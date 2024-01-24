@@ -360,7 +360,7 @@ public class BoardObject : MonoBehaviour
                             {
                                 case Hazard.eHazardType.ENEMY:
                                 case Hazard.eHazardType.BOMB:
-                                case Hazard.eHazardType.MINE:
+                                case Hazard.eHazardType.DYNAMITE:
                                 case Hazard.eHazardType.PROXIMITY_MINE:
                                     void DestroyShield()
                                     {
@@ -398,7 +398,7 @@ public class BoardObject : MonoBehaviour
                                     {   // no shield so die already
                                         if(hazard.HazardType == Hazard.eHazardType.ENEMY) FindObjectOfType<Dax>().EndGame("Killed By Enemy");
                                         else if(hazard.HazardType == Hazard.eHazardType.BOMB ) FindObjectOfType<Dax>().EndGame("Killed By Bomb");
-                                        else if (hazard.HazardType == Hazard.eHazardType.MINE) FindObjectOfType<Dax>().EndGame("Killed By Mine");
+                                        else if (hazard.HazardType == Hazard.eHazardType.DYNAMITE) FindObjectOfType<Dax>().EndGame("Killed By Dynamite");
                                         else if (hazard.HazardType == Hazard.eHazardType.PROXIMITY_MINE) FindObjectOfType<Dax>().EndGame("Killed By Proximity Mine");
                                     }
                                     break;

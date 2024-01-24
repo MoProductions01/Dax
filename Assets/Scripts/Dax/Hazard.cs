@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Hazard : BoardObject
 {
-    public enum eHazardType { ENEMY, EMP, BOMB, MINE, PROXIMITY_MINE, TIMED_MINE };
+    public enum eHazardType { ENEMY, EMP, BOMB, DYNAMITE, PROXIMITY_MINE, TIMED_MINE };
     public static float DEFAULT_EFFECT_TIME = 2f; // moupdate -  look into using this to init the objects instead of the prefab
     public static float MAX_EFFECT_TIME = 10f;
 

@@ -388,8 +388,8 @@ public class MCP : MonoBehaviour
             case Hazard.eHazardType.BOMB:
                 hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Bomb");
                 break;
-            case Hazard.eHazardType.MINE:
-                hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Mine");
+            case Hazard.eHazardType.DYNAMITE:
+                hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Dynamite");
                 break;
             case Hazard.eHazardType.PROXIMITY_MINE:
                 hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Proximity_Mine");
