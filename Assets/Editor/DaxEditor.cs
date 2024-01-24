@@ -383,11 +383,11 @@ public class DaxEditor : Editor
         {
             mcp.CreateHazard(selChannelNode, dax, Hazard.eHazardType.ENEMY);
         }
-        EditorGUILayout.Separator();
+        /*EditorGUILayout.Separator();
         if (GUILayout.Button("Create Game Mod", GUILayout.Width(buttonWidth)))
         {
             mcp.CreateGameMod(selChannelNode, dax, GameMod.eGameModType.EXTRA_POINTS);
-        }
+        }*/
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Shield", GUILayout.Width(buttonWidth)))
         {
@@ -498,7 +498,7 @@ public class DaxEditor : Editor
                 }
                 break;
         }
-        if(bo.BoardObjectType == BoardObject.eBoardObjectType.GAME_MOD)
+       /* if(bo.BoardObjectType == BoardObject.eBoardObjectType.GAME_MOD)
         {
             EditorGUILayout.Separator();
             GameMod gameMod = (GameMod)bo;
@@ -527,7 +527,8 @@ public class DaxEditor : Editor
                 }
             }
         }             
-        else if (bo.BoardObjectType == BoardObject.eBoardObjectType.MAGNET)
+        else */
+        if (bo.BoardObjectType == BoardObject.eBoardObjectType.MAGNET)
         {
             EditorGUILayout.Separator();
             Magnet magnet = (Magnet)bo;

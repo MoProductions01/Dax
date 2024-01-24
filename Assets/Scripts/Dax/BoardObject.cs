@@ -5,7 +5,7 @@ using System.Linq;
 
 public class BoardObject : MonoBehaviour
 {    
-    public enum eBoardObjectType { PLAYER, HAZARD, FACET, MAGNET, INTERACTABLE, SHIELD, SPEED_MOD, GAME_MOD, NONE };
+    public enum eBoardObjectType { PLAYER, HAZARD, FACET, MAGNET, INTERACTABLE, SHIELD, SPEED_MOD, /*GAME_MOD,*/ NONE };
     public eBoardObjectType BoardObjectType;
  
     public enum eMoveDir { OUTWARD, INWARD };
@@ -53,7 +53,7 @@ public class BoardObject : MonoBehaviour
             case eBoardObjectType.INTERACTABLE: return "Interactable";
             case eBoardObjectType.SHIELD: return "Shield";
             case eBoardObjectType.SPEED_MOD: return "Speed Mod";
-            case eBoardObjectType.GAME_MOD: return "Game Mod";
+           // case eBoardObjectType.GAME_MOD: return "Game Mod";
             default: return "ERROR: UNKNOWN Board Object TYPE: " + BoardObjectType.ToString();
         }
     }    
@@ -339,7 +339,7 @@ public class BoardObject : MonoBehaviour
                     BoardObject bo = boardObjectColliders[0].GetComponentInParent<BoardObject>();
                     switch(bo.BoardObjectType) 
                     {                        
-                        case eBoardObjectType.GAME_MOD:
+                        /*case eBoardObjectType.GAME_MOD:
                             GameMod gameMod = boardObjectColliders[0].GetComponentInParent<GameMod>();
                             switch(gameMod.GameModType)
                             {
@@ -352,7 +352,7 @@ public class BoardObject : MonoBehaviour
                             }
                             curSphereColliders.Remove(gameMod.GetComponent<Collider>());
                             DestroyImmediate(gameMod.gameObject);
-                            break;
+                            break;*/
                         case eBoardObjectType.HAZARD:
                             Hazard hazard = boardObjectColliders[0].GetComponentInParent<Hazard>();
                             if (hazard == player.TempEnemyIgnore) break; // moupdate = make sure this works
