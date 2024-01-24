@@ -359,9 +359,9 @@ public class BoardObject : MonoBehaviour
                             switch(hazard.HazardType)
                             {
                                 case Hazard.eHazardType.ENEMY:
-                                case Hazard.eHazardType.BOMB:
+                               // case Hazard.eHazardType.BOMB:
                                 case Hazard.eHazardType.DYNAMITE:
-                                case Hazard.eHazardType.PROXIMITY_MINE:
+                               // case Hazard.eHazardType.PROXIMITY_MINE:
                                     void DestroyShield()
                                     {
                                         curSphereColliders.Remove(player.ActiveShield.GetComponent<Collider>());
@@ -397,14 +397,14 @@ public class BoardObject : MonoBehaviour
                                     else
                                     {   // no shield so die already
                                         if(hazard.HazardType == Hazard.eHazardType.ENEMY) FindObjectOfType<Dax>().EndGame("Killed By Enemy");
-                                        else if(hazard.HazardType == Hazard.eHazardType.BOMB ) FindObjectOfType<Dax>().EndGame("Killed By Bomb");
+                                       // else if(hazard.HazardType == Hazard.eHazardType.BOMB ) FindObjectOfType<Dax>().EndGame("Killed By Bomb");
                                         else if (hazard.HazardType == Hazard.eHazardType.DYNAMITE) FindObjectOfType<Dax>().EndGame("Killed By Dynamite");
-                                        else if (hazard.HazardType == Hazard.eHazardType.PROXIMITY_MINE) FindObjectOfType<Dax>().EndGame("Killed By Proximity Mine");
+                                        //else if (hazard.HazardType == Hazard.eHazardType.PROXIMITY_MINE) FindObjectOfType<Dax>().EndGame("Killed By Proximity Mine");
                                     }
                                     break;
-                                case Hazard.eHazardType.TIMED_MINE:
-                                    hazard.ActivateTimer();
-                                    break;
+                                //case Hazard.eHazardType.TIMED_MINE:
+                                  //  hazard.ActivateTimer();
+                                  //  break;
                                 case Hazard.eHazardType.EMP:
                                     if (hazard == player.TempEnemyIgnore) break;
                                     if (player.ActiveShield != null)

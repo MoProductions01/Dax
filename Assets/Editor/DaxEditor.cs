@@ -455,7 +455,7 @@ public class DaxEditor : Editor
                     DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                    
                     hazard = mcp.CreateHazard(selChannelNode, dax, newHazardType);
                 }
-                if (hazard.HazardType == Hazard.eHazardType.ENEMY || hazard.HazardType == Hazard.eHazardType.EMP || hazard.HazardType == Hazard.eHazardType.BOMB)
+                if (hazard.HazardType == Hazard.eHazardType.ENEMY || hazard.HazardType == Hazard.eHazardType.EMP /*(|| hazard.HazardType == Hazard.eHazardType.BOMB*/)
                 {   // Speed and Movement Direction
                     EditorGUILayout.Separator();
                     float newSpeed = EditorGUILayout.Slider("Speed", bo.Speed, 0f, Dax.MAX_SPEED);
@@ -473,7 +473,7 @@ public class DaxEditor : Editor
                         UpdateEnumProperty(selBoardObjectSO, "MoveDir", (int)bo.MoveDir);                        
                     }                    
                 }
-                if (hazard.HazardType == Hazard.eHazardType.EMP || hazard.HazardType == Hazard.eHazardType.TIMED_MINE)
+                if (hazard.HazardType == Hazard.eHazardType.EMP /*|| hazard.HazardType == Hazard.eHazardType.TIMED_MINE*/)
                 {   // These have an Effect Timer
                     EditorGUILayout.Separator();
 
@@ -484,7 +484,7 @@ public class DaxEditor : Editor
                         UpdateFloatProperty(selBoardObjectSO, "EffectTime", hazard.EffectTime);                        
                     }
                 }
-                if (hazard.HazardType == Hazard.eHazardType.PROXIMITY_MINE)
+                /*if (hazard.HazardType == Hazard.eHazardType.PROXIMITY_MINE)
                 {   // proximity mine has a radius
                     EditorGUILayout.Separator();
 
@@ -495,7 +495,7 @@ public class DaxEditor : Editor
                         hazard.GetComponent<SphereCollider>().radius = hazard.EffectRadius;
                         UpdateFloatProperty(selBoardObjectSO, "EffectRadius", hazard.EffectRadius);                                    
                     }
-                }
+                }*/
                 break;
         }
        /* if(bo.BoardObjectType == BoardObject.eBoardObjectType.GAME_MOD)

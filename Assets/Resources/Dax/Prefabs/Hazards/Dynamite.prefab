@@ -5000,7 +5000,7 @@ MonoBehaviour:
   Speed: 0
   SpawningNode: {fileID: 0}
   DestGateJustWarpedTo: {fileID: 0}
-  HazardType: 3
+  HazardType: 2
   EffectTime: 2
   EffectRadius: 0.05
   TimerActive: 0

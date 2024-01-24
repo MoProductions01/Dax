@@ -385,18 +385,18 @@ public class MCP : MonoBehaviour
             case Hazard.eHazardType.EMP:
                 hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/EMP");
                 break;
-            case Hazard.eHazardType.BOMB:
-                hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Bomb");
-                break;
+           // case Hazard.eHazardType.BOMB:
+             //   hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Bomb");
+             //   break;
             case Hazard.eHazardType.DYNAMITE:
                 hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Dynamite");
                 break;
-            case Hazard.eHazardType.PROXIMITY_MINE:
-                hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Proximity_Mine");
-                break;
-            case Hazard.eHazardType.TIMED_MINE:
-                hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Timed_Mine");
-                break;                
+           // case Hazard.eHazardType.PROXIMITY_MINE:
+           //     hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Proximity_Mine");
+            //    break;
+          //  case Hazard.eHazardType.TIMED_MINE:
+           //     hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Timed_Mine");
+           //     break;                
         }
         Hazard hazard = Instantiate<Hazard>(hazardPrefab, channelNode.transform);
         hazard.InitForChannelNode(channelNode, dax);
@@ -648,7 +648,7 @@ public class MCP : MonoBehaviour
                 hazard.HazardType = (Hazard.eHazardType)boSave.IntList[0];
                 hazard.EffectTime = boSave.FloatList[0];
                 hazard.EffectRadius = boSave.FloatList[1];
-                if (hazard.HazardType == Hazard.eHazardType.PROXIMITY_MINE) hazard.GetComponent<SphereCollider>().radius = hazard.EffectRadius;                
+               // if (hazard.HazardType == Hazard.eHazardType.PROXIMITY_MINE) hazard.GetComponent<SphereCollider>().radius = hazard.EffectRadius;                
                 break;
             /*case BoardObject.eBoardObjectType.GAME_MOD:
                 GameMod gameMod = (GameMod)bo;
