@@ -25,6 +25,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7955232308181652115}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -32,7 +33,6 @@ Transform:
   m_Children:
   - {fileID: 1743762088059465255}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!135 &6601632668880778921
 SphereCollider:
@@ -42,9 +42,17 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7955232308181652115}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Radius: 0.05
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &794321612042148722
@@ -59,8 +67,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c8555207bc00df4fa61d2503a56a292, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BoardObjectType: 7
-  _Color: 0
+  BoardObjectType: 6
   _Dax: {fileID: 0}
   LastPositionObject: {fileID: 0}
   CurChannel: {fileID: 0}
@@ -75,6 +82,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 7955232308181652114}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 282ed8b9693ef4a4ca07b14a415e817f, type: 3}
@@ -130,6 +138,9 @@ PrefabInstance:
       value: Enemy_Speed_Up
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 282ed8b9693ef4a4ca07b14a415e817f, type: 3}
 --- !u!4 &1743762088059465255 stripped
 Transform:
