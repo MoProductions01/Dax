@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: d407df781aef24a7c87347237771e4aa
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - BIGMACCA
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 99626ed0730cb4d6cb2667f536256a08, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
