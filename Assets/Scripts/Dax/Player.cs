@@ -16,6 +16,8 @@ public class Player : BoardObject
     public Hazard.eHazardType EffectType; // moupdate - this is sloppy, maybe a new enum
     public float SpeedSave; // moupdate
 
+    
+
     public void EMPHit(float effectTime)
     {
         EffectType = Hazard.eHazardType.EMP;
@@ -177,12 +179,18 @@ public class Player : BoardObject
         Debug.Log("Player.SetStartChannel: channelIndex: " + channelIndex);
         CurChannel = _Dax.CurWheel.Rings[0].transform.GetComponentsInChildren<Channel>().ToList()[channelIndex];
         SpawningNode = CurChannel.StartNode;
+
+        transform.LookAt(SpawningNode.transform);
     }
+
+
 
 #if true
     DaxSetup DS = null;
     private void OnDrawGizmos()
     {
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(transform.position + transform.forward * .1f, .04f);
         if (DS == null) DS = FindObjectOfType<DaxSetup>();        
         if (DS != null && DS.ShowGizmos == true)            
         {           
