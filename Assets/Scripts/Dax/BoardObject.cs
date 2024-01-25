@@ -180,12 +180,94 @@ public class BoardObject : MonoBehaviour
         return amIFree;
     }    
 
-    public void BoardObjectFixedUpdate(float deltTime)
+    public void BoardObjectFixedUpdate(float deltaTime)
     {        
         if (CurChannel != null)
         {           
-            if (MoveDir == eMoveDir.OUTWARD) transform.LookAt(CurChannel.EndNode.transform);
-            else transform.LookAt(CurChannel.StartNode.transform);
+            if (MoveDir == eMoveDir.OUTWARD) 
+            {
+                //transform.LookAt(CurChannel.EndNode.transform);
+            }
+            else 
+            {
+                //transform.LookAt(CurChannel.StartNode.transform);
+            }
+            
+            transform.Translate(Vector3.forward * deltaTime * Speed);            
+            List<Collider> overlapColliders = Physics.OverlapSphere(transform.position, GetComponent<SphereCollider>().radius).ToList();
+
+            // Channel nodes
+            List<Collider> cnColliders = overlapColliders.ToList();
+            cnColliders.RemoveAll(c => c.GetComponent<ChannelNode>() == null);                        
+            cnColliders.RemoveAll(c => c.GetComponent<ChannelNode>().CanBeOnPath() == false);            
+            cnColliders.RemoveAll(c => c.GetComponent<ChannelNode>().MyChannel == CurChannel);   
+            cnColliders.RemoveAll(c => Vector3.Dot( (c.transform.position - this.transform.position), this.transform.forward) <= 0);                     
+            if(cnColliders.Count > 0)
+            {
+                if(cnColliders.Count > 1) 
+                {
+                    Debug.LogError("Why do we have more than 1 Channel Node Colliders?: " + cnColliders.Count);                    
+                }
+
+                ChannelNode cn = cnColliders[0].GetComponent<ChannelNode>();
+                Vector3 heading = cn.transform.position - this.transform.position;
+                float dot = Vector3.Dot(heading, this.transform.forward);         
+                if(dot > 0f)
+                {
+                    CurChannel = cn.MyChannel;                
+                    this.transform.parent = CurChannel.MyRing.transform;
+                    LastPositionObject.transform.parent = CurChannel.MyRing.transform;                
+                    this.transform.position = cn.transform.position;
+                    transform.LookAt(cn.IsStartNode() ? cn.MyChannel.EndNode.transform : cn.MyChannel.StartNode.transform);      
+                } 
+                else
+                {
+                    Debug.LogError("Why do we have a Channel Node that's behind us?");
+                } 
+                
+            }              
+            
+            // Player Generic (walls, etc)
+            List<Collider> pgColliders = overlapColliders.ToList();
+            pgColliders.RemoveAll(c => c.gameObject.layer != LayerMask.NameToLayer("Player Generic Collider"));  
+            pgColliders.RemoveAll(c => Vector3.Dot( (c.transform.position - this.transform.position), this.transform.forward) <= 0);            
+            if(pgColliders.Count > 0)
+            {               
+
+                if(pgColliders.Count > 1) 
+                {   // you can have more than 1 PG if a channen node and the point of a wedge are right next to each other
+                    //Debug.LogError("Why do we have more than 1 Player Generic Colliders?: " + pgColliders.Count);                
+                    /*Debug.Log("-----------------------Before Sort--------------------------");
+                    for(int i=0; i<pgColliders.Count; i++)
+                    {
+                        Debug.Log($"{i} dist: {Vector3.Distance(this.transform.position, pgColliders[i].transform.position)}, name: {pgColliders[i].name}");
+                    }
+                    Debug.Log("-----------------------After Sort--------------------------"); */                    
+                    pgColliders = pgColliders.OrderBy(o => Vector3.Distance(o.transform.position, this.transform.position)).ToList();
+                    /*for(int i=0; i<pgColliders.Count; i++)
+                    {
+                        Debug.Log($"{i} dist: {Vector3.Distance(this.transform.position, pgColliders[i].transform.position)}, name: {pgColliders[i].name}");
+                    } */                   
+                }
+
+                Collider pg = pgColliders[0];
+                Vector3 heading = pg.transform.position - this.transform.position;
+                float dot = Vector3.Dot(heading, this.transform.forward);         
+                if(dot > 0f)
+                {
+                    //transform.position = LastPositionObject.transform.position;      
+                    transform.forward = -transform.forward;         
+                } 
+                else
+                {
+                    Debug.LogError("Why do we have a Player Generic Collider that's behind us?");
+                }                                          
+            }
+            // bail
+            LastPositionObject.transform.position = transform.position;
+            return;
+
+            #if false
             RRDManager.AppendText("--------PRE MOVE-------: + " + this.MoveDir.ToString() + ", " + this.transform.position.ToString("F3") + "\n", RifRafDebug.eDebugTextType.PHYSICS);            
             CurChannel.HaveNodesLookAtEachOther();            
 
@@ -204,7 +286,7 @@ public class BoardObject : MonoBehaviour
             
             // We are not trapped, so move and start checking collision                            
             Vector3 moveDir = (MoveDir == eMoveDir.OUTWARD ? CurChannel.StartNode.transform.forward : CurChannel.EndNode.transform.forward);
-            transform.position += (moveDir * deltTime * (Speed));
+            transform.position += (moveDir * deltaTime * (Speed));
             
             
             // CHANNEL NODES for Path switching       
@@ -618,6 +700,11 @@ public class BoardObject : MonoBehaviour
             float endDistThisFrame = Vector3.Distance(this.transform.position, Vector3.zero);
             LastPositionObject.transform.position = transform.position;
             RRDManager.AppendText("-----END UPDATE-----: " + this.MoveDir.ToString() + ", " + this.transform.position.ToString("F3") + "\ndistLastFrame: " + endDistLastFrame.ToString("F3") + "\ndistThisFrame: " + endDistThisFrame.ToString("F3") + "\n", RifRafDebug.eDebugTextType.PHYSICS);
-        }        
-    }    
+            #endif
+        }   
+        else
+        {
+            Debug.LogError("Why are we not on a Channel?: " + this.name);
+        }             
+    }     
 }

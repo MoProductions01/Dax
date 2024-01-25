@@ -241,7 +241,7 @@ public class Dax : MonoBehaviour
             Ring ring = CurWheel.Rings[i];
             
             List<Channel> ringChannels = ring.transform.GetComponentsInChildren<Channel>().ToList();
-            ringChannels.OrderBy(x => x.name);            
+            ringChannels = ringChannels.OrderBy(x => x.name).ToList();
             ring.RotateSpeed = ringSave.RotSpeed;
 
             // now create all the board objects
@@ -259,7 +259,7 @@ public class Dax : MonoBehaviour
             if (ring.BumperGroup != null)
             {
                 List<Bumper> bumpers = ring.BumperGroup.Bumpers.ToList();
-                bumpers.OrderBy(x => x.name);
+                bumpers = bumpers.OrderBy(x => x.name).ToList();
                 for (int j = 0; j < bumpers.Count; j++)
                 {
                     Bumper bumper = bumpers[j];
@@ -286,7 +286,7 @@ public class Dax : MonoBehaviour
            // Ring ring = Wheels[0].Rings[i];
             Ring ring = CurWheel.Rings[i];
             List<Channel> ringChannels = ring.transform.GetComponentsInChildren<Channel>().ToList();
-            ringChannels.OrderBy(x => x.name);
+            ringChannels = ringChannels.OrderBy(x => x.name).ToList();
 
             for (int j = 0; j < numChannels; j++)
             {
@@ -503,7 +503,7 @@ public class Dax : MonoBehaviour
                 RingSave ringSave = new RingSave(ring.transform.eulerAngles, ring.RotateSpeed, numChannels);
                 RingSaves.Add(ringSave);
                 List<Channel> ringChannels = ring.transform.GetComponentsInChildren<Channel>().ToList();
-                ringChannels.OrderBy(x => x.name);
+                ringChannels = ringChannels.OrderBy(x => x.name).ToList();
                 if (ringChannels.Count != numChannels) { Debug.LogError("Channel count mismatch. ringChannels.Count: " + ringChannels.Count + ", numChannels: " + numChannels);return; }
                 // channels
                 for (int j=0; j<numChannels; j++)
@@ -517,7 +517,7 @@ public class Dax : MonoBehaviour
                 {   // not center ring so it has a BumperGroup
                     ringSave.BumperSaves = new List<BumperSave>();
                     List<Bumper> bumpers = ring.BumperGroup.Bumpers.ToList();
-                    bumpers.OrderBy(x => x.name);
+                    bumpers = bumpers.OrderBy(x => x.name).ToList();
                     for(int j=0; j<bumpers.Count; j++)
                     {
                         Bumper bumper = bumpers[j];

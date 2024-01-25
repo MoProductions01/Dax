@@ -90,6 +90,9 @@ public class Player : BoardObject
     
     private void LateUpdate()
     {        
+        string s = "pos: " + transform.position + ", localPos: " + transform.localPosition + "\n";
+        s += "forward: " + transform.forward + ", CurChannel: " + CurChannel.name;
+         RRDManager.SetText(s, RifRafDebug.eDebugTextType.GAME_STATE);   
         if(CarriedColorFacet != null)
         {
             if(MoveDir == eMoveDir.OUTWARD)
@@ -190,7 +193,7 @@ public class Player : BoardObject
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        //Gizmos.DrawSphere(transform.position + transform.forward * .1f, .04f);
+        Gizmos.DrawSphere(transform.position + transform.forward * .1f, .04f);
         if (DS == null) DS = FindObjectOfType<DaxSetup>();        
         if (DS != null && DS.ShowGizmos == true)            
         {           

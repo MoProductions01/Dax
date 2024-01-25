@@ -331,7 +331,7 @@ public class MCP : MonoBehaviour
 
             // channels            
             List<Channel> ringChannels = ring.transform.GetComponentsInChildren<Channel>().ToList();
-            ringChannels.OrderBy(x => x.name);
+            ringChannels = ringChannels.OrderBy(x => x.name).ToList();
             int numChannels = (ringIndex == 0 ? Wheel.NUM_CENTER_RING_CHANNELS : Wheel.NUM_OUTER_RING_CHANNELS);
             for (int i = 0; i < numChannels; i++)
             {

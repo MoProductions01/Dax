@@ -36,7 +36,7 @@ public static class RRDManager
         if (RifRafDebug == null) RRDManager.Init(GameObject.FindObjectOfType<DaxSetup>().RifRafDebugRef);
         
         if (type == RifRafDebug.eDebugTextType.PHYSICS) return;
-       // RifRafDebug.dbgText.text = s;
+        RifRafDebug.dbgText.text = s;
     }
     public static void AppendText(string s, RifRafDebug.eDebugTextType type)
     {
