@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Shield : BoardObject
 {
-    public enum eShieldTypes { HIT, SINGLE_KILL, TIMED, TIMED_KILL };
+    public enum eShieldTypes { HIT, SINGLE_KILL /*, TIMED, TIMED_KILL*/ };
     public static float DEFAULT_TIMER = 10f;
 
     [Header("Shield Data")]

@@ -133,7 +133,7 @@ public class Player : BoardObject
     
     private void Update()
     {   
-        if(ActiveShield != null && (ActiveShield.ShieldType == Shield.eShieldTypes.TIMED || ActiveShield.ShieldType == Shield.eShieldTypes.TIMED_KILL))
+        /*if(ActiveShield != null && (ActiveShield.ShieldType == Shield.eShieldTypes.TIMED || ActiveShield.ShieldType == Shield.eShieldTypes.TIMED_KILL))
         {
             ActiveShield.Timer -= Time.deltaTime;
             if (ActiveShield.Timer <= 0f)
@@ -141,7 +141,8 @@ public class Player : BoardObject
                 DestroyImmediate(ActiveShield.gameObject);
                 ActiveShield = null;
             }
-        }    
+        } */
+           
         if(EffectType == Hazard.eHazardType.EMP)
         {
             EMPTime -= Time.deltaTime;

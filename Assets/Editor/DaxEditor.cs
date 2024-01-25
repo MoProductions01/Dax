@@ -662,7 +662,7 @@ public class DaxEditor : Editor
                 shield = mcp.CreateShield(selChannelNode.transform, newShieldType);
                 shield.InitForChannelNode(selChannelNode, dax); // moupdate check how shields do stuff
             }
-            if(shield.ShieldType == Shield.eShieldTypes.TIMED || shield.ShieldType == Shield.eShieldTypes.TIMED_KILL)
+           /* if(shield.ShieldType == Shield.eShieldTypes.TIMED || shield.ShieldType == Shield.eShieldTypes.TIMED_KILL)
             {
                 float newTimer = EditorGUILayout.FloatField("Timer: ", shield.Timer);
                 if (newTimer < 1.0f) newTimer = 1.0f;
@@ -671,7 +671,7 @@ public class DaxEditor : Editor
                     shield.Timer = newTimer;
                     UpdateFloatProperty(selBoardObjectSO, "GameModTime", shield.Timer);                    
                 }
-            }
+            }*/
         }         
         else if(bo.BoardObjectType == BoardObject.eBoardObjectType.SPEED_MOD)
         {

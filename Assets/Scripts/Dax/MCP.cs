@@ -519,12 +519,12 @@ public class MCP : MonoBehaviour
             case Shield.eShieldTypes.SINGLE_KILL:
                 shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/Pickups/HUD_Items/Single_Kill_Shield_HUD");
                 break;
-            case Shield.eShieldTypes.TIMED:
-                shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/Pickups/HUD_Items/Timed_Shield_HUD");
-                break;
-            case Shield.eShieldTypes.TIMED_KILL:
-                shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/Pickups/HUD_Items/Timed_Kill_Shield_HUD");
-                break;
+           // case Shield.eShieldTypes.TIMED:
+            //    shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/Pickups/HUD_Items/Timed_Shield_HUD");
+             //   break;
+            //case Shield.eShieldTypes.TIMED_KILL:
+            //    shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/Pickups/HUD_Items/Timed_Kill_Shield_HUD");
+             //   break;
         }
         GameObject shieldIcon = Instantiate<GameObject>(shieldIconPrefab, _Dax._UIRoot.transform);
         return shieldIcon;       
@@ -537,17 +537,17 @@ public class MCP : MonoBehaviour
         switch (type)
         {   
             case Shield.eShieldTypes.HIT:
-                shieldPrefab = Resources.Load<Shield>("Dax/Prefabs/Pickups/Hit_Shield");
+                shieldPrefab = Resources.Load<Shield>("Dax/Prefabs/Pickups/Shields/Hit_Shield");
                 break;
             case Shield.eShieldTypes.SINGLE_KILL:
-                shieldPrefab = Resources.Load<Shield>("Dax/Prefabs/Pickups/Single_Kill_Shield");
+                shieldPrefab = Resources.Load<Shield>("Dax/Prefabs/Pickups/Shields/Single_Kill_Shield");
                 break;
-            case Shield.eShieldTypes.TIMED:
-                shieldPrefab = Resources.Load<Shield>("Dax/Prefabs/Pickups/Timed_Shield");
-                break;
-            case Shield.eShieldTypes.TIMED_KILL:
-                shieldPrefab = Resources.Load<Shield>("Dax/Prefabs/Pickups/Timed_Kill_Shield");
-                break;
+           // case Shield.eShieldTypes.TIMED:
+             //   shieldPrefab = Resources.Load<Shield>("Dax/Prefabs/Pickups/Timed_Shield");
+              //  break;
+            //case Shield.eShieldTypes.TIMED_KILL:
+              //  shieldPrefab = Resources.Load<Shield>("Dax/Prefabs/Pickups/Timed_Kill_Shield");
+               // break;
         }
         Shield shield = Instantiate<Shield>(shieldPrefab, parent);
         shield.name = transform.name + "--" + type.ToString();
