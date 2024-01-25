@@ -15,7 +15,7 @@ public class BoardObject : MonoBehaviour
     // Shared      
     [HideInInspector]
     public Dax _Dax;        
-    public GameObject LastPositionObject = null;        
+   // public GameObject LastPositionObject = null;        
     public Channel CurChannel = null;
 
     public eMoveDir MoveDir = eMoveDir.OUTWARD;
@@ -66,9 +66,9 @@ public class BoardObject : MonoBehaviour
     {
        // Debug. Log("BoardObject.InitFromCreation(): " + this.name + " --MoSave--");        
         _Dax = dax;
-        if (LastPositionObject != null) Debug.LogError("WTF there should be no last position object");
-        LastPositionObject = new GameObject("Last Position_" + this.gameObject.name); ;
-        LastPositionObject.transform.parent = this.transform.parent;
+       // if (LastPositionObject != null) Debug.LogError("WTF there should be no last position object");
+      //  LastPositionObject = new GameObject("Last Position_" + this.gameObject.name); ;
+      //  LastPositionObject.transform.parent = this.transform.parent;
        
         if (spawnNode != null) // if it's not the player do the spawn stuff right away moupdate - we now have another thing for initting on player
         {
@@ -77,194 +77,140 @@ public class BoardObject : MonoBehaviour
             CurChannel = SpawningNode.MyChannel;
 
             this.transform.parent = CurChannel.MyRing.transform;
-            LastPositionObject.transform.parent = CurChannel.MyRing.transform;
-
+         //   LastPositionObject.transform.parent = CurChannel.MyRing.transform;
             transform.position = SpawningNode.transform.position;                        
-            LastPositionObject.transform.position = transform.position;
+          //  LastPositionObject.transform.position = transform.position;
             
             transform.LookAt(CurChannel.EndNode.transform);
         }        
-    }
-
-    bool AmITrappedByCollider(Collider colliderToCheck)
-    {
-        RRDManager.AppendText("------AmITrappedByCollider(): " + colliderToCheck.name + "\n", RifRafDebug.eDebugTextType.PHYSICS);
-        if(colliderToCheck.GetComponent<ChannelPiece>() == null)
-        {
-            RRDManager.AppendText("You can't get trapped by non ChannelPiece objects for now. Free.\n", RifRafDebug.eDebugTextType.PHYSICS);
-            return false;
-        }
-        bool trapped = true;
-
-        string dictString = colliderToCheck.name.Substring(0, 13);
-        float extentsZ = _Dax.ChannelSizes[dictString];
-        float diodeToBoundsCenterDist = Vector3.Distance(this.transform.position, colliderToCheck.bounds.center);
-        if (diodeToBoundsCenterDist >= extentsZ)
-        {   // more than 50% outside the collider so you're free automatically            
-            RRDManager.AppendText("You're >= away from bounds center than it's extentsZ, so at least half out. Free.\n", RifRafDebug.eDebugTextType.PHYSICS);
-            trapped = false;
-        }
-        else
-        {                 
-            float delta = extentsZ - diodeToBoundsCenterDist;
-            float ourSize = this.GetComponent<SphereCollider>().radius;
-            float percentageIn = 50f + ((delta / ourSize) * 50f);                        
-            if (percentageIn >= _Dax.TrappedPercentage)
-            {
-                RRDManager.AppendText("you are " + percentageIn.ToString("F3") + "% in which is more than the trappedPercentage tolerance: " + _Dax.TrappedPercentage.ToString("F3") + "% so Trapped.\n", RifRafDebug.eDebugTextType.PHYSICS);
-                trapped = true;
-            }
-            else
-            {
-                RRDManager.AppendText("you are " + percentageIn.ToString("F3") + "% in which is less than the trappedPercentage tolerance: " + _Dax.TrappedPercentage.ToString("F3") + "% so Free.\n", RifRafDebug.eDebugTextType.PHYSICS);
-                trapped = false;
-            }
-        }
-        return trapped;
-    }
-    bool AmIFree(List<Collider> spherePGCs/*, List<RaycastHit> rayPGCs*/)
-    {
-       // PGCsNotTrappedBy.Clear();
-        bool amIFree;
-        if (spherePGCs.Count == 0 /*&& rayPGCs.Count == 0*/)
-        {   // Sphere false so you're fully free
-            //Dax.DebugText.text += "no Sphere or Ray hits, so you're fully free\n";
-            RRDManager.AppendText("No Sphere hits. Free.\n", RifRafDebug.eDebugTextType.PHYSICS);
-            //Dax.DebugSphere.transform.position = new Vector3(999999f, 999999f, 999999f);
-            amIFree = true;
-        }
-        else if (spherePGCs.Count == 1 /*&& rayPGCs.Count > 0*/)
-        {   // Sphere hit so you're at least partially contained within the collider bounds            
-            RRDManager.AppendText(this.name + " has 1 Sphere PGC (" + spherePGCs[0].name + ") so you're at least partially contained.\n", RifRafDebug.eDebugTextType.PHYSICS);
-
-            amIFree = !AmITrappedByCollider(spherePGCs[0]);           
-        }
-        else
-        {   // more than one sphere hit so see what's up
-            RRDManager.AppendText("**** More than 1 PGC, which could be either you're in between rings with at least one object on each ring, or you're bumping into a channel node and wedge on the next ring at the same time. Sort it out\n", RifRafDebug.eDebugTextType.PHYSICS);
-            amIFree = true;
-            List<int> ringsInvolved = new List<int>();            
-            // The only way to get trapped with more than one PGC is if they're on separate rings, so 
-            foreach(Collider c in spherePGCs)
-            {                
-                bool amITrapped = AmITrappedByCollider(c);
-                if (amITrapped == true)
-                {
-                    amIFree = false;
-                    break;
-                }
-
-                int colliderRingIndex;
-                int.TryParse(c.name.Substring(5, 2), out colliderRingIndex);
-                if (ringsInvolved.Contains(colliderRingIndex) == false) ringsInvolved.Add(colliderRingIndex);
-            }
-            if(amIFree == true)
-            {   // if we're here then we're not trapped by anything, so see if you're colliding with things between rings
-                if(ringsInvolved.Count > 1)
-                {
-                    RRDManager.AppendText("You're colliding with more than one object on " + ringsInvolved.Count + " rings, so you're stuck between them. Trapped!\n", RifRafDebug.eDebugTextType.PHYSICS);
-                    amIFree = false;
-                }
-                else
-                {
-                    RRDManager.AppendText("You're colliding with more than one object on " + ringsInvolved.Count + " rings, so treat it like a normal bounce back collision. Free. \n", RifRafDebug.eDebugTextType.PHYSICS);
-                    amIFree = true;
-                }
-            }            
-            else
-            {
-                RRDManager.AppendText("You're contained by at least one PGC. Trapped.\n", RifRafDebug.eDebugTextType.PHYSICS);
-            }
-        }
-        
-        return amIFree;
     }    
+
+    private void CheckForNewChannel(List<Collider> overlapColliders)
+    {
+        // Channel nodes
+        List<Collider> cnColliders = overlapColliders.ToList();
+        cnColliders.RemoveAll(c => c.GetComponent<ChannelNode>() == null);                        
+        cnColliders.RemoveAll(c => c.GetComponent<ChannelNode>().CanBeOnPath() == false);            
+        cnColliders.RemoveAll(c => c.GetComponent<ChannelNode>().MyChannel == CurChannel);   
+        cnColliders.RemoveAll(c => Vector3.Dot( (c.transform.position - this.transform.position), this.transform.forward) <= 0);                     
+        if(cnColliders.Count > 0)
+        {
+            if(cnColliders.Count > 1) 
+            {
+                Debug.LogError("Why do we have more than 1 Channel Node Colliders?: " + cnColliders.Count);                    
+            }
+
+            ChannelNode cn = cnColliders[0].GetComponent<ChannelNode>();
+            Vector3 heading = cn.transform.position - this.transform.position;
+            float dot = Vector3.Dot(heading, this.transform.forward);         
+            if(dot > 0f)
+            {
+                CurChannel = cn.MyChannel;                
+                this.transform.parent = CurChannel.MyRing.transform;
+                //LastPositionObject.transform.parent = CurChannel.MyRing.transform;                
+                this.transform.position = cn.transform.position;
+                transform.LookAt(cn.IsStartNode() ? cn.MyChannel.EndNode.transform : cn.MyChannel.StartNode.transform);      
+            } 
+            else
+            {
+                Debug.LogError("Why do we have a Channel Node that's behind us?");
+            }             
+        }      
+    }
+
+    private void CheckGenericBounce(List<Collider> pgColliders)
+    {
+        // Player Generic (walls, etc)
+        //List<Collider> pgColliders = overlapColliders.ToList();
+        pgColliders.RemoveAll(c => c.gameObject.layer != LayerMask.NameToLayer("Player Generic Collider"));  
+        pgColliders.RemoveAll(c => Vector3.Dot( (c.transform.position - this.transform.position), this.transform.forward) <= 0);            
+        if(pgColliders.Count > 0)
+        {               
+
+            if(pgColliders.Count > 1) 
+            {                
+                pgColliders = pgColliders.OrderBy(o => Vector3.Distance(o.transform.position, this.transform.position)).ToList();                   
+            }
+
+            Collider pg = pgColliders[0];
+            Vector3 heading = pg.transform.position - this.transform.position;
+            float dot = Vector3.Dot(heading, this.transform.forward);         
+            if(dot > 0f)
+            {                         
+                transform.forward = -transform.forward;         
+            } 
+            else
+            {
+                Debug.LogError("Why do we have a Player Generic Collider that's behind us?");
+            }                                          
+        }
+    }
+
+    private void CheckBumpers(List<Collider> bumperColliders)
+    {
+        // BUMPER collisions                
+       // List<Collider> bumperColliders = curSphereColliders.ToList();
+        for(int i=0; i<bumperColliders.Count; i++)
+        {
+            if(bumperColliders[i] == null)
+            {
+                Debug.LogError("wtF");
+            }
+        }
+        bumperColliders.RemoveAll(x => x.GetComponent<Bumper>() == null);
+        if (bumperColliders.Count > 0)
+        {
+            Bumper bumper = bumperColliders[0].GetComponent<Bumper>();
+            if (this.BoardObjectType == eBoardObjectType.PLAYER)
+            {
+                Player player = FindObjectOfType<Player>();
+                switch (bumper.BumperType)
+                {
+                    case Bumper.eBumperType.DEATH:
+                        FindObjectOfType<Dax>().EndGame("Death Bumper!");
+                        break;
+                    case Bumper.eBumperType.COLOR_MATCH:
+                        if (player.CarriedColorFacet == null) break;
+                        Facet playerCarriedColorFacet = (Facet)player.CarriedColorFacet;
+                        if (playerCarriedColorFacet._Color == bumper.BumperColor)
+                        {                                
+                            FindObjectOfType<Dax>().CurWheel.MatchedFacetColor(playerCarriedColorFacet);
+                            //curSphereColliders.Remove(playerCarriedColorFacet.GetComponentInChildren<Collider>());
+                            DestroyImmediate(playerCarriedColorFacet.gameObject);
+                            if(_Dax.CurWheel.VictoryCondition == Dax.eVictoryConditions.COLOR_MATCH) _Dax.CurWheel.CheckVictoryConditions();
+                        }
+                        break;
+                }
+            }
+            transform.forward = -transform.forward;   
+           // transform.position = LastPositionObject.transform.position;
+            //MoveDir = (MoveDir == eMoveDir.INWARD ? eMoveDir.OUTWARD : eMoveDir.INWARD);
+            //Debug.Log("bounced off: " + bumperColliders[0].name);
+        }
+    }
 
     public void BoardObjectFixedUpdate(float deltaTime)
     {        
-        if (CurChannel != null)
-        {           
-            if (MoveDir == eMoveDir.OUTWARD) 
-            {
-                //transform.LookAt(CurChannel.EndNode.transform);
-            }
-            else 
-            {
-                //transform.LookAt(CurChannel.StartNode.transform);
-            }
-            
+        if (CurChannel != null && Speed != 0f)
+        {                       
+            // move along the forward vector
             transform.Translate(Vector3.forward * deltaTime * Speed);            
             List<Collider> overlapColliders = Physics.OverlapSphere(transform.position, GetComponent<SphereCollider>().radius).ToList();
 
-            // Channel nodes
-            List<Collider> cnColliders = overlapColliders.ToList();
-            cnColliders.RemoveAll(c => c.GetComponent<ChannelNode>() == null);                        
-            cnColliders.RemoveAll(c => c.GetComponent<ChannelNode>().CanBeOnPath() == false);            
-            cnColliders.RemoveAll(c => c.GetComponent<ChannelNode>().MyChannel == CurChannel);   
-            cnColliders.RemoveAll(c => Vector3.Dot( (c.transform.position - this.transform.position), this.transform.forward) <= 0);                     
-            if(cnColliders.Count > 0)
-            {
-                if(cnColliders.Count > 1) 
-                {
-                    Debug.LogError("Why do we have more than 1 Channel Node Colliders?: " + cnColliders.Count);                    
-                }
-
-                ChannelNode cn = cnColliders[0].GetComponent<ChannelNode>();
-                Vector3 heading = cn.transform.position - this.transform.position;
-                float dot = Vector3.Dot(heading, this.transform.forward);         
-                if(dot > 0f)
-                {
-                    CurChannel = cn.MyChannel;                
-                    this.transform.parent = CurChannel.MyRing.transform;
-                    LastPositionObject.transform.parent = CurChannel.MyRing.transform;                
-                    this.transform.position = cn.transform.position;
-                    transform.LookAt(cn.IsStartNode() ? cn.MyChannel.EndNode.transform : cn.MyChannel.StartNode.transform);      
-                } 
-                else
-                {
-                    Debug.LogError("Why do we have a Channel Node that's behind us?");
-                } 
-                
-            }              
-            
-            // Player Generic (walls, etc)
-            List<Collider> pgColliders = overlapColliders.ToList();
-            pgColliders.RemoveAll(c => c.gameObject.layer != LayerMask.NameToLayer("Player Generic Collider"));  
-            pgColliders.RemoveAll(c => Vector3.Dot( (c.transform.position - this.transform.position), this.transform.forward) <= 0);            
-            if(pgColliders.Count > 0)
-            {               
-
-                if(pgColliders.Count > 1) 
-                {   // you can have more than 1 PG if a channen node and the point of a wedge are right next to each other
-                    //Debug.LogError("Why do we have more than 1 Player Generic Colliders?: " + pgColliders.Count);                
-                    /*Debug.Log("-----------------------Before Sort--------------------------");
-                    for(int i=0; i<pgColliders.Count; i++)
-                    {
-                        Debug.Log($"{i} dist: {Vector3.Distance(this.transform.position, pgColliders[i].transform.position)}, name: {pgColliders[i].name}");
-                    }
-                    Debug.Log("-----------------------After Sort--------------------------"); */                    
-                    pgColliders = pgColliders.OrderBy(o => Vector3.Distance(o.transform.position, this.transform.position)).ToList();
-                    /*for(int i=0; i<pgColliders.Count; i++)
-                    {
-                        Debug.Log($"{i} dist: {Vector3.Distance(this.transform.position, pgColliders[i].transform.position)}, name: {pgColliders[i].name}");
-                    } */                   
-                }
-
-                Collider pg = pgColliders[0];
-                Vector3 heading = pg.transform.position - this.transform.position;
-                float dot = Vector3.Dot(heading, this.transform.forward);         
-                if(dot > 0f)
-                {
-                    //transform.position = LastPositionObject.transform.position;      
-                    transform.forward = -transform.forward;         
-                } 
-                else
-                {
-                    Debug.LogError("Why do we have a Player Generic Collider that's behind us?");
-                }                                          
+            if(overlapColliders.Count > 0)
+            {                
+                CheckForNewChannel(overlapColliders.ToList());             
+                CheckBumpers(overlapColliders.ToList());                
+                CheckGenericBounce(overlapColliders.ToList());                                
             }
+            else
+            {
+                return;
+            }
+            
+                        
             // bail
-            LastPositionObject.transform.position = transform.position;
+            //LastPositionObject.transform.position = transform.position;
             return;
 
             #if false

@@ -428,7 +428,7 @@ public class DaxEditor : Editor
         EditorGUILayout.Separator();
         if (GUILayout.Button("Delete " + boName, GUILayout.Width(150f)))
         {
-            if(bo.LastPositionObject != null) DestroyImmediate(bo.LastPositionObject);
+           // if(bo.LastPositionObject != null) DestroyImmediate(bo.LastPositionObject);
             DestroyImmediate(bo.gameObject);
             selChannelNode.SpawnedBoardObject = null;
         }

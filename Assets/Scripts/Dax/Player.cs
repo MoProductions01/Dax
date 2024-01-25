@@ -90,9 +90,9 @@ public class Player : BoardObject
     
     private void LateUpdate()
     {        
-        string s = "pos: " + transform.position + ", localPos: " + transform.localPosition + "\n";
-        s += "forward: " + transform.forward + ", CurChannel: " + CurChannel.name;
-         RRDManager.SetText(s, RifRafDebug.eDebugTextType.GAME_STATE);   
+       // string s = "pos: " + transform.position + ", localPos: " + transform.localPosition + "\n";
+        //s += "forward: " + transform.forward + ", CurChannel: " + CurChannel.name;
+         //RRDManager.SetText(s, RifRafDebug.eDebugTextType.GAME_STATE);   
         if(CarriedColorFacet != null)
         {
             if(MoveDir == eMoveDir.OUTWARD)
