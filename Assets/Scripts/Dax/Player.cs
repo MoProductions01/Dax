@@ -190,7 +190,7 @@ public class Player : BoardObject
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawSphere(transform.position + transform.forward * .1f, .04f);
+        //Gizmos.DrawSphere(transform.position + transform.forward * .1f, .04f);
         if (DS == null) DS = FindObjectOfType<DaxSetup>();        
         if (DS != null && DS.ShowGizmos == true)            
         {           
