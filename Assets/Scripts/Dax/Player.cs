@@ -93,16 +93,18 @@ public class Player : BoardObject
        // string s = "pos: " + transform.position + ", localPos: " + transform.localPosition + "\n";
         //s += "forward: " + transform.forward + ", CurChannel: " + CurChannel.name;
          //RRDManager.SetText(s, RifRafDebug.eDebugTextType.GAME_STATE);   
+        
         if(CarriedColorFacet != null)
         {
-            if(MoveDir == eMoveDir.OUTWARD)
+            CarriedColorFacet.transform.position = this.transform.position + (this.transform.up * .1f);
+            /*if(MoveDir == eMoveDir.OUTWARD)
             {
                 CarriedColorFacet.transform.position = this.transform.position - (this.transform.forward * .1f);
             }            
             else
             {
                 CarriedColorFacet.transform.position = this.transform.position + (this.transform.forward * .1f);
-            }
+            }*/
         }
         if (ActiveShield != null)
         {
@@ -168,7 +170,7 @@ public class Player : BoardObject
         transform.position = Vector3.zero;
         if(playerSave != null)
         {
-            this.MoveDir = playerSave.MoveDir;
+            //this.MoveDir = playerSave.MoveDir; monewsave
             this.Speed = playerSave.Speed;
             CurChannel = GameObject.Find(playerSave.StartChannel).GetComponent<Channel>();
         }

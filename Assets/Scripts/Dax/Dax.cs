@@ -326,7 +326,7 @@ public class Dax : MonoBehaviour
     {
         public BoardObject.eBoardObjectType Type;
         public string StartChannel;
-        public BoardObject.eMoveDir MoveDir;
+        //public BoardObject.eMoveDir MoveDir; // monewsave
         public float Speed;                          
 
         // generic vars for various specific classes
@@ -344,7 +344,7 @@ public class Dax : MonoBehaviour
             StartChannel = bo.CurChannel.name;        
 
             // movement
-            MoveDir = bo.MoveDir;
+            //MoveDir = bo.MoveDir; monewsave
             Speed = bo.Speed;                        
 
             // connection lists

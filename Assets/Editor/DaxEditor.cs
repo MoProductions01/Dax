@@ -239,13 +239,14 @@ public class DaxEditor : Editor
                     player.Speed = newSpeed;
                     UpdateFloatProperty(playerSO, "Speed", player.Speed);                    
                 }
-                EditorGUILayout.Separator();
+                
+                /*EditorGUILayout.Separator();
                 BoardObject.eMoveDir newMoveDir = (BoardObject.eMoveDir)EditorGUILayout.EnumPopup("Start Direction:", player.MoveDir);
                 if (newMoveDir != player.MoveDir)
                 {
                     player.MoveDir = newMoveDir;
                     UpdateEnumProperty(playerSO, "MoveDir", (int)player.MoveDir);                    
-                }
+                }*/
                 EditorGUILayout.EndVertical();
             }
             // ************ Bumper
@@ -465,13 +466,13 @@ public class DaxEditor : Editor
                         UpdateFloatProperty(selBoardObjectSO, "Speed",  bo.Speed);                        
                     }
                     
-                    EditorGUILayout.Separator();
+                   /* EditorGUILayout.Separator();
                     BoardObject.eMoveDir newMoveDir = (BoardObject.eMoveDir)EditorGUILayout.EnumPopup("Start Direction:", bo.MoveDir);
                     if (newMoveDir != bo.MoveDir)
                     {
                         bo.MoveDir = newMoveDir;
                         UpdateEnumProperty(selBoardObjectSO, "MoveDir", (int)bo.MoveDir);                        
-                    }                    
+                    }*/                    
                 }
                 if (hazard.HazardType == Hazard.eHazardType.EMP /*|| hazard.HazardType == Hazard.eHazardType.TIMED_MINE*/)
                 {   // These have an Effect Timer

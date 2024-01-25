@@ -9,9 +9,10 @@ public class Interactable : BoardObject
     [Header("Interactable Data")]
     public eInteractableType InteractableType;
 
-    public void ToggleChannelPieces(eMoveDir playerMoveDir)
+    public void ToggleChannelPieces(/*eMoveDir playerMoveDir*/)
     {
-        if (playerMoveDir == eMoveDir.OUTWARD)
+        Debug.LogWarning("Must redo ToggleChannelPieces() since we got rid of MoveDir");
+       /* if (playerMoveDir == eMoveDir.OUTWARD)
         {
             CurChannel.InnerChannel.SetActive(true);
             CurChannel.OuterChannel.SetActive(false);
@@ -20,7 +21,7 @@ public class Interactable : BoardObject
         {
             CurChannel.InnerChannel.SetActive(false);
             CurChannel.OuterChannel.SetActive(true);
-        }
+        }*/
     }
 
 

@@ -8,7 +8,7 @@ public class BoardObject : MonoBehaviour
     public enum eBoardObjectType { PLAYER, HAZARD, FACET, MAGNET, INTERACTABLE, SHIELD, SPEED_MOD, /*GAME_MOD,*/ NONE };
     public eBoardObjectType BoardObjectType;
  
-    public enum eMoveDir { OUTWARD, INWARD };
+    //public enum eMoveDir { OUTWARD, INWARD };
 
     
 
@@ -18,7 +18,7 @@ public class BoardObject : MonoBehaviour
    // public GameObject LastPositionObject = null;        
     public Channel CurChannel = null;
 
-    public eMoveDir MoveDir = eMoveDir.OUTWARD;
+   // public eMoveDir MoveDir = eMoveDir.OUTWARD;
     public float Speed = 0f;    
 
     [Header("Starting State Stuff")]
@@ -36,11 +36,11 @@ public class BoardObject : MonoBehaviour
        // Debug.Log("Start() Diode: " + this.name + " of type: " + DiodeType.ToString());
     }
 
-    public void SetMovementInfo(eMoveDir movedir, float speed)
+    /*public void SetMovementInfo(eMoveDir movedir, float speed)
     {
         MoveDir = movedir;
         Speed = speed;
-    }
+    }*/
 
     public string GetBoardObjectName()
     {

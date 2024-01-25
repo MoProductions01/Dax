@@ -627,7 +627,7 @@ public class MCP : MonoBehaviour
     {
         // get the starting channel
         bo.CurChannel = GameObject.Find(boSave.StartChannel).GetComponent<Channel>();
-        bo.MoveDir = boSave.MoveDir;
+        // bo.MoveDir = boSave.MoveDir; monewsave
         bo.Speed = boSave.Speed; // moupdate
                                  // Debug.Log("MCP.InitBoardObject(): " + bo.name + ", bo.CurChannel: " + bo.CurChannel.name);
                                  //if (bo.CurChannel == null) Debug.LogError("dfsd");
