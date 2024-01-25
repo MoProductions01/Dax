@@ -170,10 +170,11 @@ public class Player : BoardObject
         
         transform.position = Vector3.zero;
         if(playerSave != null)
-        {
-            //this.MoveDir = playerSave.MoveDir; monewsave
+        {            
             this.Speed = playerSave.Speed;
             CurChannel = GameObject.Find(playerSave.StartChannel).GetComponent<Channel>();
+            this.transform.LookAt(CurChannel.StartNode.transform);
+            //this.MoveDir = playerSave.MoveDir; monewsave
         }
         ActiveShield = null;
         TempEnemyIgnore = null;

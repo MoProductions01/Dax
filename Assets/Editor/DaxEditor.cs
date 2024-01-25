@@ -383,17 +383,12 @@ public class DaxEditor : Editor
         if (GUILayout.Button("Create Hazard", GUILayout.Width(buttonWidth)))
         {
             mcp.CreateHazard(selChannelNode, dax, Hazard.eHazardType.ENEMY);
-        }
-        /*EditorGUILayout.Separator();
-        if (GUILayout.Button("Create Game Mod", GUILayout.Width(buttonWidth)))
-        {
-            mcp.CreateGameMod(selChannelNode, dax, GameMod.eGameModType.EXTRA_POINTS);
-        }*/
+        }        
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Shield", GUILayout.Width(buttonWidth)))
         {
             Shield shield = mcp.CreateShield(selChannelNode.transform, Shield.eShieldTypes.HIT);
-            shield.InitForChannelNode(selChannelNode, dax);
+            shield.InitForChannelNode(selChannelNode, dax); // monote - why is this here
         }
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Magnet", GUILayout.Width(buttonWidth)))
@@ -456,23 +451,25 @@ public class DaxEditor : Editor
                     DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                    
                     hazard = mcp.CreateHazard(selChannelNode, dax, newHazardType);
                 }
-                if (hazard.HazardType == Hazard.eHazardType.ENEMY || hazard.HazardType == Hazard.eHazardType.EMP /*(|| hazard.HazardType == Hazard.eHazardType.BOMB*/)
-                {   // Speed and Movement Direction
+                if (hazard.HazardType == Hazard.eHazardType.ENEMY /*|| hazard.HazardType == Hazard.eHazardType.EMP (|| hazard.HazardType == Hazard.eHazardType.BOMB*/)
+                {   // Speed and Starting Direction
+                    EditorGUILayout.Separator();
+                    EditorGUILayout.Separator();
+                    BoardObject.eStartDir newStartDir = (BoardObject.eStartDir)EditorGUILayout.EnumPopup("Start Direction:", bo.StartDir);
+                    if (newStartDir != bo.StartDir) // monewsave
+                    {
+                        bo.StartDir = newStartDir;
+                        UpdateEnumProperty(selBoardObjectSO, "StartDir", (int)bo.StartDir);                        
+                        hazard.transform.LookAt(bo.StartDir == BoardObject.eStartDir.OUTWARD ? hazard.CurChannel.EndNode.transform : hazard.CurChannel.StartNode.transform);
+                    }                      
+
                     EditorGUILayout.Separator();
                     float newSpeed = EditorGUILayout.Slider("Speed", bo.Speed, 0f, Dax.MAX_SPEED);
                     if (newSpeed != bo.Speed)
                     {
                         bo.Speed = newSpeed;
                         UpdateFloatProperty(selBoardObjectSO, "Speed",  bo.Speed);                        
-                    }
-                    
-                   /* EditorGUILayout.Separator();
-                    BoardObject.eMoveDir newMoveDir = (BoardObject.eMoveDir)EditorGUILayout.EnumPopup("Start Direction:", bo.MoveDir);
-                    if (newMoveDir != bo.MoveDir)
-                    {
-                        bo.MoveDir = newMoveDir;
-                        UpdateEnumProperty(selBoardObjectSO, "MoveDir", (int)bo.MoveDir);                        
-                    }*/                    
+                    }                                                         
                 }
                 if (hazard.HazardType == Hazard.eHazardType.EMP /*|| hazard.HazardType == Hazard.eHazardType.TIMED_MINE*/)
                 {   // These have an Effect Timer

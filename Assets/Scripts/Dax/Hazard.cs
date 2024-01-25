@@ -18,14 +18,7 @@ public class Hazard : BoardObject
     public float EffectTimer;
 
     public override void InitForChannelNode(ChannelNode spawnNode, Dax dax)
-    {
-        //name = spawnNode.name + "--Magnet";
-        // BoardObjectType = eBoardObjectType.MAGNET;
-        /*if(this.HazardType == eHazardType.PROXIMITY_MINE)
-        {
-            Debug.Log("update collider");
-            this.GetComponent<SphereCollider>().radius = EffectRadius;
-        }*/
+    {        
         base.InitForChannelNode(spawnNode, dax);
     }
 

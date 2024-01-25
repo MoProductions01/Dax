@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -8,13 +8,14 @@ public class BoardObject : MonoBehaviour
     public enum eBoardObjectType { PLAYER, HAZARD, FACET, MAGNET, INTERACTABLE, SHIELD, SPEED_MOD, /*GAME_MOD,*/ NONE };
     public eBoardObjectType BoardObjectType;
 
+    public enum eStartDir {OUTWARD, INWARD}; // monewsave
+    public eStartDir StartDir = eStartDir.OUTWARD;
+
     // Shared      
     [HideInInspector]
-    public Dax _Dax;        
-   // public GameObject LastPositionObject = null;        
+    public Dax _Dax;                  
     public Channel CurChannel = null;
-
-   // public eMoveDir MoveDir = eMoveDir.OUTWARD;
+       
     public float Speed = 0f;    
 
     [Header("Starting State Stuff")]
@@ -62,22 +63,15 @@ public class BoardObject : MonoBehaviour
     public virtual void InitForChannelNode(ChannelNode spawnNode, Dax dax)
     {
        // Debug. Log("BoardObject.InitFromCreation(): " + this.name + " --MoSave--");        
-        _Dax = dax;
-       // if (LastPositionObject != null) Debug.LogError("WTF there should be no last position object");
-      //  LastPositionObject = new GameObject("Last Position_" + this.gameObject.name); ;
-      //  LastPositionObject.transform.parent = this.transform.parent;
+        _Dax = dax;       
        
         if (spawnNode != null) // if it's not the player do the spawn stuff right away moupdate - we now have another thing for initting on player
         {
             SpawningNode = spawnNode;
             spawnNode.SpawnedBoardObject = this;
             CurChannel = SpawningNode.MyChannel;
-
-            this.transform.parent = CurChannel.MyRing.transform;
-         //   LastPositionObject.transform.parent = CurChannel.MyRing.transform;
-            transform.position = SpawningNode.transform.position;                        
-          //  LastPositionObject.transform.position = transform.position;
-            
+            this.transform.parent = CurChannel.MyRing.transform;         
+            transform.position = SpawningNode.transform.position;                                              
             transform.LookAt(CurChannel.EndNode.transform);
         }        
     }    
@@ -243,6 +237,31 @@ public class BoardObject : MonoBehaviour
                             else if (hazard.HazardType == Hazard.eHazardType.DYNAMITE) FindObjectOfType<Dax>().EndGame("Killed By Dynamite");                            
                         }
                         break;
+                    case Hazard.eHazardType.EMP:
+                            if (hazard == player.TempEnemyIgnore) break;
+                            if (player.ActiveShield != null)
+                            {
+                                switch (player.ActiveShield.ShieldType)
+                                {
+                                    case Shield.eShieldTypes.HIT:
+                                        DestroyShield();
+                                        player.TempEnemyIgnore = hazard;
+                                        break;
+                                    case Shield.eShieldTypes.SINGLE_KILL:
+                                        DestroyShield();
+                                        DestroyHazard(hazard);
+                                        break;                                    
+                                }
+                            }
+                            else
+                            {   // no shield so stay frozen                               
+                                //FindObjectOfType<Dax>().EndGame("Killed By Enemy");                                        
+                                //moving, enemy that ‘stuns’ the player leaving them frozen in place for x seconds
+                                //Debug.Log("do that emp shit");
+                                player.EMPHit(hazard.EffectTime);
+                                DestroyHazard(hazard);
+                            }
+                            break;                        
                 }                        
             break;
         }

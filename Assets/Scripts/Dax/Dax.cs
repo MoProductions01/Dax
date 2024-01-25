@@ -292,9 +292,17 @@ public class Dax : MonoBehaviour
             {
                 ChannelSave channelSave = ringSave.ChannelSaves[j];
                 Channel channel = ringChannels[j];                
-                if (channel.StartNode.SpawnedBoardObject != null) mcp.InitBoardObjectFromSave(channel.StartNode.SpawnedBoardObject, channelSave.StartNodeBO);
+                if (channel.StartNode.SpawnedBoardObject != null) 
+                {   
+                    Debug.LogError("Should not have spawned object on start node");
+                    mcp.InitBoardObjectFromSave(channel.StartNode.SpawnedBoardObject, channelSave.StartNodeBO);
+                }
                 if (channel.MidNode.SpawnedBoardObject != null) mcp.InitBoardObjectFromSave(channel.MidNode.SpawnedBoardObject, channelSave.MidNodeBO);
-                if (channel.EndNode.SpawnedBoardObject != null) mcp.InitBoardObjectFromSave(channel.EndNode.SpawnedBoardObject, channelSave.EndNodeBO);
+                if (channel.EndNode.SpawnedBoardObject != null) 
+                {
+                    Debug.LogError("Should not have spawned object on end node");
+                    mcp.InitBoardObjectFromSave(channel.EndNode.SpawnedBoardObject, channelSave.EndNodeBO);
+                }
             }
         }
 
@@ -326,7 +334,7 @@ public class Dax : MonoBehaviour
     {
         public BoardObject.eBoardObjectType Type;
         public string StartChannel;
-        //public BoardObject.eMoveDir MoveDir; // monewsave
+        public BoardObject.eStartDir StartDir; // monewsave
         public float Speed;                          
 
         // generic vars for various specific classes
@@ -344,7 +352,7 @@ public class Dax : MonoBehaviour
             StartChannel = bo.CurChannel.name;        
 
             // movement
-            //MoveDir = bo.MoveDir; monewsave
+            StartDir = bo.StartDir; // monewsave
             Speed = bo.Speed;                        
 
             // connection lists

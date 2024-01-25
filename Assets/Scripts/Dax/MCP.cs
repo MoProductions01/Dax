@@ -384,28 +384,16 @@ public class MCP : MonoBehaviour
                 break;
             case Hazard.eHazardType.EMP:
                 hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/EMP");
-                break;
-           // case Hazard.eHazardType.BOMB:
-             //   hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Bomb");
-             //   break;
+                break;           
             case Hazard.eHazardType.DYNAMITE:
                 hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Dynamite");
-                break;
-           // case Hazard.eHazardType.PROXIMITY_MINE:
-           //     hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Proximity_Mine");
-            //    break;
-          //  case Hazard.eHazardType.TIMED_MINE:
-           //     hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Timed_Mine");
-           //     break;                
+                break;           
         }
         Hazard hazard = Instantiate<Hazard>(hazardPrefab, channelNode.transform);
         hazard.InitForChannelNode(channelNode, dax);
-        return hazard;
-        //Enemy enemyPrefab = Resources.Load<Enemy>("Dax/Prefabs/Hazards/Enemy_Diode");
-        // Enemy enemy = Instantiate<Enemy>(enemyPrefab, channelNode.transform);
-        // enemy.InitForChannelNode(channelNode, dax);
-        // return enemy;        
+        return hazard;        
     }
+    
     public Interactable CreateInteractable(ChannelNode channelNode, Dax dax, Interactable.eInteractableType type)
     {
         Interactable interactablePrefab = null;
@@ -551,7 +539,7 @@ public class MCP : MonoBehaviour
         }
         Shield shield = Instantiate<Shield>(shieldPrefab, parent);
         shield.name = transform.name + "--" + type.ToString();
-        //shield.InitForChannelNode(channelNode, dax);        
+        //shield.InitForChannelNode(channelNode, dax);    // monote - why is it like this?  check DaxEditor.cs    
         return shield;        
     }
   
@@ -627,7 +615,7 @@ public class MCP : MonoBehaviour
     {
         // get the starting channel
         bo.CurChannel = GameObject.Find(boSave.StartChannel).GetComponent<Channel>();
-        // bo.MoveDir = boSave.MoveDir; monewsave
+        bo.StartDir = boSave.StartDir; // monewsave
         bo.Speed = boSave.Speed; // moupdate
                                  // Debug.Log("MCP.InitBoardObject(): " + bo.name + ", bo.CurChannel: " + bo.CurChannel.name);
                                  //if (bo.CurChannel == null) Debug.LogError("dfsd");
@@ -648,14 +636,12 @@ public class MCP : MonoBehaviour
                 hazard.HazardType = (Hazard.eHazardType)boSave.IntList[0];
                 hazard.EffectTime = boSave.FloatList[0];
                 hazard.EffectRadius = boSave.FloatList[1];
+                if(hazard.HazardType == Hazard.eHazardType.ENEMY)
+                { // monewsave
+                    hazard.transform.LookAt(bo.StartDir == BoardObject.eStartDir.OUTWARD ? hazard.CurChannel.EndNode.transform : hazard.CurChannel.StartNode.transform);
+                }
                // if (hazard.HazardType == Hazard.eHazardType.PROXIMITY_MINE) hazard.GetComponent<SphereCollider>().radius = hazard.EffectRadius;                
                 break;
-            /*case BoardObject.eBoardObjectType.GAME_MOD:
-                GameMod gameMod = (GameMod)bo;
-                gameMod.GameModType = (GameMod.eGameModType)boSave.IntList[0];
-                gameMod.GameModVal = boSave.IntList[1];
-                gameMod.GameModTime = boSave.FloatList[0];
-                break;*/
             case BoardObject.eBoardObjectType.INTERACTABLE:
                 Interactable interactable = (Interactable)bo;
                 interactable.InteractableType = (Interactable.eInteractableType)boSave.IntList[0];
