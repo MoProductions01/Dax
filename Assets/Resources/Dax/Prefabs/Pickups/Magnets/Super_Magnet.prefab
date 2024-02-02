@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2464375458095937293
+--- !u!1 &8125116677260748649
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,10 +8,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3377416312107197347}
-  - component: {fileID: 7929098619019285564}
-  - component: {fileID: 6222124078380143345}
-  - component: {fileID: 3486060438747829755}
+  - component: {fileID: 7787228234416069918}
+  - component: {fileID: 8670790585855686549}
+  - component: {fileID: 8439649953796976826}
+  - component: {fileID: 3066692050075977968}
   m_Layer: 0
   m_Name: Magnet Grey
   m_TagString: Untagged
@@ -19,36 +19,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3377416312107197347
+--- !u!4 &7787228234416069918
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2464375458095937293}
+  m_GameObject: {fileID: 8125116677260748649}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.75470966, z: 0.656059, w: 0}
+  m_LocalRotation: {x: -0.656059, y: 0, z: 0, w: 0.75470966}
   m_LocalPosition: {x: 0, y: 0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7221811252878416334}
-  m_LocalEulerAnglesHint: {x: -82, y: 180, z: 0}
---- !u!33 &7929098619019285564
+  m_Father: {fileID: 980709227015063680}
+  m_LocalEulerAnglesHint: {x: -82, y: 0, z: 0}
+--- !u!33 &8670790585855686549
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2464375458095937293}
+  m_GameObject: {fileID: 8125116677260748649}
   m_Mesh: {fileID: 4300000, guid: 8b52704cc518af049a264eea6bb5d473, type: 3}
---- !u!23 &6222124078380143345
+--- !u!23 &8439649953796976826
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2464375458095937293}
+  m_GameObject: {fileID: 8125116677260748649}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -84,29 +84,29 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &3486060438747829755
+--- !u!114 &3066692050075977968
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2464375458095937293}
+  m_GameObject: {fileID: 8125116677260748649}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bdd9a8d0eec05524e9533fa8e5dfcd47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animateRotation: 0
+  _animateRotation: 1
   rotationSpeedsInDegreePerSecond: {x: 0, y: 180, z: 0}
   rotationType: 0
-  _animateScale: 0
+  _animateScale: 1
   scaleMin: 1
   scaleMax: 1.33
   scaleCycleDuration: 1.33
-  _animateYOffset: 0
+  _animateYOffset: 1
   yOffsetAmplitude: 0.025
   yOffsetCycleDuration: 1.25
---- !u!1 &7569649903860733218
+--- !u!1 &9205560427726692453
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -114,38 +114,39 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7221811252878416334}
-  - component: {fileID: 6151048434097762106}
+  - component: {fileID: 980709227015063680}
+  - component: {fileID: 7662761697343194573}
+  - component: {fileID: 4936613605111653811}
   m_Layer: 0
-  m_Name: Super_Magnet_HUD
+  m_Name: Super_Magnet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7221811252878416334
+--- !u!4 &980709227015063680
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7569649903860733218}
+  m_GameObject: {fileID: 9205560427726692453}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3377416312107197347}
+  - {fileID: 7787228234416069918}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &6151048434097762106
+--- !u!135 &7662761697343194573
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7569649903860733218}
+  m_GameObject: {fileID: 9205560427726692453}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -158,5 +159,25 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.11
+  m_Radius: 0.05
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4936613605111653811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9205560427726692453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a55e1f1ec76339245969c7b58ef828a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BoardObjectType: 3
+  StartDir: 0
+  _Dax: {fileID: 0}
+  CurChannel: {fileID: 0}
+  Speed: 0
+  SpawningNode: {fileID: 0}
+  DestGateJustWarpedTo: {fileID: 0}
+  MagnetType: 1

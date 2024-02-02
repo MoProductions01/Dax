@@ -10,7 +10,7 @@ public class Player : BoardObject
     [Header("Player Specific")] // moupdate - separate code that's saved and that's reset
     public Shield ActiveShield = null;
     public List<Shield> Shields = new List<Shield>();
-    public List<Magnet.eMagnetTypes> MagnetTypes = new List<Magnet.eMagnetTypes>();
+    public List<Magnet> Magnets = new List<Magnet>();
     public Hazard TempEnemyIgnore = null; // ignore this enemy after a shield collision until you're not collided
     public BoardObject CarriedColorFacet = null;
     public float EMPTime; // moupdate
@@ -30,41 +30,25 @@ public class Player : BoardObject
     {
        // for(int i=0; i < Shields.Count; i++) DestroyImmediate(Shields[i].gameObject);        
         Shields.Clear();
-        MagnetTypes.Clear();
+        Magnets.Clear();
     }
-    public bool AddMagnet(Magnet.eMagnetTypes magnetType)
+    
+    
+    
+    public bool AddMagnet(Magnet magnet)
     {
-        if (MagnetTypes.Count == 24) return false;
+        if (Magnets.Count == 12) return false;
 
-        MagnetTypes.Add(magnetType);
-        if (MagnetTypes.Count == 1) _Dax._UIRoot.ChangeMagnetIcon(magnetType);
+        Destroy(magnet.GetComponent<Collider>());        
+        magnet.SpawningNode.SpawnedBoardObject = null;
+        magnet.transform.parent = this.transform;
+        magnet.gameObject.SetActive(false);
+
+        Magnets.Add(magnet);
+        if (Magnets.Count == 1) _Dax._UIRoot.ChangeMagnetIcon(magnet);
         return true;
     }
-    public void ActivateMagnet()
-    {
-        if (MagnetTypes.Count == 0) return;
 
-        Magnet.eMagnetTypes magnetType = MagnetTypes[0];
-        MagnetTypes.RemoveAt(0);
-        _Dax._UIRoot.DestroyMagnetIcon();
-        if (MagnetTypes.Count > 0) _Dax._UIRoot.ChangeMagnetIcon(MagnetTypes[0]);
-
-        switch(magnetType)
-        {
-            case Magnet.eMagnetTypes.REGULAR:                
-                CurChannel.MyRing.CollectAllPickupFacets();
-                break;
-            case Magnet.eMagnetTypes.SUPER:                
-                foreach(Ring ring in _Dax.CurWheel.Rings)
-                {
-                    ring.CollectAllPickupFacets();
-                }
-                break;
-        }
-        
-    }
-    
-    
     public bool AddShield(Shield shield)
     {
         if (Shields.Count == 12) return false;
@@ -89,6 +73,30 @@ public class Player : BoardObject
         Shields.RemoveAt(0);
         _Dax._UIRoot.DestroyShieldIcon();
         if (Shields.Count > 0) _Dax._UIRoot.ChangeShieldIcon(Shields[0]);                
+    }
+
+    public void ActivateMagnet()
+    {
+        if (Magnets.Count == 0) return;
+
+        Magnet magnet = Magnets[0];
+        Magnets.RemoveAt(0);
+        _Dax._UIRoot.DestroyMagnetIcon();
+        if (Magnets.Count > 0) _Dax._UIRoot.ChangeMagnetIcon(Magnets[0]);
+
+        switch(magnet.MagnetType)
+        {
+            case Magnet.eMagnetTypes.REGULAR:                
+                CurChannel.MyRing.CollectAllPickupFacets();
+                break;
+            case Magnet.eMagnetTypes.SUPER:                
+                foreach(Ring ring in _Dax.CurWheel.Rings)
+                {
+                    ring.CollectAllPickupFacets();
+                }
+                break;
+        }
+        
     }
     
     private void LateUpdate()

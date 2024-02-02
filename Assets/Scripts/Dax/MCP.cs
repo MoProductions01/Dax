@@ -288,7 +288,7 @@ public class MCP : MonoBehaviour
                 endNode.AddComponent<ChannelNode>();
 
                 
-                if(ringIndex == 0)
+               /* if(ringIndex == 0)
                 {
                     for(int channelIndex=0; channelIndex<numChannels; channelIndex++)
                     {
@@ -316,7 +316,7 @@ public class MCP : MonoBehaviour
 
 
                     }
-                }
+                }*/
                // for(int i=0; i<)
 
                 // OUTER FLOOR      
@@ -456,10 +456,10 @@ public class MCP : MonoBehaviour
         switch (type)
         {
             case Magnet.eMagnetTypes.REGULAR:
-                magnetPrefab = Resources.Load<Magnet>("Dax/Prefabs/Pickups/Magnet");
+                magnetPrefab = Resources.Load<Magnet>("Dax/Prefabs/Pickups/Magnets/Magnet");
                 break;
             case Magnet.eMagnetTypes.SUPER:
-                magnetPrefab = Resources.Load<Magnet>("Dax/Prefabs/Pickups/Super_Magnet");
+                magnetPrefab = Resources.Load<Magnet>("Dax/Prefabs/Pickups/Magnets/Super_Magnet");
                 break;
         }
 

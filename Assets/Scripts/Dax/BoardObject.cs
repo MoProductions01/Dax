@@ -270,6 +270,16 @@ public class BoardObject : MonoBehaviour
                     _Dax.AddPoints(5);
                 }                                                        
                 break;
+            case eBoardObjectType.MAGNET:
+                Magnet magnet = boardObjectColliders[0].GetComponentInParent<Magnet>();
+                if(player.AddMagnet(magnet) == true)
+                {
+                   // magnet.SpawningNode.SpawnedBoardObject = null;
+                    //curSphereColliders.Remove(magnet.GetComponentInChildren<Collider>());
+                   // DestroyImmediate(magnet.gameObject);
+                    _Dax.AddPoints(5);
+                }                                                                           
+                break;
         }
         
         #if false            

@@ -38,16 +38,19 @@ public class UIRoot : MonoBehaviour
         ShieldIcon = _MCP.CreateShieldIcon(shield.ShieldType);
         ShieldIcon.transform.parent = this.transform;
     }
+
+    public void ChangeMagnetIcon(Magnet magnet)
+    {
+        DestroyMagnetIcon();
+        MagnetIcon = _MCP.CreateMagnetIcon(magnet.MagnetType);
+        MagnetIcon.transform.parent = this.transform;
+    }
+
     public void DestroyMagnetIcon()
     {
         if (MagnetIcon != null) DestroyImmediate(MagnetIcon);        
     }
-    public void ChangeMagnetIcon(Magnet.eMagnetTypes type)
-    {
-        DestroyMagnetIcon();
-        MagnetIcon = _MCP.CreateMagnetIcon(type);
-        MagnetIcon.transform.parent = this.transform;
-    }
+    
 
     public void Init()
     {
@@ -113,9 +116,9 @@ public class UIRoot : MonoBehaviour
                             Debug.Log("Shield_HUD");
                             FindObjectOfType<Player>().ActivateShield();
                         }
-                        else if (hit.collider.name.Contains("02"))
+                        else if (hit.collider.name.Contains("Magnet_HUD"))
                         {
-                            Debug.Log("02");
+                            Debug.Log("Magnet_HUD");
                             FindObjectOfType<Player>().ActivateMagnet();
                         }
                         break;
