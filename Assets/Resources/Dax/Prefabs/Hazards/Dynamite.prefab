@@ -4845,14 +4845,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5505889796843038942}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.656059, y: 0, z: 0, w: 0.75470966}
   m_LocalPosition: {x: 0, y: 0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6837898967535507297}
   m_Father: {fileID: 7585837015371192817}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 82, y: 0, z: 0}
 --- !u!33 &2414562299671749480
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -4923,7 +4923,7 @@ MonoBehaviour:
   scaleMax: 1.33
   scaleCycleDuration: 1.33
   _animateYOffset: 1
-  yOffsetAmplitude: 0.025
+  yOffsetAmplitude: 0
   yOffsetCycleDuration: 1.25
 --- !u!1 &8354920458172829646
 GameObject:
@@ -4951,9 +4951,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8354920458172829646}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.18, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6403010805506019187}
@@ -4993,10 +4993,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BoardObjectType: 1
+  StartDir: 0
   _Dax: {fileID: 0}
-  LastPositionObject: {fileID: 0}
   CurChannel: {fileID: 0}
-  MoveDir: 0
   Speed: 0
   SpawningNode: {fileID: 0}
   DestGateJustWarpedTo: {fileID: 0}

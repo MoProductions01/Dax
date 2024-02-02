@@ -20,7 +20,7 @@ public class Player : BoardObject
 
     public void EMPHit(float effectTime)
     {
-        EffectType = Hazard.eHazardType.EMP;
+        EffectType = Hazard.eHazardType.GLUE;
         EMPTime = effectTime;
         SpeedSave = Speed;
         Speed = 0f;
@@ -66,7 +66,7 @@ public class Player : BoardObject
     
     public bool AddShield(Shield shield)
     {
-        if (Shields.Count == 24) return false;
+        if (Shields.Count == 12) return false;
 
         Destroy(shield.GetComponent<Collider>());        
         shield.SpawningNode.SpawnedBoardObject = null;
@@ -143,7 +143,7 @@ public class Player : BoardObject
             }
         } */
            
-        if(EffectType == Hazard.eHazardType.EMP)
+        if(EffectType == Hazard.eHazardType.GLUE)
         {
             EMPTime -= Time.deltaTime;
             if(EMPTime <= 0f)

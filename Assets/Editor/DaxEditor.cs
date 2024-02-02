@@ -471,7 +471,7 @@ public class DaxEditor : Editor
                         UpdateFloatProperty(selBoardObjectSO, "Speed",  bo.Speed);                        
                     }                                                         
                 }
-                if (hazard.HazardType == Hazard.eHazardType.EMP /*|| hazard.HazardType == Hazard.eHazardType.TIMED_MINE*/)
+                if (hazard.HazardType == Hazard.eHazardType.GLUE /*|| hazard.HazardType == Hazard.eHazardType.TIMED_MINE*/)
                 {   // These have an Effect Timer
                     EditorGUILayout.Separator();
 

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5365944533009726880}
   - component: {fileID: 7904720135482748488}
   m_Layer: 0
-  m_Name: EMP
+  m_Name: Glue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 7986561258922158105}
   - component: {fileID: 2035539863849577038}
   m_Layer: 0
-  m_Name: Glue White
+  m_Name: Glue Blue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -106,13 +106,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8900197598049938210}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.1, z: 0}
+  m_LocalRotation: {x: 0.656059, y: 0, z: 0, w: 0.75470966}
+  m_LocalPosition: {x: 0, y: -0.016, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3410776815067391852}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 82, y: 0, z: 0}
 --- !u!33 &7413076471913867779
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -141,7 +141,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4e503dab9c5d59c4cb8b1f732bfeddce, type: 2}
+  - {fileID: 2100000, guid: 1569c00d0eebf854e9482c8092561724, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -183,5 +183,5 @@ MonoBehaviour:
   scaleMax: 1.33
   scaleCycleDuration: 1.33
   _animateYOffset: 1
-  yOffsetAmplitude: 0.025
+  yOffsetAmplitude: 0
   yOffsetCycleDuration: 1.25

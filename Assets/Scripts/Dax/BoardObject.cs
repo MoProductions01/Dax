@@ -223,12 +223,7 @@ public class BoardObject : MonoBehaviour
                                 case Shield.eShieldTypes.SINGLE_KILL:
                                     DestroyShield();
                                     DestroyHazard(hazard);
-                                    break;
-                             //   case Shield.eShieldTypes.TIMED:                                                
-                               //     break;
-                               // case Shield.eShieldTypes.TIMED_KILL:
-                                 //   DestroyHazard(hazard);
-                                  //  break;
+                                    break;                             
                             }
                         }
                         else
@@ -237,7 +232,7 @@ public class BoardObject : MonoBehaviour
                             else if (hazard.HazardType == Hazard.eHazardType.DYNAMITE) FindObjectOfType<Dax>().EndGame("Killed By Dynamite");                            
                         }
                         break;
-                    case Hazard.eHazardType.EMP:
+                    case Hazard.eHazardType.GLUE:
                             if (hazard == player.TempEnemyIgnore) break;
                             if (player.ActiveShield != null)
                             {
@@ -264,6 +259,17 @@ public class BoardObject : MonoBehaviour
                             break;                        
                 }                        
             break;
+            case eBoardObjectType.SHIELD:
+                // if (player.ActiveShield != null) break; // already have a shield                                                        
+                Shield shield = boardObjectColliders[0].GetComponentInParent<Shield>();                
+                if( player.AddShield(shield) == true )
+                {
+                    //shield.SpawningNode.SpawnedBoardObject = null;
+                    // curSphereColliders.Remove(shield.GetComponentInChildren<Collider>());
+                    // DestroyImmediate(shield.gameObject);
+                    _Dax.AddPoints(5);
+                }                                                        
+                break;
         }
         
         #if false            

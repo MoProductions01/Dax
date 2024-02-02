@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -162,12 +163,12 @@ public class MCP : MonoBehaviour
         GameObject ringGameObject = null;
         GameObject bumperGroup = null;
         GameObject nodesContainer = null;
-        GameObject locatorsPrefab = Resources.Load<GameObject>("Dax/Board_Parts/DAX_Locators");
+        GameObject locatorsPrefab = Resources.Load<GameObject>("Dax/Board_Parts/DAX_Locators"); // monote - this is in the Nodes prefab
         GameObject locators = GameObject.Instantiate<GameObject>(locatorsPrefab);
         GameObject nodesPrefab = Resources.Load<GameObject>("Dax/Board_Parts/Nodes");
         GameObject nodes = GameObject.Instantiate<GameObject>(nodesPrefab);
-
         wheel.Rings.Clear();
+        
         // Create rings
         for (int ringIndex = 0; ringIndex <= 4; ringIndex++)
         {
@@ -286,7 +287,39 @@ public class MCP : MonoBehaviour
                 endNode.transform.name = ringString + "_End_Node_" + channelString;
                 endNode.AddComponent<ChannelNode>();
 
-                // OUTER FLOOR
+                
+                if(ringIndex == 0)
+                {
+                    for(int channelIndex=0; channelIndex<numChannels; channelIndex++)
+                    {
+                        Transform startNode_ = nodesContainer.transform.GetChild(channelIndex*3);
+                        Transform endNode_ = nodesContainer.transform.GetChild(channelIndex*3 + 2);
+
+                        double radian = Math.Atan2(endNode_.transform.position.z - startNode_.transform.position.z,
+                                                    endNode_.transform.position.x - startNode_.transform.position.x);
+                        double angle = radian * (180 / Math.PI);
+                        Debug.Log("-------------------------------------------\nchannelIndex: " + channelIndex + ", startNode transform.position: " + startNode_.transform.position + 
+                        ", endNode: transform.position: " + endNode_.transform.position + "\n startNode transform.localPosition: " + startNode_.transform.localPosition + 
+                        ", endNode: transform.localPosition: " + endNode_.transform.localPosition + ", radian: " + radian + ", angle: " + angle);
+
+                        Vector3 newPosA = Vector3.zero;
+                        newPosA.x = startNode_.position.x + (endNode_.position.x - startNode_.position.x) / 2;
+                        newPosA.y = startNode_.position.y + (endNode_.position.y - startNode_.position.y) / 2;
+                        newPosA.z = startNode_.position.z + (endNode_.position.z - startNode_.position.z) / 2;
+                        Vector3 newPosB = Vector3.Lerp(startNode_.transform.position, endNode_.transform.position, .5f);
+                        Debug.Log( "transform.position newPosA: " + newPosA + ", newPosB: " + newPosB);
+                        newPosA.x = startNode_.localPosition.x + (endNode_.localPosition.x - startNode_.localPosition.x) / 2;
+                        newPosA.y = startNode_.localPosition.y + (endNode_.localPosition.y - startNode_.localPosition.y) / 2;
+                        newPosA.z = startNode_.localPosition.z + (endNode_.localPosition.z - startNode_.localPosition.z) / 2;
+                        newPosB = Vector3.Lerp(startNode_.transform.localPosition, endNode_.transform.localPosition, .5f);
+                        Debug.Log( "transform.localPosition newPosA: " + newPosA + ", newPosB: " + newPosB);
+
+
+                    }
+                }
+               // for(int i=0; i<)
+
+                // OUTER FLOOR      
                 locatorIndex = i + (4 * numChannels);
                 if (ringIndex == 0) locatorIndex -= numChannels;
                 GameObject outerFloorLocator = locatorGroup.transform.GetChild(locatorIndex).gameObject;
@@ -382,8 +415,8 @@ public class MCP : MonoBehaviour
             case Hazard.eHazardType.ENEMY:
                 hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Enemy_Diode");
                 break;
-            case Hazard.eHazardType.EMP:
-                hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/EMP");
+            case Hazard.eHazardType.GLUE:
+                hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Glue");
                 break;           
             case Hazard.eHazardType.DYNAMITE:
                 hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Dynamite");
@@ -506,13 +539,7 @@ public class MCP : MonoBehaviour
                 break;
             case Shield.eShieldTypes.SINGLE_KILL:
                 shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/Pickups/HUD_Items/Single_Kill_Shield_HUD");
-                break;
-           // case Shield.eShieldTypes.TIMED:
-            //    shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/Pickups/HUD_Items/Timed_Shield_HUD");
-             //   break;
-            //case Shield.eShieldTypes.TIMED_KILL:
-            //    shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/Pickups/HUD_Items/Timed_Kill_Shield_HUD");
-             //   break;
+                break;           
         }
         GameObject shieldIcon = Instantiate<GameObject>(shieldIconPrefab, _Dax._UIRoot.transform);
         return shieldIcon;       
@@ -529,13 +556,7 @@ public class MCP : MonoBehaviour
                 break;
             case Shield.eShieldTypes.SINGLE_KILL:
                 shieldPrefab = Resources.Load<Shield>("Dax/Prefabs/Pickups/Shields/Single_Kill_Shield");
-                break;
-           // case Shield.eShieldTypes.TIMED:
-             //   shieldPrefab = Resources.Load<Shield>("Dax/Prefabs/Pickups/Timed_Shield");
-              //  break;
-            //case Shield.eShieldTypes.TIMED_KILL:
-              //  shieldPrefab = Resources.Load<Shield>("Dax/Prefabs/Pickups/Timed_Kill_Shield");
-               // break;
+                break;           
         }
         Shield shield = Instantiate<Shield>(shieldPrefab, parent);
         shield.name = transform.name + "--" + type.ToString();
@@ -624,7 +645,7 @@ public class MCP : MonoBehaviour
             case BoardObject.eBoardObjectType.SHIELD:
                 Shield shield = (Shield)bo;
                 shield.ShieldType = (Shield.eShieldTypes)boSave.IntList[0]; // moupdate - check if this is necessary 
-                shield.Timer = boSave.FloatList[0];
+               // shield.Timer = boSave.FloatList[0];
                 break;
             case BoardObject.eBoardObjectType.SPEED_MOD:
                 SpeedMod speedMod = (SpeedMod)bo;

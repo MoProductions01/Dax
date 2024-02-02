@@ -418,7 +418,7 @@ public class Dax : MonoBehaviour
                 IntList = new List<int>();
                 IntList.Add((int)shield.ShieldType);
                 FloatList = new List<float>();
-                FloatList.Add(shield.Timer);                
+                //FloatList.Add(shield.Timer);                
             }
             else if (Type == BoardObject.eBoardObjectType.SPEED_MOD)
             {
