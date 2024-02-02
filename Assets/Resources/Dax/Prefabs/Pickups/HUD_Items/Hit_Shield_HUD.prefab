@@ -52,7 +52,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.05
+  m_Radius: 0.11
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &9216409383227027918
 GameObject:
@@ -81,13 +81,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9216409383227027918}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.75470966, z: 0.656059, w: 0}
   m_LocalPosition: {x: 0, y: 0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6799800989849352346}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -82, y: 180, z: 0}
 --- !u!33 &7932186226285611477
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -153,10 +153,10 @@ MonoBehaviour:
   _animateRotation: 0
   rotationSpeedsInDegreePerSecond: {x: 0, y: 180, z: 0}
   rotationType: 0
-  _animateScale: 1
+  _animateScale: 0
   scaleMin: 1
   scaleMax: 1.33
   scaleCycleDuration: 1.33
-  _animateYOffset: 1
+  _animateYOffset: 0
   yOffsetAmplitude: 0.025
   yOffsetCycleDuration: 1.25

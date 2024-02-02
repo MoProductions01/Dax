@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using VisCircle;
 
 public class Player : BoardObject
 {
@@ -83,6 +84,8 @@ public class Player : BoardObject
 
         ActiveShield = Shields[0];
         ActiveShield.gameObject.SetActive(true);
+        ActiveShield.transform.GetComponentInChildren<PowerUpAnimation>().enabled = false;
+        ActiveShield.transform.GetChild(0).transform.eulerAngles = new Vector3(-82f, 0f, 0f);    
         Shields.RemoveAt(0);
         _Dax._UIRoot.DestroyShieldIcon();
         if (Shields.Count > 0) _Dax._UIRoot.ChangeShieldIcon(Shields[0]);                

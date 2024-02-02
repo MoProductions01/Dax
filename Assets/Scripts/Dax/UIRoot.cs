@@ -108,9 +108,9 @@ public class UIRoot : MonoBehaviour
                 switch(_Dax.GameState)
                 {
                     case Dax.eGameState.RUNNING:
-                        if (hit.collider.name.Contains("01"))
+                        if (hit.collider.name.Contains("Shield_HUD"))
                         {
-                            Debug.Log("01");
+                            Debug.Log("Shield_HUD");
                             FindObjectOfType<Player>().ActivateShield();
                         }
                         else if (hit.collider.name.Contains("02"))
