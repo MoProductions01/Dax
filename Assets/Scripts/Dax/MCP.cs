@@ -74,8 +74,16 @@ public class MCP : MonoBehaviour
         for (int i = 0; i < wheel.NumFacetsCollected.Count; i++) wheel.NumFacetsCollected[i] = 0;       
     }
 
+    /// <summary>
+    /// If they exist, it trashes all of the elements of the previous puzzle.  
+    /// If not, it skips that process.
+    /// </summary>
     static void TrashCurrentPuzzle()
     {
+        MCP mcp = GameObject.FindObjectOfType<MCP>();
+        if(mcp != null) UnityEngine.Object.DestroyImmediate(mcp.gameObject);
+        DaxEditControl daxEditControl = GameObject.FindObjectOfType<DaxEditControl>();
+        if(daxEditControl != null) UnityEngine.Object.DestroyImmediate(daxEditControl.gameObject);
         DaxSetup daxSetup = GameObject.FindObjectOfType<DaxSetup>();
         if (daxSetup != null) UnityEngine.Object.DestroyImmediate(daxSetup.gameObject);
         Dax dax = GameObject.FindObjectOfType<Dax>();
@@ -84,33 +92,24 @@ public class MCP : MonoBehaviour
         if (uiRoot != null) UnityEngine.Object.DestroyImmediate(uiRoot.gameObject);
     }
 
+    /// <summary>
+    /// Trashes any existing puzzle in the scene then creates and brand new one from scratch.
+    /// </summary>
     public static void CreateNewPuzzle()
-    {
-      //  Debug.Log("MCP.CreateNewPuzzle()");
-        // First trash old puzzle
-        TrashCurrentPuzzle();
+    {      
+        // First trash all the components used in the previous puzzle (if they exist)
+        TrashCurrentPuzzle();       
 
-        // Create an MCP instance if necessary
-        MCP mcp = GameObject.FindObjectOfType<MCP>();
-        if (mcp == null)
-        {
-            GameObject mcpGO = new GameObject("MCP");
-            ResetTransform(mcpGO.transform);
-            mcp = mcpGO.AddComponent<MCP>();
-        }
-        else
-        {
-            mcp._Dax = null;
-        }
-        // same with DaxEditControl
-        DaxEditControl daxEditControl = GameObject.FindObjectOfType<DaxEditControl>();
-        if (daxEditControl == null)
-        {
-            GameObject decGO = new GameObject("Dax Edit Control");
-            MCP.ResetTransform(decGO.transform);
-            daxEditControl = decGO.AddComponent<DaxEditControl>();
-            daxEditControl.gameObject.AddComponent<DaxSetup>();
-        }
+        // Create an MCP.  Description above since we're in that class
+        GameObject mcpGO = new GameObject("MCP");
+        ResetTransform(mcpGO.transform);
+        MCP mcp = mcpGO.AddComponent<MCP>();
+                
+        // DaxEditControl is 
+        GameObject decGO = new GameObject("Dax Edit Control");
+        MCP.ResetTransform(decGO.transform);
+        DaxEditControl daxEditControl = decGO.AddComponent<DaxEditControl>();
+        daxEditControl.gameObject.AddComponent<DaxSetup>();       
 
         mcp._Dax = new GameObject("Dax").AddComponent<Dax>();
         daxEditControl.GetComponent<DaxSetup>()._Dax = mcp._Dax;

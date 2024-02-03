@@ -9,36 +9,12 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System;
 
-
+/// <summary>
+/// This class is used to create the menu items to create new puzzles
+/// or load up existing serialized save files.
+/// </summary>
 public class RifRafGames
-{
-
-    static bool CheckSelection<T>()
-    {
-        if (Selection.activeGameObject != null)
-        {
-            Debug.LogError("Error: must have no GameObject selected to create puzzle.");
-            return false;
-        }
-
-        if (Selection.activeGameObject == null)
-        {
-            Debug.LogError("RifRaf Error: No GameObject selected.");
-            return false;
-        }
-        if (Selection.gameObjects.Length != 1)
-        {
-            Debug.LogError("RifRaf Error: You must have only 1 GameObject selected.  You have " + Selection.gameObjects.Length + " selected.");
-            return false;
-        }
-        if (Selection.activeGameObject.GetComponent<T>() == null)
-        {
-            Debug.LogError("RifRafError: This object is not the correct type.");
-            return false;
-        }
-        return true;
-    }
-
+{    
     [MenuItem("RifRaf Games/Dax/Choose Puzzle")]
     public static void LoadPuzzle()
     {
@@ -50,6 +26,9 @@ public class RifRafGames
         GameObject.FindObjectOfType<MCP>().LoadPuzzle(puzzlePath);       
     }
 
+    /// <summary>
+    /// Trash any existing puzzle and create a new one from scratch.
+    /// </summary>
     [MenuItem("RifRaf Games/Dax/Create Puzzle")]
     public static void CreateDaxPuzzle()
     {        
