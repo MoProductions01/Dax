@@ -211,17 +211,13 @@ public class DaxEditor : Editor
             {
                 StartNewSelection(selected.name, "Ring");
                 Ring selRing = selected.GetComponent<Ring>();
-                //    public bool IsCenterRing()
-                if(selRing != selRing.IsCenterRing())
-                {   // center ring doesn't spin
-                    float newSpeed = EditorGUILayout.FloatField("Rotate Speed: ", selRing.RotateSpeed);
-                    if (newSpeed != selRing.RotateSpeed)
-                    {
-                        selRing.RotateSpeed = newSpeed;
-                        SerializedObject selRingSO = new SerializedObject(selRing);
-                        selRingSO.Update();
-                        UpdateFloatProperty(selRingSO, "RotateSpeed", selRing.RotateSpeed);                    
-                    }
+                float newSpeed = EditorGUILayout.FloatField("Rotate Speed: ", selRing.RotateSpeed);
+                if (newSpeed != selRing.RotateSpeed)
+                {
+                    selRing.RotateSpeed = newSpeed;
+                    SerializedObject selRingSO = new SerializedObject(selRing);
+                    selRingSO.Update();
+                    UpdateFloatProperty(selRingSO, "RotateSpeed", selRing.RotateSpeed);                    
                 }
                 
                 EditorGUILayout.Separator();

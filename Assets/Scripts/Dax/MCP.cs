@@ -185,7 +185,7 @@ public class MCP : MonoBehaviour
             ringGameObject.GetComponent<MeshCollider>().convex = false;
             ringGameObject.transform.parent = wheel.gameObject.transform;
             ringGameObject.name = ringString;
-            if(ringIndex != 0) ringGameObject.layer = LayerMask.NameToLayer("Main Touch Control");
+            /*if(ringIndex != 0)*/ ringGameObject.layer = LayerMask.NameToLayer("Main Touch Control");
             ringGameObject.AddComponent<Ring>();
 
             wheel.Rings.Add(ringGameObject.GetComponent<Ring>());

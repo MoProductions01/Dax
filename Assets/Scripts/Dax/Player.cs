@@ -196,6 +196,7 @@ public class Player : BoardObject
     {
         Debug.Log("Player.SetStartChannel: channelIndex: " + channelIndex);
         CurChannel = _Dax.CurWheel.Rings[0].transform.GetComponentsInChildren<Channel>().ToList()[channelIndex];
+        this.transform.parent = CurChannel.MyRing.transform;
         SpawningNode = CurChannel.StartNode;
 
         transform.LookAt(SpawningNode.transform);
