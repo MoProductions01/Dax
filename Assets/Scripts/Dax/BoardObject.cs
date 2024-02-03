@@ -5,7 +5,7 @@ using System.Linq;
 
 public class BoardObject : MonoBehaviour
 {    
-    public enum eBoardObjectType { PLAYER, HAZARD, FACET, FACET_COLLECT, /*INTERACTABLE,*/ SHIELD, SPEED_MOD, /*GAME_MOD,*/ NONE };
+    public enum eBoardObjectType { PLAYER, HAZARD, FACET, FACET_COLLECT, /*INTERACTABLE,*/ SHIELD, SPEED_MOD, GAME_MOD, NONE };
     public eBoardObjectType BoardObjectType;
 
     public enum eStartDir {OUTWARD, INWARD}; // monewsave
@@ -51,7 +51,7 @@ public class BoardObject : MonoBehaviour
             //case eBoardObjectType.INTERACTABLE: return "Interactable";
             case eBoardObjectType.SHIELD: return "Shield";
             case eBoardObjectType.SPEED_MOD: return "Speed Mod";
-           // case eBoardObjectType.GAME_MOD: return "Game Mod";
+            case eBoardObjectType.GAME_MOD: return "Game Mod";
             default: return "ERROR: UNKNOWN Board Object TYPE: " + BoardObjectType.ToString();
         }
     }    
@@ -280,6 +280,20 @@ public class BoardObject : MonoBehaviour
                     _Dax.AddPoints(5);
                 }                                                                           
                 break;
+            case eBoardObjectType.GAME_MOD:
+                    GameMod gameMod = boardObjectColliders[0].GetComponentInParent<GameMod>();
+                    switch(gameMod.GameModType)
+                    {
+                        case GameMod.eGameModType.EXTRA_POINTS:
+                            _Dax.AddPoints(gameMod.GameModVal);
+                            break;
+                        case GameMod.eGameModType.POINTS_MULTIPLIER:
+                            _Dax.BeginPointMod(gameMod.GameModTime, gameMod.GameModVal);
+                            break;
+                    }
+                    //curSphereColliders.Remove(gameMod.GetComponent<Collider>());
+                    DestroyImmediate(gameMod.gameObject);
+                    break;
             case eBoardObjectType.SPEED_MOD:
                 SpeedMod speedMod = boardObjectColliders[0].GetComponentInParent<SpeedMod>();
                 List<GameObject> gameObjectsToMod = new List<GameObject>();

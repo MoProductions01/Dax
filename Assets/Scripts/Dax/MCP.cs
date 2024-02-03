@@ -597,23 +597,23 @@ public class MCP : MonoBehaviour
         }
     }
 
-   /* public GameMod CreateGameMod(ChannelNode channelNode, Dax dax, GameMod.eGameModType type)
+    public GameMod CreateGameMod(ChannelNode channelNode, Dax dax, GameMod.eGameModType type)
     {
         GameMod gameModPrefab;
         if (type == GameMod.eGameModType.EXTRA_POINTS)
         {
-            gameModPrefab = Resources.Load<GameMod>("Dax/Prefabs/Pickups/Extra_Points"); // moupdate yeah use switch
+            gameModPrefab = Resources.Load<GameMod>("Dax/Prefabs/Pickups/Point_Mods/Extra_Points"); // moupdate yeah use switch
         }
         else
         {
-            gameModPrefab = Resources.Load<GameMod>("Dax/Prefabs/Pickups/Points_Multiplier");
+            gameModPrefab = Resources.Load<GameMod>("Dax/Prefabs/Pickups/Point_Mods/Points_Multiplier");
         }
 
         GameMod gameMod = Instantiate<GameMod>(gameModPrefab, channelNode.transform);
         gameMod.InitForChannelNode(channelNode, dax);
         gameMod.GameModType = type;
         return gameMod;
-    }    */
+    }    
 
     
 
@@ -663,6 +663,12 @@ public class MCP : MonoBehaviour
                 }
                // if (hazard.HazardType == Hazard.eHazardType.PROXIMITY_MINE) hazard.GetComponent<SphereCollider>().radius = hazard.EffectRadius;                
                 break;
+            case BoardObject.eBoardObjectType.GAME_MOD:
+                GameMod gameMod = (GameMod)bo;
+                gameMod.GameModType = (GameMod.eGameModType)boSave.IntList[0];
+                gameMod.GameModVal = boSave.IntList[1];
+                gameMod.GameModTime = boSave.FloatList[0];
+                break;
             /*case BoardObject.eBoardObjectType.INTERACTABLE:
                 Interactable interactable = (Interactable)bo;
                 interactable.InteractableType = (Interactable.eInteractableType)boSave.IntList[0];
@@ -709,9 +715,9 @@ public class MCP : MonoBehaviour
             case BoardObject.eBoardObjectType.HAZARD:
                 CreateHazard(channelNode, dax, (Hazard.eHazardType)boSave.IntList[0]);
                 break;
-           // case BoardObject.eBoardObjectType.GAME_MOD:
-             //   CreateGameMod(channelNode, dax, (GameMod.eGameModType)boSave.IntList[0]);
-               // break;
+            case BoardObject.eBoardObjectType.GAME_MOD:
+                CreateGameMod(channelNode, dax, (GameMod.eGameModType)boSave.IntList[0]);
+                break;
            // case BoardObject.eBoardObjectType.INTERACTABLE:
             //    Interactable interactable = CreateInteractable(channelNode, dax, (Interactable.eInteractableType)boSave.IntList[0]);
             //    break;

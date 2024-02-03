@@ -383,7 +383,12 @@ public class DaxEditor : Editor
         if (GUILayout.Button("Create Hazard", GUILayout.Width(buttonWidth)))
         {
             mcp.CreateHazard(selChannelNode, dax, Hazard.eHazardType.ENEMY);
-        }        
+        }    
+        EditorGUILayout.Separator();
+        if (GUILayout.Button("Create Game Mod", GUILayout.Width(buttonWidth)))
+        {
+            mcp.CreateGameMod(selChannelNode, dax, GameMod.eGameModType.EXTRA_POINTS);
+        }    
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Shield", GUILayout.Width(buttonWidth)))
         {
@@ -496,7 +501,7 @@ public class DaxEditor : Editor
                 }*/
                 break;
         }
-       /* if(bo.BoardObjectType == BoardObject.eBoardObjectType.GAME_MOD)
+        if(bo.BoardObjectType == BoardObject.eBoardObjectType.GAME_MOD)
         {
             EditorGUILayout.Separator();
             GameMod gameMod = (GameMod)bo;
@@ -525,8 +530,7 @@ public class DaxEditor : Editor
                 }
             }
         }             
-        else */
-        if (bo.BoardObjectType == BoardObject.eBoardObjectType.FACET_COLLECT)
+        else if (bo.BoardObjectType == BoardObject.eBoardObjectType.FACET_COLLECT)
         {
             EditorGUILayout.Separator();
             FacetCollect facetCollect = (FacetCollect)bo;

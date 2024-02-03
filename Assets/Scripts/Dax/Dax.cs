@@ -365,7 +365,7 @@ public class Dax : MonoBehaviour
                 FloatList.Add(hazard.EffectTime);
                 FloatList.Add(hazard.EffectRadius);
             }
-            /*if(Type == BoardObject.eBoardObjectType.GAME_MOD)
+            if(Type == BoardObject.eBoardObjectType.GAME_MOD)
             {
                 GameMod gameMod = (GameMod)bo;
                 IntList = new List<int>();
@@ -374,7 +374,7 @@ public class Dax : MonoBehaviour
                 FloatList = new List<float>();
                 FloatList.Add(gameMod.GameModTime);
             }
-            else */
+            else 
             if(Type == BoardObject.eBoardObjectType.FACET)
             {
                 Facet facet = (Facet)bo;
