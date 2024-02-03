@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3213862507093484215}
   - component: {fileID: 4775140328459666919}
   m_Layer: 0
-  m_Name: Magnet_HUD
+  m_Name: Facet_Collect_Ring_HUDOLD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -391,9 +391,9 @@ public class DaxEditor : Editor
             shield.InitForChannelNode(selChannelNode, dax); // monote - why is this here
         }
         EditorGUILayout.Separator();
-        if (GUILayout.Button("Create Magnet", GUILayout.Width(buttonWidth)))
+        if (GUILayout.Button("Create Facet Collect", GUILayout.Width(buttonWidth)))
         {
-            mcp.CreateMagnet(selChannelNode, dax, Magnet.eMagnetTypes.REGULAR);
+            mcp.CreateFacetCollect(selChannelNode, dax, FacetCollect.eFacetCollectTypes.RING);
         }
         //EditorGUILayout.Separator();
        /* if (GUILayout.Button("Create Interactable", GUILayout.Width(buttonWidth)))
@@ -526,16 +526,16 @@ public class DaxEditor : Editor
             }
         }             
         else */
-        if (bo.BoardObjectType == BoardObject.eBoardObjectType.MAGNET)
+        if (bo.BoardObjectType == BoardObject.eBoardObjectType.FACET_COLLECT)
         {
             EditorGUILayout.Separator();
-            Magnet magnet = (Magnet)bo;
+            FacetCollect facetCollect = (FacetCollect)bo;
             
-            Magnet.eMagnetTypes newMagnetType = (Magnet.eMagnetTypes)EditorGUILayout.EnumPopup("Type: ", magnet.MagnetType);
-            if (newMagnetType != magnet.MagnetType)
+            FacetCollect.eFacetCollectTypes newFacetCollectType = (FacetCollect.eFacetCollectTypes)EditorGUILayout.EnumPopup("Type: ", facetCollect.FacetCollectType);
+            if (newFacetCollectType != facetCollect.FacetCollectType)
             {
                 DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                
-                magnet = mcp.CreateMagnet(selChannelNode, dax, newMagnetType);
+                facetCollect = mcp.CreateFacetCollect(selChannelNode, dax, newFacetCollectType);
             }            
         }                
         /*else if(bo.BoardObjectType == BoardObject.eBoardObjectType.INTERACTABLE)

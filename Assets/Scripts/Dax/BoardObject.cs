@@ -5,7 +5,7 @@ using System.Linq;
 
 public class BoardObject : MonoBehaviour
 {    
-    public enum eBoardObjectType { PLAYER, HAZARD, FACET, MAGNET, /*INTERACTABLE,*/ SHIELD, SPEED_MOD, /*GAME_MOD,*/ NONE };
+    public enum eBoardObjectType { PLAYER, HAZARD, FACET, FACET_COLLECT, /*INTERACTABLE,*/ SHIELD, SPEED_MOD, /*GAME_MOD,*/ NONE };
     public eBoardObjectType BoardObjectType;
 
     public enum eStartDir {OUTWARD, INWARD}; // monewsave
@@ -47,7 +47,7 @@ public class BoardObject : MonoBehaviour
             case eBoardObjectType.PLAYER: return "Player";
             case eBoardObjectType.HAZARD: return "Hazard";            
             case eBoardObjectType.FACET: return "Facet";
-            case eBoardObjectType.MAGNET: return "Magnet";             
+            case eBoardObjectType.FACET_COLLECT: return "Facet Collect";             
             //case eBoardObjectType.INTERACTABLE: return "Interactable";
             case eBoardObjectType.SHIELD: return "Shield";
             case eBoardObjectType.SPEED_MOD: return "Speed Mod";
@@ -270,13 +270,13 @@ public class BoardObject : MonoBehaviour
                     _Dax.AddPoints(5);
                 }                                                        
                 break;
-            case eBoardObjectType.MAGNET:
-                Magnet magnet = boardObjectColliders[0].GetComponentInParent<Magnet>();
-                if(player.AddMagnet(magnet) == true)
+            case eBoardObjectType.FACET_COLLECT:
+                FacetCollect facetCollect = boardObjectColliders[0].GetComponentInParent<FacetCollect>();
+                if(player.AddFacetCollect(facetCollect) == true)
                 {
-                   // magnet.SpawningNode.SpawnedBoardObject = null;
-                    //curSphereColliders.Remove(magnet.GetComponentInChildren<Collider>());
-                   // DestroyImmediate(magnet.gameObject);
+                   // facetCollect.SpawningNode.SpawnedBoardObject = null;
+                    //curSphereColliders.Remove(facetCollect.GetComponentInChildren<Collider>());
+                   // DestroyImmediate(facetCollect.gameObject);
                     _Dax.AddPoints(5);
                 }                                                                           
                 break;
@@ -443,13 +443,13 @@ public class BoardObject : MonoBehaviour
                             _Dax.AddPoints(5);
                         }                                                        
                         break;
-                    case eBoardObjectType.MAGNET:
-                        Magnet magnet = boardObjectColliders[0].GetComponentInParent<Magnet>();
-                        if(player.AddMagnet(magnet.MagnetType) == true)
+                    case eBoardObjectType.FACET_COLLECT:
+                        FacetCollect facetCollect = boardObjectColliders[0].GetComponentInParent<FacetCollect>();
+                        if(player.AddFacetCollect(facetCollect.FacetCollectType) == true)
                         {
-                            magnet.SpawningNode.SpawnedBoardObject = null;
-                            curSphereColliders.Remove(magnet.GetComponentInChildren<Collider>());
-                            DestroyImmediate(magnet.gameObject);
+                            facetCollect.SpawningNode.SpawnedBoardObject = null;
+                            curSphereColliders.Remove(facetCollect.GetComponentInChildren<Collider>());
+                            DestroyImmediate(facetCollect.gameObject);
                             _Dax.AddPoints(5);
                         }                                                                           
                         break;

@@ -118,7 +118,7 @@ GameObject:
   - component: {fileID: 6826060075218264985}
   - component: {fileID: 4154812301887385187}
   m_Layer: 0
-  m_Name: Magnet
+  m_Name: Facet_Collect_RingOLD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

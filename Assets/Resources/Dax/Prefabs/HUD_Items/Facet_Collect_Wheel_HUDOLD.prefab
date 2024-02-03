@@ -117,7 +117,7 @@ GameObject:
   - component: {fileID: 7221811252878416334}
   - component: {fileID: 6151048434097762106}
   m_Layer: 0
-  m_Name: Super_Magnet_HUD
+  m_Name: Facet_Collect_Wheel_HUDOLD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

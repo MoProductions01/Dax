@@ -14,7 +14,7 @@ public class UIRoot : MonoBehaviour
     public GameObject[] ColorCounters;
     public TextMeshPro[] ColorCounterTexts = new TextMeshPro[(int)Facet.eFacetColors.WHITE];
     public GameObject ShieldIcon = null;
-    public GameObject MagnetIcon = null;
+    public GameObject FacetCollectIcon = null;
     public TextMeshPro EndGameText;
     public GameObject TryAgainButton;
     public GameObject MainMenuButton;
@@ -39,16 +39,16 @@ public class UIRoot : MonoBehaviour
         ShieldIcon.transform.parent = this.transform;
     }
 
-    public void ChangeMagnetIcon(Magnet magnet)
+    public void ChangeFacetCollectIcon(FacetCollect facetCollect)
     {
-        DestroyMagnetIcon();
-        MagnetIcon = _MCP.CreateMagnetIcon(magnet.MagnetType);
-        MagnetIcon.transform.parent = this.transform;
+        DestroyFacetCollectIcon();
+        FacetCollectIcon = _MCP.CreateFacetCollectIcon(facetCollect.FacetCollectType);
+        FacetCollectIcon.transform.parent = this.transform;
     }
 
-    public void DestroyMagnetIcon()
+    public void DestroyFacetCollectIcon()
     {
-        if (MagnetIcon != null) DestroyImmediate(MagnetIcon);        
+        if (FacetCollectIcon != null) DestroyImmediate(FacetCollectIcon);        
     }
     
 
@@ -116,10 +116,10 @@ public class UIRoot : MonoBehaviour
                             Debug.Log("Shield_HUD");
                             FindObjectOfType<Player>().ActivateShield();
                         }
-                        else if (hit.collider.name.Contains("Magnet_HUD"))
+                        else if (hit.collider.name.Contains("Facet_Collect_"))
                         {
-                            Debug.Log("Magnet_HUD");
-                            FindObjectOfType<Player>().ActivateMagnet();
+                            Debug.Log("Facet_Collect_");
+                            FindObjectOfType<Player>().ActivateFacetCollect();
                         }
                         break;
                     case Dax.eGameState.PRE_GAME:

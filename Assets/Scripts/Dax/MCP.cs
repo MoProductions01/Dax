@@ -450,22 +450,22 @@ public class MCP : MonoBehaviour
         interactable.name = channelNode.name + "--Warp Gate"; // moupdate - get this whole init thing done
         return interactable;
     }
-    public Magnet CreateMagnet(ChannelNode channelNode, Dax dax, Magnet.eMagnetTypes type)
+    public FacetCollect CreateFacetCollect(ChannelNode channelNode, Dax dax, FacetCollect.eFacetCollectTypes type)
     {
-        Magnet magnetPrefab = null;
+        FacetCollect facetCollectPrefab = null;
         switch (type)
         {
-            case Magnet.eMagnetTypes.REGULAR:
-                magnetPrefab = Resources.Load<Magnet>("Dax/Prefabs/Pickups/Magnets/Magnet");
+            case FacetCollect.eFacetCollectTypes.RING:
+                facetCollectPrefab = Resources.Load<FacetCollect>("Dax/Prefabs/Pickups/Facet_Collects/Facet_Collect_Ring");
                 break;
-            case Magnet.eMagnetTypes.SUPER:
-                magnetPrefab = Resources.Load<Magnet>("Dax/Prefabs/Pickups/Magnets/Super_Magnet");
+            case FacetCollect.eFacetCollectTypes.WHEEL:
+                facetCollectPrefab = Resources.Load<FacetCollect>("Dax/Prefabs/Pickups/Facet_Collects/Facet_Collect_Wheel");
                 break;
         }
 
-        Magnet magnet = Instantiate<Magnet>(magnetPrefab, channelNode.transform);
-        magnet.InitForChannelNode(channelNode, dax);
-        return magnet;
+        FacetCollect facetCollect = Instantiate<FacetCollect>(facetCollectPrefab, channelNode.transform);
+        facetCollect.InitForChannelNode(channelNode, dax);
+        return facetCollect;
     }
 
     public SpeedMod CreateSpeedMod(ChannelNode channelNode, Dax dax, SpeedMod.eSpeedModType type)
@@ -514,19 +514,19 @@ public class MCP : MonoBehaviour
         speedMod.InitForChannelNode(channelNode, dax);               
         return speedMod;
     }
-    public GameObject CreateMagnetIcon( Magnet.eMagnetTypes type)
+    public GameObject CreateFacetCollectIcon( FacetCollect.eFacetCollectTypes type)
     {
-        GameObject magnetIconPrefab = null;
+        GameObject facetCollectIconPrefab = null;
         switch (type)
         {
-            case Magnet.eMagnetTypes.REGULAR:
-                magnetIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/Pickups/HUD_Items/Magnet_HUD");
+            case FacetCollect.eFacetCollectTypes.RING:
+                facetCollectIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/Facet_Collect_Ring_HUD");
                 break;
-            case Magnet.eMagnetTypes.SUPER:
-                magnetIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/Pickups/HUD_Items/Super_Magnet_HUD");
+            case FacetCollect.eFacetCollectTypes.WHEEL:
+                facetCollectIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/Facet_Collect_Wheel_HUD");
                 break;
         }
-        GameObject shieldIcon = Instantiate<GameObject>(magnetIconPrefab, _Dax._UIRoot.transform);
+        GameObject shieldIcon = Instantiate<GameObject>(facetCollectIconPrefab, _Dax._UIRoot.transform);
         return shieldIcon;
     }
     public GameObject CreateShieldIcon(Shield.eShieldTypes type)
@@ -535,10 +535,10 @@ public class MCP : MonoBehaviour
         switch (type)
         {   // 
             case Shield.eShieldTypes.HIT:
-                shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/Pickups/HUD_Items/Hit_Shield_HUD");
+                shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/Hit_Shield_HUD");
                 break;
             case Shield.eShieldTypes.SINGLE_KILL:
-                shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/Pickups/HUD_Items/Single_Kill_Shield_HUD");
+                shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/Single_Kill_Shield_HUD");
                 break;           
         }
         GameObject shieldIcon = Instantiate<GameObject>(shieldIconPrefab, _Dax._UIRoot.transform);
@@ -722,8 +722,8 @@ public class MCP : MonoBehaviour
             case BoardObject.eBoardObjectType.SPEED_MOD:
                 SpeedMod speedMod = CreateSpeedMod(channelNode, dax, (SpeedMod.eSpeedModType)boSave.IntList[0]);
                 break;            
-            case BoardObject.eBoardObjectType.MAGNET:                
-                CreateMagnet(channelNode, dax, (Magnet.eMagnetTypes)boSave.IntList[0]);
+            case BoardObject.eBoardObjectType.FACET_COLLECT:                
+                CreateFacetCollect(channelNode, dax, (FacetCollect.eFacetCollectTypes)boSave.IntList[0]);
                 break;
         }
     }

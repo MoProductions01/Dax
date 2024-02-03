@@ -429,11 +429,11 @@ public class Dax : MonoBehaviour
                 FloatList = new List<float>();
                 FloatList.Add(speedMod.SpeedModVal);
             }
-            else if(Type == BoardObject.eBoardObjectType.MAGNET)
+            else if(Type == BoardObject.eBoardObjectType.FACET_COLLECT)
             {                
-                Magnet magnet = (Magnet)bo;
+                FacetCollect facetCollect = (FacetCollect)bo;
                 IntList = new List<int>();
-                IntList.Add((int)magnet.MagnetType);               
+                IntList.Add((int)facetCollect.FacetCollectType);               
             }
         }
     }

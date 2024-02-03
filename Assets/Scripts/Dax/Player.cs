@@ -10,7 +10,7 @@ public class Player : BoardObject
     [Header("Player Specific")] // moupdate - separate code that's saved and that's reset
     public Shield ActiveShield = null;
     public List<Shield> Shields = new List<Shield>();
-    public List<Magnet> Magnets = new List<Magnet>();
+    public List<FacetCollect> FacetCollects = new List<FacetCollect>();
     public Hazard TempEnemyIgnore = null; // ignore this enemy after a shield collision until you're not collided
     public BoardObject CarriedColorFacet = null;
     public float EMPTime; // moupdate
@@ -30,22 +30,22 @@ public class Player : BoardObject
     {
        // for(int i=0; i < Shields.Count; i++) DestroyImmediate(Shields[i].gameObject);        
         Shields.Clear();
-        Magnets.Clear();
+        FacetCollects.Clear();
     }
     
     
     
-    public bool AddMagnet(Magnet magnet)
+    public bool AddFacetCollect(FacetCollect facetCollect)
     {
-        if (Magnets.Count == 12) return false;
+        if (FacetCollects.Count == 12) return false;
 
-        Destroy(magnet.GetComponent<Collider>());        
-        magnet.SpawningNode.SpawnedBoardObject = null;
-        magnet.transform.parent = this.transform;
-        magnet.gameObject.SetActive(false);
+        Destroy(facetCollect.GetComponent<Collider>());        
+        facetCollect.SpawningNode.SpawnedBoardObject = null;
+        facetCollect.transform.parent = this.transform;
+        facetCollect.gameObject.SetActive(false);
 
-        Magnets.Add(magnet);
-        if (Magnets.Count == 1) _Dax._UIRoot.ChangeMagnetIcon(magnet);
+        FacetCollects.Add(facetCollect);
+        if (FacetCollects.Count == 1) _Dax._UIRoot.ChangeFacetCollectIcon(facetCollect);
         return true;
     }
 
@@ -75,21 +75,21 @@ public class Player : BoardObject
         if (Shields.Count > 0) _Dax._UIRoot.ChangeShieldIcon(Shields[0]);                
     }
 
-    public void ActivateMagnet()
+    public void ActivateFacetCollect()
     {
-        if (Magnets.Count == 0) return;
+        if (FacetCollects.Count == 0) return;
 
-        Magnet magnet = Magnets[0];
-        Magnets.RemoveAt(0);
-        _Dax._UIRoot.DestroyMagnetIcon();
-        if (Magnets.Count > 0) _Dax._UIRoot.ChangeMagnetIcon(Magnets[0]);
+        FacetCollect facetCollect = FacetCollects[0];
+        FacetCollects.RemoveAt(0);
+        _Dax._UIRoot.DestroyFacetCollectIcon();
+        if (FacetCollects.Count > 0) _Dax._UIRoot.ChangeFacetCollectIcon(FacetCollects[0]);
 
-        switch(magnet.MagnetType)
+        switch(facetCollect.FacetCollectType)
         {
-            case Magnet.eMagnetTypes.REGULAR:                
+            case FacetCollect.eFacetCollectTypes.RING:                
                 CurChannel.MyRing.CollectAllPickupFacets();
                 break;
-            case Magnet.eMagnetTypes.SUPER:                
+            case FacetCollect.eFacetCollectTypes.WHEEL:                
                 foreach(Ring ring in _Dax.CurWheel.Rings)
                 {
                     ring.CollectAllPickupFacets();
@@ -175,7 +175,7 @@ public class Player : BoardObject
         }
         else
         {
-            _Dax._UIRoot.DestroyMagnetIcon();
+            _Dax._UIRoot.DestroyFacetCollectIcon();
             _Dax._UIRoot.DestroyShieldIcon();
         }
         
