@@ -20,7 +20,7 @@ public class DaxEditor : Editor
     void UpdateStringProperty(SerializedObject so, string propName, string stringValue)
     {
         so.FindProperty(propName).stringValue = stringValue;
-        so.ApplyModifiedProperties();
+        so.ApplyModifiedProperties();        
     }
     void UpdateFloatProperty(SerializedObject so, string propName, float floatValue)
     {
@@ -34,8 +34,10 @@ public class DaxEditor : Editor
     }
     void UpdateEnumProperty(SerializedObject so, string propName, int enumValue)
     {
+        if(so.hasModifiedProperties == true) Debug.Log("so: " + so.ToString() + ", hasModifiedProperties");
         so.FindProperty(propName).enumValueIndex = enumValue;
-        so.ApplyModifiedProperties();
+        bool changesMade = so.ApplyModifiedProperties();
+        if(changesMade == true) Debug.Log("so: " + so.ToString() + ", enum: " + propName + ", changed to: " + enumValue);
     }
 
     /* Helper to get a new section of the interface going */
@@ -86,6 +88,7 @@ public class DaxEditor : Editor
         daxSetupSO.Update();
         Dax dax = mcp._Dax.GetComponent<Dax>();
         SerializedObject daxSO = new SerializedObject(dax);
+        daxSO.Update();
 
         if (dax == null) { Debug.LogError("ERROR: no Dax component on this game object: " + this.name); return; }
 
@@ -97,11 +100,7 @@ public class DaxEditor : Editor
         {
             dax.PuzzleName = newName;
             UpdateStringProperty(daxSO, "PuzzleName", dax.PuzzleName);            
-        }        
-
-        // **************** Starting Channel
-        EditorGUILayout.Separator();
-        EditorGUILayout.LabelField("Starting Channel " + (dax.StartChannelIndex+1));
+        }                
 
         // ************ Level Time
         EditorGUILayout.Separator();
@@ -221,7 +220,8 @@ public class DaxEditor : Editor
             #endregion
 
         // ********** Objects selected by mouse
-        GameObject selected = Selection.activeGameObject;        
+        GameObject selected = Selection.activeGameObject;              
+
         if (LastSelectedObject != selected) LastSelectedObject = selected;        
         if (selected != null)
         {
@@ -302,6 +302,17 @@ public class DaxEditor : Editor
                 }
                 EditorGUILayout.EndVertical();
             }
+            
+            // If you've got a BoardObject selected then make sure the HandleBoardObject stuff is taken care of
+            if(selected.transform.parent != null && selected.transform.parent.GetComponent<BoardObject>() != null)
+            {                
+                BoardObject parent = selected.transform.parent.GetComponent<BoardObject>();
+                ChannelNode selChannelNode = parent.SpawningNode;
+                StartNewSelection(selChannelNode.name, "Channel Node");
+                HandleBoardObject(selChannelNode, mcp, dax);
+                EditorGUILayout.Separator();
+                EditorGUILayout.EndVertical();
+            }
             // ************ Channel Node
             if (selected.GetComponent<ChannelNode>() != null)
             {
@@ -326,9 +337,9 @@ public class DaxEditor : Editor
                     if (GUILayout.Button("Make Starting Channel", GUILayout.Width(200f)))
                     {                                                
                         int startChannelIndex = Int32.Parse(selChannelNode.name.Substring(19, 2)) - 1;                        
-                        dax.StartChannelIndex = startChannelIndex;
+                       // dax.StartChannelIndex = startChannelIndex;
                         FindObjectOfType<Player>().SetStartChannel(startChannelIndex);
-                        UpdateIntProperty(daxSO, "StartChannelIndex", dax.StartChannelIndex);                                    
+                       // UpdateIntProperty(daxSO, "StartChannelIndex", dax.StartChannelIndex);                                    
                     }
                 }                                                                                                                                      
                 
@@ -346,17 +357,17 @@ public class DaxEditor : Editor
                     selected.GetComponent<ChannelPiece>().Toggle();
                 }
                 EditorGUILayout.EndVertical();
-            }
-            
-            // wheel.StartNodes = wheel.transform.transform.GetComponentsInChildren<ChannelNode>().ToList();
-            // wheel.StartNodes.RemoveAll(x => x.name.Contains("Ring_00_Start_Node") == false);
-
+            }                        
             #endregion            
         }
 
-        // Save data        
-        daxSetupSO.ApplyModifiedProperties();
-        daxSO.ApplyModifiedProperties();
+        // Save data                
+        if(daxSetupSO.hasModifiedProperties == true) Debug.Log("daxSetupSO.hasModifiedProperties == true"); //else Debug.Log("daxSetupSO.hasModifiedProperties == false");
+        if(daxSO.hasModifiedProperties == true) Debug.Log("daxSO.hasModifiedProperties == true"); //else Debug.Log("daxSO.hasModifiedProperties == false");
+        bool daxSetupChanged = daxSetupSO.ApplyModifiedProperties();
+        bool daxChanged = daxSO.ApplyModifiedProperties();
+        if(daxSetupChanged == true) Debug.Log("daxSetupChanged == true"); //else Debug.Log("daxSetupChanged == false");
+        if(daxChanged == true) Debug.Log("daxChanged == true");  //else Debug.Log("daxChanged == false");              
         Undo.RecordObject(daxSetup, "OnInspectorGUI");
         EditorUtility.SetDirty(daxSetup);
     }

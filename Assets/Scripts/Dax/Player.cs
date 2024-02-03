@@ -207,8 +207,8 @@ public class Player : BoardObject
     DaxSetup DS = null;
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.green;
-        Gizmos.DrawSphere(transform.position + transform.forward * .1f, .04f);
+        //Gizmos.color = Color.green;
+        //Gizmos.DrawSphere(transform.position + transform.forward * .1f, .04f);
         if (DS == null) DS = FindObjectOfType<DaxSetup>();        
         if (DS != null && DS.ShowGizmos == true)            
         {           

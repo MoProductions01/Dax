@@ -19,7 +19,7 @@ public class Dax : MonoBehaviour
     public Wheel CurWheel;
     public Ring CurTouchedRing = null;
 
-    public int StartChannelIndex = 0;
+    //public int StartChannelIndex = 0;
     
     // Ring Controls
     LayerMask RingMask;
@@ -241,9 +241,9 @@ public class Dax : MonoBehaviour
                 Channel channel = ringChannels[j];                
                 channel.InnerChannel.SetActive(channelSave.InnerActive);
                 channel.OuterChannel.SetActive(channelSave.OuterActive);                
-                if (channelSave.StartNodeBO != null) mcp.CreateBoardObjectFromSaveData(channel.StartNode, channelSave.StartNodeBO, this);                
+                //if (channelSave.StartNodeBO != null) mcp.CreateBoardObjectFromSaveData(channel.StartNode, channelSave.StartNodeBO, this);                
                 if (channelSave.MidNodeBO != null) mcp.CreateBoardObjectFromSaveData(channel.MidNode, channelSave.MidNodeBO, this);
-                if (channelSave.EndNodeBO != null) mcp.CreateBoardObjectFromSaveData(channel.EndNode, channelSave.EndNodeBO, this);                                
+                //if (channelSave.EndNodeBO != null) mcp.CreateBoardObjectFromSaveData(channel.EndNode, channelSave.EndNodeBO, this);                                
             }            
             // bumpers
             if (ring.BumperGroup != null)
@@ -282,17 +282,9 @@ public class Dax : MonoBehaviour
             {
                 ChannelSave channelSave = ringSave.ChannelSaves[j];
                 Channel channel = ringChannels[j];                
-                if (channel.StartNode.SpawnedBoardObject != null) 
-                {   
-                    Debug.LogError("Should not have spawned object on start node");
-                    mcp.InitBoardObjectFromSave(channel.StartNode.SpawnedBoardObject, channelSave.StartNodeBO);
-                }
+                //if (channel.StartNode.SpawnedBoardObject != null) mcp.InitBoardObjectFromSave(channel.StartNode.SpawnedBoardObject, channelSave.StartNodeBO);                
                 if (channel.MidNode.SpawnedBoardObject != null) mcp.InitBoardObjectFromSave(channel.MidNode.SpawnedBoardObject, channelSave.MidNodeBO);
-                if (channel.EndNode.SpawnedBoardObject != null) 
-                {
-                    Debug.LogError("Should not have spawned object on end node");
-                    mcp.InitBoardObjectFromSave(channel.EndNode.SpawnedBoardObject, channelSave.EndNodeBO);
-                }
+                //if (channel.EndNode.SpawnedBoardObject != null) mcp.InitBoardObjectFromSave(channel.EndNode.SpawnedBoardObject, channelSave.EndNodeBO);                
             }
         }
 
@@ -433,20 +425,20 @@ public class Dax : MonoBehaviour
         public bool InnerActive;
         public bool OuterActive;
 
-        public BoardObjectSave StartNodeBO = null;
+        //public BoardObjectSave StartNodeBO = null;
         public BoardObjectSave MidNodeBO = null;
-        public BoardObjectSave EndNodeBO = null;
+        //public BoardObjectSave EndNodeBO = null;
 
         public ChannelSave(Channel channel)
         {            
             InnerActive = channel.InnerChannel.Active;
             OuterActive = channel.OuterChannel.Active;
-            BoardObject bo = channel.StartNode.SpawnedBoardObject;            
-            if (bo != null) StartNodeBO = new BoardObjectSave(bo);
-            bo = channel.MidNode.SpawnedBoardObject;
+            //BoardObject bo = channel.StartNode.SpawnedBoardObject;            
+            //if (bo != null) StartNodeBO = new BoardObjectSave(bo);
+            BoardObject bo = channel.MidNode.SpawnedBoardObject;
             if (bo != null) MidNodeBO = new BoardObjectSave(bo);
-            bo = channel.EndNode.SpawnedBoardObject;
-            if (bo != null) EndNodeBO = new BoardObjectSave(bo);
+            //bo = channel.EndNode.SpawnedBoardObject;
+            //if (bo != null) EndNodeBO = new BoardObjectSave(bo);
         }
     }
     [System.Serializable]
