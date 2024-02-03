@@ -663,7 +663,7 @@ public class MCP : MonoBehaviour
                 }
                // if (hazard.HazardType == Hazard.eHazardType.PROXIMITY_MINE) hazard.GetComponent<SphereCollider>().radius = hazard.EffectRadius;                
                 break;
-            case BoardObject.eBoardObjectType.INTERACTABLE:
+            /*case BoardObject.eBoardObjectType.INTERACTABLE:
                 Interactable interactable = (Interactable)bo;
                 interactable.InteractableType = (Interactable.eInteractableType)boSave.IntList[0];
                 if (interactable.InteractableType == Interactable.eInteractableType.SWITCH)
@@ -693,7 +693,7 @@ public class MCP : MonoBehaviour
                         interactable.DestGates.Add(destGate);
                     }
                 }
-                break;
+                break;*/
         }
     }
 
@@ -712,9 +712,9 @@ public class MCP : MonoBehaviour
            // case BoardObject.eBoardObjectType.GAME_MOD:
              //   CreateGameMod(channelNode, dax, (GameMod.eGameModType)boSave.IntList[0]);
                // break;
-            case BoardObject.eBoardObjectType.INTERACTABLE:
-                Interactable interactable = CreateInteractable(channelNode, dax, (Interactable.eInteractableType)boSave.IntList[0]);
-                break;
+           // case BoardObject.eBoardObjectType.INTERACTABLE:
+            //    Interactable interactable = CreateInteractable(channelNode, dax, (Interactable.eInteractableType)boSave.IntList[0]);
+            //    break;
             case BoardObject.eBoardObjectType.SHIELD:                
                 Shield shield = CreateShield(channelNode.transform, (Shield.eShieldTypes)boSave.IntList[0]);
                 shield.InitForChannelNode(channelNode, dax);

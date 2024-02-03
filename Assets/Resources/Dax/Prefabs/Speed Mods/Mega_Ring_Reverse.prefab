@@ -68,15 +68,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c8555207bc00df4fa61d2503a56a292, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BoardObjectType: 6
+  BoardObjectType: 5
+  StartDir: 0
   _Dax: {fileID: 0}
-  LastPositionObject: {fileID: 0}
   CurChannel: {fileID: 0}
-  MoveDir: 0
   Speed: 0
   SpawningNode: {fileID: 0}
   DestGateJustWarpedTo: {fileID: 0}
-  SpeedModType: 11
+  SpeedModType: 0
   SpeedModVal: 2
 --- !u!1001 &7346380435795850974
 PrefabInstance:

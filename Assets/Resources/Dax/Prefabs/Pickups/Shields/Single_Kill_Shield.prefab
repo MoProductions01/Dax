@@ -173,7 +173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b0e031a47475bf4097ee88c9c60d4c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BoardObjectType: 5
+  BoardObjectType: 4
   StartDir: 0
   _Dax: {fileID: 0}
   CurChannel: {fileID: 0}

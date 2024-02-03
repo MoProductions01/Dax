@@ -381,7 +381,7 @@ public class Dax : MonoBehaviour
                 IntList = new List<int>();
                 IntList.Add((int)facet._Color);
             }
-            else if(Type == BoardObject.eBoardObjectType.INTERACTABLE)
+            /*else if(Type == BoardObject.eBoardObjectType.INTERACTABLE)
             {
                 Interactable interactable = (Interactable)bo;
                 IntList = new List<int>();
@@ -411,7 +411,7 @@ public class Dax : MonoBehaviour
                         StringList01.Add(destGate.name);
                     }
                 }
-            }           
+            }           */
             else if (Type == BoardObject.eBoardObjectType.SHIELD) // moupdate - make sure all these are in the same order
             {
                 Shield shield = (Shield)bo;

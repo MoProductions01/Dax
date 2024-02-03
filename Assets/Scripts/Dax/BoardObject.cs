@@ -5,7 +5,7 @@ using System.Linq;
 
 public class BoardObject : MonoBehaviour
 {    
-    public enum eBoardObjectType { PLAYER, HAZARD, FACET, MAGNET, INTERACTABLE, SHIELD, SPEED_MOD, /*GAME_MOD,*/ NONE };
+    public enum eBoardObjectType { PLAYER, HAZARD, FACET, MAGNET, /*INTERACTABLE,*/ SHIELD, SPEED_MOD, /*GAME_MOD,*/ NONE };
     public eBoardObjectType BoardObjectType;
 
     public enum eStartDir {OUTWARD, INWARD}; // monewsave
@@ -48,7 +48,7 @@ public class BoardObject : MonoBehaviour
             case eBoardObjectType.HAZARD: return "Hazard";            
             case eBoardObjectType.FACET: return "Facet";
             case eBoardObjectType.MAGNET: return "Magnet";             
-            case eBoardObjectType.INTERACTABLE: return "Interactable";
+            //case eBoardObjectType.INTERACTABLE: return "Interactable";
             case eBoardObjectType.SHIELD: return "Shield";
             case eBoardObjectType.SPEED_MOD: return "Speed Mod";
            // case eBoardObjectType.GAME_MOD: return "Game Mod";

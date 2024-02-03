@@ -396,10 +396,10 @@ public class DaxEditor : Editor
             mcp.CreateMagnet(selChannelNode, dax, Magnet.eMagnetTypes.REGULAR);
         }
         EditorGUILayout.Separator();
-        if (GUILayout.Button("Create Interactable", GUILayout.Width(buttonWidth)))
+       /* if (GUILayout.Button("Create Interactable", GUILayout.Width(buttonWidth)))
         {
             mcp.CreateInteractable(selChannelNode, dax, Interactable.eInteractableType.TOGGLE);
-        }
+        }*/
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Speed Mod", GUILayout.Width(buttonWidth)))
         {
@@ -538,7 +538,7 @@ public class DaxEditor : Editor
                 magnet = mcp.CreateMagnet(selChannelNode, dax, newMagnetType);
             }            
         }                
-        else if(bo.BoardObjectType == BoardObject.eBoardObjectType.INTERACTABLE)
+        /*else if(bo.BoardObjectType == BoardObject.eBoardObjectType.INTERACTABLE)
         {
             EditorGUILayout.Separator();
             Interactable interactable = (Interactable)bo;
@@ -604,33 +604,33 @@ public class DaxEditor : Editor
                              DestDiode removedDestDiode = preChangeDestGates[i];
                              if (removedDestDiode.WarpSources.Contains(warpDiode) == false) { Debug.LogError("ERROR: this DESTINAION node: " + removedDestDiode.name + " was wiped out by shrinking paths size.  But the WARP node: " + warpDiode.name + " was never in the DESTINATION node's WarpSources list. Bailing."); break; }
                              removedDestDiode.WarpSources.Remove(warpDiode);
-                         }*/
-                    }
-                    else
-                    {
+                         }
+                    }*/
+                   // else
+                   // {
                         // Debug.Log("same number of destination nodes so something else must have changed");
                         // number of destinations stayed the same so check for something else                   
-                        Interactable changedWarpGate = (Interactable)selDiodeDestSP.serializedObject.targetObject;
-                        for (int i = 0; i < interactable.DestGates.Count; i++)
-                        {
-                            if (preChangeDestGates[i] != changedWarpGate.DestGates[i])
-                            {
-                                if (preChangeDestGates[i] == null && changedWarpGate.DestGates[i] != null)
-                                {
+                    //    Interactable changedWarpGate = (Interactable)selDiodeDestSP.serializedObject.targetObject;
+                     //   for (int i = 0; i < interactable.DestGates.Count; i++)
+                     //   {
+                      //      if (preChangeDestGates[i] != changedWarpGate.DestGates[i])
+                      //      {
+                       //         if (preChangeDestGates[i] == null && changedWarpGate.DestGates[i] != null)
+                        //        {
                                     // Debug.Log("added a new connection at spot: " + i + " + with new name: " + changedWarpdDiode.WarpDestinations[i].name);
                                     /*DestDiode newDestDiode = changedWarpdDiode.DestGates[i];
                                     if (newDestDiode.WarpSources.Contains(changedWarpdDiode) == true) { Debug.LogError("ERROR: Trying to add this new DESTINAION node: " + newDestDiode.name + " to this WARP node: " + changedWarpdDiode + " but the WARP node was already in the new DESTINATION node's WarpSources list. Bailing."); break; }
                                     newDestDiode.WarpSources.Add(changedWarpdDiode);*/
-                                }
-                                else if (preChangeDestGates[i] != null && changedWarpGate.DestGates[i] == null)
-                                {
+                           //     }
+                           //     else if (preChangeDestGates[i] != null && changedWarpGate.DestGates[i] == null)
+                           //     {
                                     // Debug.Log("removed a connection");
                                     /* DestDiode delDestDiode = preChangeDestGates[i];
                                      if (delDestDiode.WarpSources.Contains(changedWarpdDiode) == false) { Debug.LogError("ERROR: Trying to remove this DESTINATION node: " + delDestDiode + " from this WARP node: " + changedWarpdDiode + " but the WARP node was never in the DESTINATION node's WarpSources list. Bailing"); break; }
                                      delDestDiode.WarpSources.Remove(changedWarpdDiode);*/
-                                }
-                                else
-                                {
+                             //   }
+                             //   else
+                             //   {
                                     //  Debug.Log("changed a connection");
                                     /* DestDiode oldDestDiode = preChangeDestGates[i];
                                      DestDiode newDestDiode = changedWarpdDiode.DestGates[i];
@@ -640,13 +640,13 @@ public class DaxEditor : Editor
                                      // add new one
                                      if (newDestDiode.WarpSources.Contains(changedWarpdDiode) == true) { Debug.LogError("ERROR: Trying to swap out a DESTINATION node with this new one: " + newDestDiode + " on this WARP node: " + changedWarpdDiode + " but the new DESTINATION node already had the WARP node in it's WarpSources list. Bailing."); break; }
                                      newDestDiode.WarpSources.Add(changedWarpdDiode);*/
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+                              //  }
+                           // }
+                       // }
+                 //   }
+            //    }
+          //  }
+       // }
         else if (bo.BoardObjectType == BoardObject.eBoardObjectType.SHIELD)
         {           
             EditorGUILayout.Separator();
