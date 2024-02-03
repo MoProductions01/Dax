@@ -25,7 +25,7 @@ public static class RRDManager
 
     public static void ResetText()
     {
-        if (RifRafDebug == null) RRDManager.Init(GameObject.FindObjectOfType<DaxSetup>().RifRafDebugRef);
+        if (RifRafDebug == null) RRDManager.Init(GameObject.FindObjectOfType<DaxPuzzleSetup>().RifRafDebugRef);
         
         //RifRafDebug.dbgText.text = "";
     }
@@ -33,7 +33,7 @@ public static class RRDManager
     public static void SetText(string s, RifRafDebug.eDebugTextType type)
     {
         //Debug.Log("SetText()");
-        if (RifRafDebug == null) RRDManager.Init(GameObject.FindObjectOfType<DaxSetup>().RifRafDebugRef);
+        if (RifRafDebug == null) RRDManager.Init(GameObject.FindObjectOfType<DaxPuzzleSetup>().RifRafDebugRef);
         
         if (type == RifRafDebug.eDebugTextType.PHYSICS) return;
         RifRafDebug.dbgText.text = s;
@@ -41,7 +41,7 @@ public static class RRDManager
     public static void AppendText(string s, RifRafDebug.eDebugTextType type)
     {
        // Debug.Log("AppendText(): " + s);
-        if (RifRafDebug == null) RRDManager.Init(GameObject.FindObjectOfType<DaxSetup>().RifRafDebugRef);
+        if (RifRafDebug == null) RRDManager.Init(GameObject.FindObjectOfType<DaxPuzzleSetup>().RifRafDebugRef);
         
         if (type == RifRafDebug.eDebugTextType.PHYSICS) return;
        // RifRafDebug.dbgText.text += s;

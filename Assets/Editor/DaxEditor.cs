@@ -6,7 +6,7 @@ using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
-[CustomEditor(typeof(DaxSetup))]
+[CustomEditor(typeof(DaxPuzzleSetup))]
 public class DaxEditor : Editor
 {
     public GameObject LastSelectedObject = null;    // used for checking for changes in the selected object
@@ -83,7 +83,7 @@ public class DaxEditor : Editor
         HandleSceneView(); // make sure the RifRaf Debug object is not visible        
                 
         MCP mcp = GameObject.FindObjectOfType<MCP>();
-        DaxSetup daxSetup = (DaxSetup)target;        
+        DaxPuzzleSetup daxSetup = (DaxPuzzleSetup)target;        
         SerializedObject daxSetupSO = new SerializedObject(daxSetup);
         daxSetupSO.Update();
         Dax dax = mcp._Dax.GetComponent<Dax>();
@@ -161,7 +161,7 @@ public class DaxEditor : Editor
         }
         else
         {   // ************ Number of rings
-            int newNumRings = EditorGUILayout.IntPopup("Number of Rings", dax.CurWheel.NumActiveRings, DaxSetup.NUM_RINGS_NAMES, DaxSetup.NUM_RINGS_TOTALS);
+            int newNumRings = EditorGUILayout.IntPopup("Number of Rings", dax.CurWheel.NumActiveRings, DaxPuzzleSetup.NUM_RINGS_NAMES, DaxPuzzleSetup.NUM_RINGS_TOTALS);
             if (newNumRings != dax.CurWheel.NumActiveRings)
             {
                 if (newNumRings > dax.CurWheel.NumActiveRings)

@@ -28,10 +28,10 @@ public class ChannelPiece : MonoBehaviour
     }
 
 #if true
-    DaxSetup DS = null;
+    DaxPuzzleSetup DS = null;
     private void OnDrawGizmos()
     {       
-        if (DS == null) DS = FindObjectOfType<DaxSetup>();                   
+        if (DS == null) DS = FindObjectOfType<DaxPuzzleSetup>();                   
         if (DS != null && DS.ShowGizmos == true && Active == false)
         {            
             Gizmos.color = Color.red;

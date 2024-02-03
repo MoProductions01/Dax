@@ -5,7 +5,7 @@ using System.Linq;
 
 public class ChannelNode : MonoBehaviour
 {
-    DaxSetup DS = null;
+    DaxPuzzleSetup DS = null;
     public Channel MyChannel = null;
     public BoardObject SpawnedBoardObject = null;    
 
@@ -65,7 +65,7 @@ public class ChannelNode : MonoBehaviour
     
     private void OnDrawGizmos()
     {
-        if (DS == null) DS = FindObjectOfType<DaxSetup>();
+        if (DS == null) DS = FindObjectOfType<DaxPuzzleSetup>();
         if (DS != null && DS.ShowGizmos == true )      
         {
             Gizmos.color = new Color(.1f, .1f, .1f, .1f);

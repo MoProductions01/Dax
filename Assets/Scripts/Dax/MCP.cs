@@ -81,10 +81,8 @@ public class MCP : MonoBehaviour
     static void TrashCurrentPuzzle()
     {
         MCP mcp = GameObject.FindObjectOfType<MCP>();
-        if(mcp != null) UnityEngine.Object.DestroyImmediate(mcp.gameObject);
-        DaxEditControl daxEditControl = GameObject.FindObjectOfType<DaxEditControl>();
-        if(daxEditControl != null) UnityEngine.Object.DestroyImmediate(daxEditControl.gameObject);
-        DaxSetup daxSetup = GameObject.FindObjectOfType<DaxSetup>();
+        if(mcp != null) UnityEngine.Object.DestroyImmediate(mcp.gameObject);        
+        DaxPuzzleSetup daxSetup = GameObject.FindObjectOfType<DaxPuzzleSetup>();
         if (daxSetup != null) UnityEngine.Object.DestroyImmediate(daxSetup.gameObject);
         Dax dax = GameObject.FindObjectOfType<Dax>();
         if (dax != null) UnityEngine.Object.DestroyImmediate(dax.gameObject);
@@ -105,14 +103,14 @@ public class MCP : MonoBehaviour
         ResetTransform(mcpGO.transform);
         MCP mcp = mcpGO.AddComponent<MCP>();
                 
-        // DaxEditControl is 
-        GameObject decGO = new GameObject("Dax Edit Control");
-        MCP.ResetTransform(decGO.transform);
-        DaxEditControl daxEditControl = decGO.AddComponent<DaxEditControl>();
-        daxEditControl.gameObject.AddComponent<DaxSetup>();       
+        // Dax Puzzle Setup is the main component for creating puzzles using
+        // Unity's in-editor functionality
+        GameObject decGO = new GameObject("Dax Puzzle Setup");
+        ResetTransform(decGO.transform);                
+        DaxPuzzleSetup daxSetup = decGO.AddComponent<DaxPuzzleSetup>();
 
-        mcp._Dax = new GameObject("Dax").AddComponent<Dax>();
-        daxEditControl.GetComponent<DaxSetup>()._Dax = mcp._Dax;
+        mcp._Dax = new GameObject("Dax").AddComponent<Dax>();        
+        daxSetup._Dax = mcp._Dax;
 
         // start off with just one wheel       
         Wheel wheel = CreateWheel(mcp, mcp._Dax.gameObject, mcp._Dax, 0);
@@ -120,7 +118,7 @@ public class MCP : MonoBehaviour
 
         // set up the camera
         Camera mainCamera = Camera.main;
-        mainCamera.transform.position = new Vector3(0f, DaxSetup.CAMERA_Y_VALUES[3], 0f);
+        mainCamera.transform.position = new Vector3(0f, DaxPuzzleSetup.CAMERA_Y_VALUES[3], 0f);
         mainCamera.transform.eulerAngles = new Vector3(90f, 0f, 0f);        
         mainCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("UI"));
 
@@ -136,15 +134,13 @@ public class MCP : MonoBehaviour
         mcp._Dax._Player._Dax = mcp._Dax;
         player.SetStartChannel(0);        
         player.InitForChannelNode(null, mcp._Dax);
-        player.ResetForPuzzleRestart();
-        //Debug.Log($"parent: {wheel.StartNodes[0].transform.parent.name}");
-        //wheel.StartNodes[0].transform.parent.GetComponent<Channel>().InnerChannel.Toggle();       
+        player.ResetForPuzzleRestart();        
         
         // debug          
         RifRafDebug rifRafDebugPrefab = Resources.Load<RifRafDebug>("_RifRafDebug");
         RifRafDebug rifRafDebug = UnityEngine.Object.Instantiate<RifRafDebug>(rifRafDebugPrefab, mcp._Dax.gameObject.transform);
-        RRDManager.Init(rifRafDebug);
-        daxEditControl.GetComponent<DaxSetup>().RifRafDebugRef = rifRafDebug;        
+        RRDManager.Init(rifRafDebug);        
+        daxSetup.RifRafDebugRef = rifRafDebug;
     }
 
     public static Wheel CreateWheel(MCP mcp, GameObject rootGO, Dax daxRef, int wheelNum)

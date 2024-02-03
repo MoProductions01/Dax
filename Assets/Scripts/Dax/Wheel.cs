@@ -166,7 +166,7 @@ public class Wheel : MonoBehaviour
         }
 
         // set up the camera position        
-        Camera.main.transform.position = new Vector3(0f, DaxSetup.CAMERA_Y_VALUES[numRings-1], 0f);
+        Camera.main.transform.position = new Vector3(0f, DaxPuzzleSetup.CAMERA_Y_VALUES[numRings-1], 0f);
     }
 
     public Ring GetOuterRing()
