@@ -21,7 +21,7 @@ public class BoardObject : MonoBehaviour
     [Header("Starting State Stuff")]
     public ChannelNode SpawningNode = null;    
 
-    public Interactable DestGateJustWarpedTo = null;
+    //public Interactable DestGateJustWarpedTo = null;
 
     private void Awake()
     {
@@ -280,6 +280,59 @@ public class BoardObject : MonoBehaviour
                     _Dax.AddPoints(5);
                 }                                                                           
                 break;
+            case eBoardObjectType.SPEED_MOD:
+                SpeedMod speedMod = boardObjectColliders[0].GetComponentInParent<SpeedMod>();
+                List<GameObject> gameObjectsToMod = new List<GameObject>();
+                // Transform objectsToSpeedModParent;
+                switch(speedMod.SpeedModType)
+                {
+                    case SpeedMod.eSpeedModType.PLAYER_SPEED:
+                        //Debug.Log("Speed before: " + player.Speed);
+                        player.Speed += speedMod.SpeedModVal;
+                        //Debug.Log("Speed after: " + player.Speed);
+                        break;
+                  //  case SpeedMod.eSpeedModType.SPEED_DOWN:
+                    //    player.Speed -= speedMod.SpeedModVal;
+                   //     break;
+                    case SpeedMod.eSpeedModType.ENEMY_SPEED:
+                   // case SpeedMod.eSpeedModType.ENEMY_DOWN:
+                        List<Hazard> enemies = _Dax.CurWheel.GetComponentsInChildren<Hazard>().ToList();
+                        float speedModVal = (speedMod.SpeedModType == SpeedMod.eSpeedModType.ENEMY_SPEED ? speedMod.SpeedModVal : -speedMod.SpeedModVal); // moupdate optimize all this
+                        foreach (Hazard e in enemies) e.Speed += speedModVal; // moupdate - optimize this --- use generic <T> or an overwritten activate.  maybe go back to one class for each and have a generic activate overwriten                                                                                                             
+                        break;
+                    case SpeedMod.eSpeedModType.RING_SPEED:
+                  //  case SpeedMod.eSpeedModType.RING_DOWN:
+                        float speedModVal2 = (speedMod.SpeedModType == SpeedMod.eSpeedModType.RING_SPEED ? speedMod.SpeedModVal : -speedMod.SpeedModVal);
+                        player.CurChannel.MyRing.RotateSpeed += speedModVal2;
+                        break;
+                 /*   case SpeedMod.eSpeedModType.WHEEL_UP:
+                    case SpeedMod.eSpeedModType.WHEEL_DOWN:
+                        float speedModVal3 = (speedMod.SpeedModType == SpeedMod.eSpeedModType.WHEEL_UP ? speedMod.SpeedModVal : -speedMod.SpeedModVal);
+                        List<Ring> rings = _Dax.CurWheel.GetComponentsInChildren<Ring>().ToList();
+                        foreach (Ring ring in rings) ring.RotateSpeed += speedModVal3; // moupdate - move this to the actual script so that it's not bloating up all this
+                        break;    */                            
+                   /* case SpeedMod.eSpeedModType.RING_STOP:
+                        player.CurChannel.MyRing.RotateSpeed = 0f;
+                        break;
+                    case SpeedMod.eSpeedModType.TIME_STOP: // moupdate - maybe split this up from SpeedMod to EnvMod or something
+                        List<Ring> rings2 = _Dax.CurWheel.GetComponentsInChildren<Ring>().ToList();
+                        List<Hazard> enemies2 = _Dax.CurWheel.GetComponentsInChildren<Hazard>().ToList();
+                        foreach(Ring ring in rings2) ring.RotateSpeed = 0f;
+                        foreach (Hazard e in enemies2) e.Speed = 0f; ;
+                        break;
+                    case SpeedMod.eSpeedModType.RING_REVERSE:
+                        player.CurChannel.MyRing.RotateSpeed = -player.CurChannel.MyRing.RotateSpeed;
+                        break;
+                    case SpeedMod.eSpeedModType.MEGA_RING_REVERSE: // moupdate - maybe rename this
+                        List<Ring> rings3 = _Dax.CurWheel.GetComponentsInChildren<Ring>().ToList();
+                        foreach (Ring ring in rings3) ring.RotateSpeed = -ring.RotateSpeed;
+                        break;*/
+                }
+                speedMod.SpawningNode.SpawnedBoardObject = null;
+                boardObjectColliders.Remove(speedMod.GetComponentInChildren<Collider>());
+                DestroyImmediate(speedMod.gameObject);
+                _Dax.AddPoints(5);
+            break;    
         }
         
         #if false            

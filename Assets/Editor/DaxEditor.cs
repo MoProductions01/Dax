@@ -395,7 +395,7 @@ public class DaxEditor : Editor
         {
             mcp.CreateMagnet(selChannelNode, dax, Magnet.eMagnetTypes.REGULAR);
         }
-        EditorGUILayout.Separator();
+        //EditorGUILayout.Separator();
        /* if (GUILayout.Button("Create Interactable", GUILayout.Width(buttonWidth)))
         {
             mcp.CreateInteractable(selChannelNode, dax, Interactable.eInteractableType.TOGGLE);
@@ -403,7 +403,7 @@ public class DaxEditor : Editor
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Speed Mod", GUILayout.Width(buttonWidth)))
         {
-            mcp.CreateSpeedMod(selChannelNode, dax, SpeedMod.eSpeedModType.SPEED_UP);
+            mcp.CreateSpeedMod(selChannelNode, dax, SpeedMod.eSpeedModType.PLAYER_SPEED);
         }
     }
 
@@ -680,8 +680,26 @@ public class DaxEditor : Editor
             {
                 DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                
                 speedMod = mcp.CreateSpeedMod(selChannelNode, dax, newSpeedModType);
-            }            
-            if((int)speedMod.SpeedModType <= (int)SpeedMod.eSpeedModType.WHEEL_DOWN)
+            }        
+            float minSpeedModVal, maxSpeedModVal;
+            if(speedMod.SpeedModType == SpeedMod.eSpeedModType.RING_SPEED)
+            {
+                minSpeedModVal = -10f;
+                maxSpeedModVal = 10f;
+            }
+            else
+            {
+                minSpeedModVal = 0f;
+                maxSpeedModVal = 1f;
+            }
+            float newSpeedModVal =  EditorGUILayout.Slider("Speed Mod:", speedMod.SpeedModVal, minSpeedModVal, maxSpeedModVal);
+            if (newSpeedModVal != speedMod.SpeedModVal)
+            {                                    
+                speedMod.SpeedModVal = newSpeedModVal;
+                UpdateFloatProperty(selBoardObjectSO, "SpeedModVal", speedMod.SpeedModVal);                    
+            }
+
+          /*  if((int)speedMod.SpeedModType <= (int)SpeedMod.eSpeedModType.WHEEL_DOWN)
             {
                 float newSpeedModVal = EditorGUILayout.FloatField("Val: ", speedMod.SpeedModVal);
                 if (newSpeedModVal != speedMod.SpeedModVal)
@@ -689,7 +707,7 @@ public class DaxEditor : Editor
                     speedMod.SpeedModVal = newSpeedModVal;
                     UpdateFloatProperty(selBoardObjectSO, "SpeedModVal", speedMod.SpeedModVal);                    
                 }
-            }            
+            }     */       
         }
     }      
     

@@ -473,42 +473,42 @@ public class MCP : MonoBehaviour
         SpeedMod speedModPrefab = null;
         switch (type) // moupdate - send the Type to the functions instead of a different one for each type
         {   // moupdate - turn this into an array you look up based on index
-            case SpeedMod.eSpeedModType.SPEED_UP:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Up");
+            case SpeedMod.eSpeedModType.PLAYER_SPEED:
+                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Player_Speed");
                 break;
-            case SpeedMod.eSpeedModType.SPEED_DOWN:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Down");
+            //case SpeedMod.eSpeedModType.SPEED_DOWN:
+           //     speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Speed_Down");
+            //    break;
+            case SpeedMod.eSpeedModType.ENEMY_SPEED:
+                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Enemy_Speed");
                 break;
-            case SpeedMod.eSpeedModType.ENEMY_UP:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Enemy_Speed_Up");
+           // case SpeedMod.eSpeedModType.ENEMY_DOWN:
+           //     speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Enemy_Speed_Down");
+            //    break;
+            case SpeedMod.eSpeedModType.RING_SPEED:
+                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Ring_Speed");
                 break;
-            case SpeedMod.eSpeedModType.ENEMY_DOWN:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Enemy_Speed_Down");
-                break;
-            case SpeedMod.eSpeedModType.RING_UP:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Ring_Speed_Up");
-                break;
-            case SpeedMod.eSpeedModType.RING_DOWN:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Ring_Speed_Down");
-                break;
-            case SpeedMod.eSpeedModType.WHEEL_UP:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Wheel_Speed_Up");
+          //  case SpeedMod.eSpeedModType.RING_DOWN:
+          //      speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Ring_Speed_Down");
+          //      break;
+          /*  case SpeedMod.eSpeedModType.WHEEL_UP:
+                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Wheel_Speed_Up");
                 break;
             case SpeedMod.eSpeedModType.WHEEL_DOWN:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Wheel_Speed_Down");
-                break;
-            case SpeedMod.eSpeedModType.RING_STOP:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Ring_Stop");
+                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Wheel_Speed_Down");
+                break;*/
+           /* case SpeedMod.eSpeedModType.RING_STOP:
+                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Ring_Stop");
                 break;
             case SpeedMod.eSpeedModType.TIME_STOP:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Time_Stop");
+                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Time_Stop");
                 break;
             case SpeedMod.eSpeedModType.RING_REVERSE:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Ring_Reverse");
+                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Ring_Reverse");
                 break;
             case SpeedMod.eSpeedModType.MEGA_RING_REVERSE:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Mega_Ring_Reverse");
-                break;
+                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Mega_Ring_Reverse");
+                break;*/
         }
         SpeedMod speedMod = Instantiate<SpeedMod>(speedModPrefab, channelNode.transform);
         speedMod.InitForChannelNode(channelNode, dax);               

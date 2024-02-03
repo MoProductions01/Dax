@@ -11,10 +11,9 @@ GameObject:
   - component: {fileID: 5258473636388128974}
   - component: {fileID: 244382921547405241}
   - component: {fileID: 4577970556464607055}
-  - component: {fileID: 7549296346790777657}
   - component: {fileID: 5155965355934243633}
-  - component: {fileID: 8943853214940838377}
   - component: {fileID: 7869687370789488563}
+  - component: {fileID: 8943853214940838377}
   m_Layer: 0
   m_Name: Player_Diode
   m_TagString: Untagged
@@ -88,28 +87,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7549296346790777657
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5646822598826178058}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bdd9a8d0eec05524e9533fa8e5dfcd47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _animateRotation: 1
-  rotationSpeedsInDegreePerSecond: {x: 0, y: 180, z: 0}
-  rotationType: 0
-  _animateScale: 1
-  scaleMin: 1
-  scaleMax: 1.33
-  scaleCycleDuration: 1.33
-  _animateYOffset: 1
-  yOffsetAmplitude: 0.025
-  yOffsetCycleDuration: 1.25
 --- !u!135 &5155965355934243633
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -131,34 +108,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.04290161
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8943853214940838377
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5646822598826178058}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a2d1bc8c58161d4fb95fe38fe9dc8cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  BoardObjectType: 0
-  _Dax: {fileID: 0}
-  LastPositionObject: {fileID: 0}
-  CurChannel: {fileID: 0}
-  MoveDir: 0
-  Speed: 0.5
-  SpawningNode: {fileID: 0}
-  DestGateJustWarpedTo: {fileID: 0}
-  ActiveShield: {fileID: 0}
-  Shields: []
-  MagnetTypes: 
-  TempEnemyIgnore: {fileID: 0}
-  CarriedColorFacet: {fileID: 0}
-  EMPTime: 0
-  EffectType: 0
-  SpeedSave: 0
 --- !u!54 &7869687370789488563
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -186,3 +135,30 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!114 &8943853214940838377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5646822598826178058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a2d1bc8c58161d4fb95fe38fe9dc8cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BoardObjectType: 0
+  StartDir: 0
+  _Dax: {fileID: 0}
+  CurChannel: {fileID: 0}
+  Speed: 0.5
+  SpawningNode: {fileID: 0}
+  DestGateJustWarpedTo: {fileID: 0}
+  ActiveShield: {fileID: 0}
+  Shields: []
+  Magnets: []
+  TempEnemyIgnore: {fileID: 0}
+  CarriedColorFacet: {fileID: 0}
+  EMPTime: 0
+  EffectType: 0
+  SpeedSave: 0

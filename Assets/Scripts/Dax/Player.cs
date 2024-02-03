@@ -129,10 +129,10 @@ public class Player : BoardObject
         //string s = "Player.OnCollisionExit() collision name: " + collision.collider.name + ", collision parent name: " + collision.collider.transform.parent.name + ", Dest Gate: ";
         //s += (DestGateJustWapredTo == null ? "no dest gate" : DestGateJustWapredTo.name);
         //Debug.Log(s);        
-        if(DestGateJustWarpedTo != null && collision.collider.name.Equals(DestGateJustWarpedTo.name))
+      /*  if(DestGateJustWarpedTo != null && collision.collider.name.Equals(DestGateJustWarpedTo.name))
         {   // this is so we don't warp back 'n forth between gates after a warp            
             DestGateJustWarpedTo = null;
-        }    
+        }    */
         if (collision.collider.gameObject.GetComponentInParent<Hazard>() != null)
         {            
             if(TempEnemyIgnore == collision.collider.gameObject.GetComponentInParent<Hazard>())
