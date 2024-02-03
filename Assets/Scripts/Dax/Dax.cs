@@ -12,13 +12,8 @@ public class Dax : MonoBehaviour
     public eGameState GameState;    
 
     public static float MAX_SPIN_SPEED = 20f;
-    public static float MAX_SPEED = 1f;
-
-    public float TrappedPercentage = 80f;
-
-
-
-    //public List<Wheel> Wheels = new List<Wheel>();
+    public static float MAX_SPEED = 1f;    
+    
     public Wheel CurWheel;
     public Ring CurTouchedRing = null;
 
@@ -28,9 +23,12 @@ public class Dax : MonoBehaviour
     LayerMask RingMask;
     Vector2 RingCenterPoint = Vector3.zero;
     Vector2 MousePosition;
-    float RingAngle = 0f;    
-  //  public float ResetTimer;    
+    float RingAngle = 0f;      
     float PointerPrevAngle;
+    
+    bool GameModActive;
+    float GameModTimer; 
+    int GameModVal;
 
     public Player _Player;
 
@@ -38,16 +36,12 @@ public class Dax : MonoBehaviour
 
     [Header("Game Data")]
     public float LevelTime = 120f;
-    public int Score = 0;
-    [Header("Game Mods")]
-    bool GameModActive;
-    float GameModTimer; // moupdate - this is corny
-    int GameModVal;
-    
+    public int Score = 0;    
 
-    [Header("Debug")]    
-    public Dictionary<string, float> ChannelSizes = new Dictionary<string, float>();
+    [Header("Save Data")]
+    public PuzzleSaveData _PuzzleSaveData = null;       
         
+
     private void Awake()    
     {
         GameState = eGameState.PRE_GAME; // Dax.Awake()
@@ -55,7 +49,12 @@ public class Dax : MonoBehaviour
         Score = 0;
         _UIRoot = FindObjectOfType<UIRoot>();
         _UIRoot.Init();
-    }        
+    }      
+
+    private void Start()
+    {
+        
+    }  
     
     public void BeginPointMod(float time, int val)
     {
@@ -73,11 +72,6 @@ public class Dax : MonoBehaviour
         _UIRoot.ScoreText.SetText(Score.ToString());
     }   
 
-    /*public void SetCurrentWheel(Wheel wheel)
-    {
-        CurWheel = wheel;
-        Camera.main.transform.position = CurWheel.transform.position + new Vector3(0f, DaxSetup.WHEEL_DIST_Y, 0f);
-    }*/
     void Update()
     {
         if (GameState != eGameState.RUNNING) return;      
@@ -190,8 +184,7 @@ public class Dax : MonoBehaviour
         GameState = eGameState.RUNNING;
     }
 
-    [Header("Save Data")]
-    public PuzzleSaveData _PuzzleSaveData = null;
+    
     public PuzzleSaveData CreateSaveData(Dax dax)
     {
         Debug.Log("Dax.SavePuzzle() /*creates save data*/ --MoSave--");
@@ -200,7 +193,7 @@ public class Dax : MonoBehaviour
         return _PuzzleSaveData;
     }
 
-    public Channel InnerChannel, OuterChannel;
+    //public Channel InnerChannel, OuterChannel;
 
     public bool ResetPuzzleFromSave(PuzzleSaveData saveData = null)
     {   // note - this assumes the puzzle is created and fresh
@@ -539,21 +532,5 @@ public class Dax : MonoBehaviour
             Player player = FindObjectOfType<Player>();
             PlayerSave = new BoardObjectSave(player);
         }
-    }
-
-    private void Start()
-    {
-        // channel sizes
-        ChannelSizes.Add("Ring_00_Inner", 0.117336f); // .0938688 = 80%
-        ChannelSizes.Add("Ring_01_Inner", 0.199654f); // .1597232
-        ChannelSizes.Add("Ring_02_Inner", 0.221045f); // .176836
-        ChannelSizes.Add("Ring_03_Inner", 0.221045f);
-        ChannelSizes.Add("Ring_04_Inner", 0.221045f);
-
-        ChannelSizes.Add("Ring_00_Outer", 0.234672f); // .1877376
-        ChannelSizes.Add("Ring_01_Outer", 0.221045f); // .176836
-        ChannelSizes.Add("Ring_02_Outer", 0.221045f);
-        ChannelSizes.Add("Ring_03_Outer", 0.221045f);
-        ChannelSizes.Add("Ring_04_Outer", 0.228175f); // .18254                
-    }
+    }    
 }
