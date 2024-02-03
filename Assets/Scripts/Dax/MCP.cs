@@ -579,7 +579,8 @@ public class MCP : MonoBehaviour
             default: Debug.LogError("GetFacetMaterial(): Invalid Bumper color: " + color); return null;
         }
     }
-
+    // moassetstoget
+    // bumer matierials None and Death
     public Material GetBumperMaterial(Bumper.eBumperType type, Facet.eFacetColors color)
     {
         if (type != Bumper.eBumperType.COLOR_MATCH)
