@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class Wheel : MonoBehaviour
@@ -66,8 +67,8 @@ public class Wheel : MonoBehaviour
             NumFacetsOnBoard[i] = facets.RemoveAll(x => x._Color == (Facet.eFacetColors)i);
             //Debug.Log("num " + ((BoardObject.eFacetColors)i).ToString() + " on board: " + NumFacetsOnBoard[i]);
         }
-        int x = 5;
-        x++;
+       // int x = 5;
+       // x++;
     }         
     
     public void CollectPickupFacet(Facet facet)
@@ -75,8 +76,8 @@ public class Wheel : MonoBehaviour
         //Debug.LogError("CollectPickupFacet()");
 
         //NumPickupFacetsCollected++;
-        NumFacetsCollected[(int)Facet.eFacetColors.WHITE]++;
-        DaxRef._UIRoot.SetFacetColorText(Facet.eFacetColors.BLUE, NumFacetsCollected[(int)Facet.eFacetColors.WHITE]);
+        NumFacetsCollected[(int)facet._Color]++;
+        DaxRef._UIRoot.SetFacetColorText(facet._Color, NumFacetsCollected[(int)facet._Color]);
         DaxRef.AddPoints(5);
         DestroyImmediate(facet.gameObject);
         CheckVictoryConditions();
@@ -92,9 +93,9 @@ public class Wheel : MonoBehaviour
 
     public bool CheckVictoryConditions()
     {       
-        bool gameWon = false;
+        bool gameWon = true;
 
-        switch (VictoryCondition)
+       /* switch (VictoryCondition)
         {
             case Dax.eVictoryConditions.COLLECTION:
                 if (NumFacetsCollected[(int)Facet.eFacetColors.WHITE] == NumFacetsOnBoard[(int)Facet.eFacetColors.WHITE])
@@ -114,6 +115,15 @@ public class Wheel : MonoBehaviour
                     
                 }
                 break;               
+        }*/        
+        for(int i = 0; i < NumFacetsCollected.Count-1; i++)
+        {                   
+            if (NumFacetsCollected[i] != NumFacetsOnBoard[i])
+            {
+                gameWon = false;
+                break;
+            }
+            
         }
 
         if(gameWon == true)

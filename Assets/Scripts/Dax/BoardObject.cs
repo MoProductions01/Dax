@@ -192,6 +192,25 @@ public class BoardObject : MonoBehaviour
         BoardObject bo = boardObjectColliders[0].GetComponentInParent<BoardObject>(); // monote - maybe loop over this
         switch(bo.BoardObjectType) 
         {
+            case eBoardObjectType.FACET:                            
+                Facet facet = boardObjectColliders[0].GetComponentInParent<Facet>();
+                //if(facet._Color == Facet.eFacetColors.WHITE)
+                if(_Dax.CurWheel.VictoryCondition == Dax.eVictoryConditions.COLLECTION)
+                {
+                    //Debug.LogError("Pickup facet collect");
+                    facet.SpawningNode.SpawnedBoardObject = null;
+                    //curSphereColliders.Remove(facet.GetComponentInChildren<Collider>()); // moupdate - loook in making this a function
+                    this._Dax.CurWheel.CollectPickupFacet(facet);                                
+                    //DestroyImmediate(facet.gameObject);
+                    //_Dax.CurWheel.CheckVictoryConditions();
+                }
+                else
+                {
+                    //Debug.LogError("Color facet collect");
+                    if (player.CarriedColorFacet != null) { /*Debug.Log("you already have a facet: " + playerDiode.CarriedFacet.name);*/ }
+                    else player.CarriedColorFacet = bo;
+                }
+                break;  
             case eBoardObjectType.HAZARD:
                 Hazard hazard = boardObjectColliders[0].GetComponentInParent<Hazard>();
                 if (hazard == player.TempEnemyIgnore) break; // moupdate = make sure this works

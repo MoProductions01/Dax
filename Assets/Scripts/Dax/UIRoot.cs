@@ -12,7 +12,7 @@ public class UIRoot : MonoBehaviour
     public TextMeshPro TimerText;
     public TextMeshPro ScoreText;
     public GameObject[] ColorCounters;
-    public TextMeshPro[] ColorCounterTexts = new TextMeshPro[(int)Facet.eFacetColors.WHITE];
+    public TextMeshPro[] ColorCounterTexts = new TextMeshPro[(int)Facet.eFacetColors.ORANGE];
     public GameObject ShieldIcon = null;
     public GameObject FacetCollectIcon = null;
     public TextMeshPro EndGameText;
@@ -62,7 +62,7 @@ public class UIRoot : MonoBehaviour
         }
         SetTimerText();
         ScoreText.SetText(0.ToString());
-        if(_Dax.CurWheel.VictoryCondition == Dax.eVictoryConditions.COLLECTION)
+        /*if(_Dax.CurWheel.VictoryCondition == Dax.eVictoryConditions.COLLECTION)
         {
             Material greyMaterial = Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Grey"));
             Material whiteMaterial = _MCP.GetFacetMaterial(Facet.eFacetColors.WHITE);            
@@ -81,6 +81,11 @@ public class UIRoot : MonoBehaviour
                 ColorCounters[i].GetComponent<MeshRenderer>().material = _MCP.GetFacetMaterial((Facet.eFacetColors)i);
                 ColorCounterTexts[i].SetText(0.ToString());
             }
+        }*/
+        for (int i = 0; i < ColorCounters.Length; i++)
+        {
+            ColorCounters[i].GetComponent<MeshRenderer>().material = _MCP.GetFacetMaterial((Facet.eFacetColors)i);
+            ColorCounterTexts[i].SetText(0.ToString());
         }
         PreGameButton.gameObject.SetActive(true);
     }

@@ -155,8 +155,8 @@ public class MCP : MonoBehaviour
         go.transform.parent = rootGO.gameObject.transform;
         Wheel wheel = go.AddComponent<Wheel>();
 
-        wheel.NumFacetsOnBoard = new List<int>(new int[((int)Facet.eFacetColors.WHITE) + 1]);
-        wheel.NumFacetsCollected = new List<int>(new int[((int)Facet.eFacetColors.WHITE) + 1]);        
+        wheel.NumFacetsOnBoard = new List<int>(new int[((int)Facet.eFacetColors.ORANGE) + 1]);
+        wheel.NumFacetsCollected = new List<int>(new int[((int)Facet.eFacetColors.ORANGE) + 1]);        
         wheel.DaxRef = daxRef;
 
         GameObject ringColliderPrefab = null;
@@ -220,7 +220,7 @@ public class MCP : MonoBehaviour
                     bumper.AddComponent<MeshCollider>();
                     bumper.GetComponent<MeshCollider>().convex = true;
                     bumper.AddComponent<Bumper>();
-                    bumper.gameObject.GetComponent<MeshRenderer>().material = mcp.GetBumperMaterial(Bumper.eBumperType.REGULAR, Facet.eFacetColors.WHITE);                    
+                    bumper.gameObject.GetComponent<MeshRenderer>().material = mcp.GetBumperMaterial(Bumper.eBumperType.REGULAR, Facet.eFacetColors.ORANGE);                    
                 }
 
                 // CHANNEL CONTAINER
@@ -573,9 +573,9 @@ public class MCP : MonoBehaviour
             case Facet.eFacetColors.BLUE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Blue"));
             case Facet.eFacetColors.YELLOW: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Yellow"));
             case Facet.eFacetColors.PURPLE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Purple"));
-            case Facet.eFacetColors.PINK: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Pink"));
+            //case Facet.eFacetColors.PINK: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Pink"));
             case Facet.eFacetColors.ORANGE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Orange"));
-            case Facet.eFacetColors.WHITE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_White"));
+           // case Facet.eFacetColors.WHITE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_White"));
             default: Debug.LogError("GetFacetMaterial(): Invalid Bumper color: " + color); return null;
         }
     }

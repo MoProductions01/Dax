@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Facet : BoardObject
 {
-    public enum eFacetColors { RED, GREEN, BLUE, YELLOW, PURPLE, PINK, ORANGE, WHITE };
+    public enum eFacetColors { RED, GREEN, BLUE, YELLOW, PURPLE, /*PINK,*/ ORANGE/*, WHITE*/ };
     public eFacetColors _Color;
     public override void InitForChannelNode(ChannelNode spawnNode, Dax dax)
     {

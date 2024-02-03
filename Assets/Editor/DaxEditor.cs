@@ -122,7 +122,12 @@ public class DaxEditor : Editor
         }
         // ************ Pickup Facets on board/to collect
         EditorGUILayout.Separator();
-        if(dax.CurWheel.VictoryCondition == Dax.eVictoryConditions.COLLECTION)
+        for (int i = 0; i < dax.CurWheel.NumFacetsOnBoard.Count-1; i++)
+        {
+            Facet.eFacetColors curColor = (Facet.eFacetColors)i;
+            EditorGUILayout.LabelField(curColor.ToString() + " To Collect: " + dax.CurWheel.NumFacetsOnBoard[(int)curColor]);
+        }  
+       /* if(dax.CurWheel.VictoryCondition == Dax.eVictoryConditions.COLLECTION)
         {            
             EditorGUILayout.LabelField("Pickup Facets To Collect " + dax.CurWheel.NumFacetsOnBoard[(int)Facet.eFacetColors.WHITE]);
         }
@@ -134,7 +139,7 @@ public class DaxEditor : Editor
                 Facet.eFacetColors curColor = (Facet.eFacetColors)i;
                 EditorGUILayout.LabelField(curColor.ToString() + " To Collect: " + dax.CurWheel.NumFacetsOnBoard[(int)curColor]);
             }           
-        }       
+        }   */    
 
         // ************ Rings        
         EditorGUILayout.Separator();
@@ -262,8 +267,9 @@ public class DaxEditor : Editor
                 {
                     selBumper.BumperType = newBumperType;
                     UpdateEnumProperty(selBumperSO, "BumperType", (int)selBumper.BumperType);
-                    if (newBumperType == Bumper.eBumperType.COLOR_MATCH) selBumper.BumperColor = Facet.eFacetColors.RED;
-                    else selBumper.BumperColor = Facet.eFacetColors.WHITE;
+                   // if (newBumperType == Bumper.eBumperType.COLOR_MATCH) selBumper.BumperColor = Facet.eFacetColors.RED;
+                    //else selBumper.BumperColor = Facet.eFacetColors.WHITE;
+                    selBumper.BumperColor = Facet.eFacetColors.RED;
                     selBumper.gameObject.GetComponent<MeshRenderer>().material = GetBumperMaterial(newBumperType, selBumper.BumperColor);                    
                     UpdateEnumProperty(selBumperSO, "BumperColor", (int)selBumper.BumperColor);
                 }
@@ -273,7 +279,7 @@ public class DaxEditor : Editor
                     Facet.eFacetColors newBumperColor = (Facet.eFacetColors)EditorGUILayout.EnumPopup("Bumper Color", selBumper.BumperColor);
                     if (newBumperColor != selBumper.BumperColor)
                     {
-                        if (newBumperColor == Facet.eFacetColors.WHITE) { Debug.LogError("Bumper Color can't be White."); return; }
+                        //if (newBumperColor == Facet.eFacetColors.WHITE) { Debug.LogError("Bumper Color can't be White."); return; }
                         selBumper.BumperColor = newBumperColor;
                         selBumper.gameObject.GetComponent<MeshRenderer>().material = GetBumperMaterial(selBumper.BumperType, newBumperColor);
                         UpdateEnumProperty(selBumperSO, "BumperColor", (int)selBumper.BumperColor);
@@ -377,7 +383,8 @@ public class DaxEditor : Editor
         float buttonWidth = 200f;
         if (GUILayout.Button("Create Facet", GUILayout.Width(buttonWidth)))
         {
-            mcp.CreateFacet(selChannelNode, dax, Facet.eFacetColors.WHITE);
+            //mcp.CreateFacet(selChannelNode, dax, Facet.eFacetColors.WHITE);
+            mcp.CreateFacet(selChannelNode, dax, Facet.eFacetColors.RED);
         }
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Hazard", GUILayout.Width(buttonWidth)))

@@ -17,7 +17,7 @@ public class Ring : MonoBehaviour
     public void CollectAllPickupFacets()
     {        
         List<Facet> collectFacets = this.GetComponentsInChildren<Facet>().ToList();
-        collectFacets.RemoveAll(x => x._Color != Facet.eFacetColors.WHITE);
+        //collectFacets.RemoveAll(x => x._Color != Facet.eFacetColors.WHITE);
         foreach(Facet facet in collectFacets)
         {
             this.DaxRef.CurWheel.CollectPickupFacet(facet);
