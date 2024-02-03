@@ -62,7 +62,7 @@ public class BoardObject : MonoBehaviour
     }
     public virtual void InitForChannelNode(ChannelNode spawnNode, Dax dax)
     {
-       // Debug. Log("BoardObject.InitFromCreation(): " + this.name + " --MoSave--");        
+        Debug. Log("BoardObject.InitFromCreation(): " + this.name + " --MoSave--");        
         _Dax = dax;       
        
         if (spawnNode != null) // if it's not the player do the spawn stuff right away moupdate - we now have another thing for initting on player

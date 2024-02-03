@@ -11,8 +11,8 @@ public class DaxEditor : Editor
 {
     public GameObject LastSelectedObject = null;    // used for checking for changes in the selected object
     int SelectedRing = 0; // index of our currently selected ring   
-    bool IsDialogueShowing = false; // this is to get around a weird Unity bug where dialogues show up twice.  FUN
-    bool StartChannelError = false; // if we're waiting for a system popup on a start channel error    
+   // bool IsDialogueShowing = false; // this is to get around a weird Unity bug where dialogues show up twice.  FUN
+   // bool StartChannelError = false; // if we're waiting for a system popup on a start channel error    
     bool RingsChangePopupActive = false; // to confirm if the user does in fact want to reduce the number of rings since that also destroys objects
     int NumRingsUserWants = 4; // how many rings the user wants to change to
 
@@ -200,6 +200,25 @@ public class DaxEditor : Editor
             }
             SelectedRing = newRing;
         }
+         #region INIT_SAVE
+            // **** Puzzle initialization/saving
+            EditorGUILayout.Separator();
+            //EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            if (GUILayout.Button("Init Puzzle"))
+            {
+                // check to see if the chosen start channel is valid
+                // StartChannelError = !dax._Player.CurChannel.IsValidStartChannel();                               
+                //if (StartChannelError == true) return; // bail if the player's starting channel isn't valid                
+                dax.CurWheel.InitWheelFacets();
+                dax.CreateSaveData(dax);
+                Debug.Log("*******Puzzle Initted*********"); // moupdate - restrict to center nodes
+            }
+            EditorGUILayout.Separator();
+            if(GUILayout.Button("Save Puzzle"))
+            {
+                mcp.SavePuzzle();                
+            }             
+            #endregion
 
         // ********** Objects selected by mouse
         GameObject selected = Selection.activeGameObject;        
@@ -306,11 +325,9 @@ public class DaxEditor : Editor
                     //Debug.Log("Selected a potential start node");                    
                     if (GUILayout.Button("Make Starting Channel", GUILayout.Width(200f)))
                     {                                                
-                        int channelIndex = Int32.Parse(selChannelNode.name.Substring(19, 2)) - 1;
-                        Debug.Log($"node name: {selChannelNode.name}, channel Index: {channelIndex}");
-
-                        dax.StartChannelIndex = channelIndex;
-                        FindObjectOfType<Player>().SetStartChannel(channelIndex);
+                        int startChannelIndex = Int32.Parse(selChannelNode.name.Substring(19, 2)) - 1;                        
+                        dax.StartChannelIndex = startChannelIndex;
+                        FindObjectOfType<Player>().SetStartChannel(startChannelIndex);
                         UpdateIntProperty(daxSO, "StartChannelIndex", dax.StartChannelIndex);                                    
                     }
                 }                                                                                                                                      
@@ -334,37 +351,7 @@ public class DaxEditor : Editor
             // wheel.StartNodes = wheel.transform.transform.GetComponentsInChildren<ChannelNode>().ToList();
             // wheel.StartNodes.RemoveAll(x => x.name.Contains("Ring_00_Start_Node") == false);
 
-            #endregion
-            #region INIT_SAVE
-            // **** Puzzle initialization/saving
-            EditorGUILayout.Separator();
-            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-            // first check for any errors 
-            if (StartChannelError == true && IsDialogueShowing == false)
-            {   // you tried to init but the player's starting channel is not valid                      
-                IsDialogueShowing = true;           
-                EditorUtility.DisplayDialog("Player Start Channel Error", "Chosen start channel is not available", "OK");
-                IsDialogueShowing = false;
-                StartChannelError = false;
-            }       
-            else
-            {   // no init errors so give the user an option to retry
-                if (GUILayout.Button("Init Puzzle"))
-                {
-                    // check to see if the chosen start channel is valid
-                   // StartChannelError = !dax._Player.CurChannel.IsValidStartChannel();                               
-                    //if (StartChannelError == true) return; // bail if the player's starting channel isn't valid                
-                    dax.CurWheel.InitWheelFacets();
-                    dax.CreateSaveData(dax);
-                    Debug.Log("*******Puzzle Initted*********"); // moupdate - restrict to center nodes
-                }
-                EditorGUILayout.Separator();
-                if(GUILayout.Button("Save Puzzle"))
-                {
-                    mcp.SavePuzzle();                
-                }                                                                                         
-            }
-            #endregion
+            #endregion            
         }
 
         // Save data        

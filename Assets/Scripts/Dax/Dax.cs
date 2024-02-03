@@ -6,13 +6,15 @@ using UnityEngine;
 public class Dax : MonoBehaviour
 {   
     public enum eVictoryConditions { COLLECTION, COLOR_MATCH };
-
-    public string PuzzleName = "Default Puzzle";
     public enum eGameState { PRE_GAME, RUNNING, GAME_OVER };
+    
+    public static float MAX_SPIN_SPEED = 20f;
+    public static float MAX_SPEED = 1f; 
+
+    public string PuzzleName = "Default Puzzle";    
     public eGameState GameState;    
 
-    public static float MAX_SPIN_SPEED = 20f;
-    public static float MAX_SPEED = 1f;    
+       
     
     public Wheel CurWheel;
     public Ring CurTouchedRing = null;
@@ -172,11 +174,6 @@ public class Dax : MonoBehaviour
         GameState = eGameState.GAME_OVER;
         _UIRoot.ToggleEndGameItems(reason, true);
     }
-
-    #region GameFlow                           
-
-    
-    #endregion
 
     public void StartGame()
     {

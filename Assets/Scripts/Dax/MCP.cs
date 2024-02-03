@@ -20,7 +20,7 @@ public class MCP : MonoBehaviour
         file.Close();
         _Dax.ResetPuzzleFromSave(saveData);        
     }
-    public void SavePuzzle() // moupdate - why are there two save puzzles
+    public void SavePuzzle() 
     {
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file;
