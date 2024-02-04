@@ -184,6 +184,7 @@ public class Player : BoardObject
         {            
             this.Speed = playerSave.Speed;
             CurChannel = GameObject.Find(playerSave.StartChannel).GetComponent<Channel>();
+            this.transform.parent = CurChannel.MyRing.transform;
             this.transform.LookAt(CurChannel.StartNode.transform);
             //this.MoveDir = playerSave.MoveDir; monewsave
         }

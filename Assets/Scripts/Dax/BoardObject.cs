@@ -5,7 +5,7 @@ using System.Linq;
 
 public class BoardObject : MonoBehaviour
 {    
-    public enum eBoardObjectType { PLAYER, FACET, HAZARD, FACET_COLLECT, SHIELD, SPEED_MOD, GAME_MOD };
+    public enum eBoardObjectType { PLAYER, FACET, HAZARD, FACET_COLLECT, SHIELD, SPEED_MOD, GAME_MOD }; // monote - change GAME_MOD to POINT_MOD
     public eBoardObjectType BoardObjectType;
 
     public enum eStartDir {OUTWARD, INWARD}; // monewsave

@@ -385,46 +385,39 @@ public class DaxEditor : Editor
         //******************************************************************************************
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Hazard", GUILayout.Width(buttonWidth)))
-        {
-            string prefabString = "Dax/Prefabs/Hazards/" + 
+        {            
+            string prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.HAZARD] + 
                 Hazard.HAZARD_STRINGS[(int)Hazard.eHazardType.ENEMY];
-            mcp.CreateBoardObject<Hazard>(selChannelNode, dax, prefabString);
-            //mcp.CreateHazard(selChannelNode, dax, Hazard.eHazardType.ENEMY);            
+            mcp.CreateBoardObject<Hazard>(selChannelNode, dax, prefabString);                      
         }    
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Facet Collect", GUILayout.Width(buttonWidth)))
         {
-            string prefabString = "Dax/Prefabs/Pickups/Facet_Collects/" + 
+            string prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.FACET_COLLECT] + 
                 FacetCollect.FACET_COLLECT_STRINGS[(int)FacetCollect.eFacetCollectTypes.RING];
-            mcp.CreateBoardObject<FacetCollect>(selChannelNode, dax, prefabString);
-            //mcp.CreateFacetCollect(selChannelNode, dax, FacetCollect.eFacetCollectTypes.RING);
+            mcp.CreateBoardObject<FacetCollect>(selChannelNode, dax, prefabString);            
         } 
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Shield", GUILayout.Width(buttonWidth)))
         {
-            string prefabString = "Dax/Prefabs/Pickups/Shields/" + 
-                Shield.SHIELD_STRINGS[(int)Shield.eShieldTypes.SINGLE_KILL];
-            mcp.CreateBoardObject<Shield>(selChannelNode, dax, prefabString);
-            //mcp.CreateShield(selChannelNode, dax, Shield.eShieldTypes.HIT);            
+            string prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.SHIELD] + 
+                Shield.SHIELD_STRINGS[(int)Shield.eShieldTypes.HIT];
+            mcp.CreateBoardObject<Shield>(selChannelNode, dax, prefabString);                  
         }
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Speed Mod", GUILayout.Width(buttonWidth)))
         {
-            string prefabString = "Dax/Prefabs/Pickups/Speed_Mods/" +
+            string prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.SPEED_MOD] +
                 SpeedMod.SPEED_MOD_STRINGS[(int)SpeedMod.eSpeedModType.PLAYER_SPEED];
-            mcp.CreateBoardObject<SpeedMod>(selChannelNode, dax, prefabString);            
-            //mcp.CreateSpeedMod(selChannelNode, dax, SpeedMod.eSpeedModType.PLAYER_SPEED);
+            mcp.CreateBoardObject<SpeedMod>(selChannelNode, dax, prefabString);                        
         }
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Game Mod", GUILayout.Width(buttonWidth)))
         {
-            string prefabString = "Dax/Prefabs/Pickups/Point_Mods/" +
-                GameMod.GAME_MOD_STRINGS[(int)GameMod.eGameModType.POINTS_MULTIPLIER];
-            mcp.CreateBoardObject<GameMod>(selChannelNode, dax, prefabString);
-            //mcp.CreateGameMod(selChannelNode, dax, GameMod.eGameModType.EXTRA_POINTS);          
-        }            
-               
-        
+            string prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.GAME_MOD] +
+                GameMod.GAME_MOD_STRINGS[(int)GameMod.eGameModType.EXTRA_POINTS];
+            mcp.CreateBoardObject<GameMod>(selChannelNode, dax, prefabString);                   
+        }                                   
     }
 
     // moupdate - get the MCP/Dax confusion sorted out
@@ -469,7 +462,11 @@ public class DaxEditor : Editor
                 if (newHazardType != hazard.HazardType)
                 {
                     DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                    
-                    hazard = mcp.CreateHazard(selChannelNode, dax, newHazardType);
+                    string prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.HAZARD] + 
+                        Hazard.HAZARD_STRINGS[(int)(Hazard.eHazardType)newHazardType];
+                    hazard = mcp.CreateBoardObject<Hazard>(selChannelNode, dax, prefabString);
+                    //hazard = mcp.CreateHazard(selChannelNode, dax, newHazardType);
+
                 }
                 if (hazard.HazardType == Hazard.eHazardType.ENEMY /*|| hazard.HazardType == Hazard.eHazardType.EMP (|| hazard.HazardType == Hazard.eHazardType.BOMB*/)
                 {   // Speed and Starting Direction
@@ -512,7 +509,10 @@ public class DaxEditor : Editor
             if (newGameModType != gameMod.GameModType)
             {
                 DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);          
-                gameMod = mcp.CreateGameMod(selChannelNode, dax, newGameModType);
+                //gameMod = mcp.CreateGameMod(selChannelNode, dax, newGameModType);
+                string prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.GAME_MOD] +
+                    GameMod.GAME_MOD_STRINGS[(int)(GameMod.eGameModType)newGameModType];
+                gameMod = mcp.CreateBoardObject<GameMod>(selChannelNode, dax, prefabString);  
             }
 
             int newGameModVal = EditorGUILayout.IntField("Game Mod Val: ", gameMod.GameModVal);
@@ -542,7 +542,10 @@ public class DaxEditor : Editor
             if (newFacetCollectType != facetCollect.FacetCollectType)
             {
                 DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                
-                facetCollect = mcp.CreateFacetCollect(selChannelNode, dax, newFacetCollectType);
+                //facetCollect = mcp.CreateFacetCollect(selChannelNode, dax, newFacetCollectType);
+                string prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.FACET_COLLECT] +
+                    FacetCollect.FACET_COLLECT_STRINGS[(int)(FacetCollect.eFacetCollectTypes)newFacetCollectType];
+                facetCollect = mcp.CreateBoardObject<FacetCollect>(selChannelNode, dax, prefabString); 
             }            
         }                
         
@@ -556,7 +559,10 @@ public class DaxEditor : Editor
             {
                 //Debug.LogError("Implement this");
                 DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);
-                shield = mcp.CreateShield(selChannelNode, dax, newShieldType);                
+                //shield = mcp.CreateShield(selChannelNode, dax, newShieldType);                
+                string prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.SHIELD] + 
+                    Shield.SHIELD_STRINGS[(int)(Shield.eShieldTypes)newShieldType];
+                shield = mcp.CreateBoardObject<Shield>(selChannelNode, dax, prefabString); 
             }           
         }         
         else if(bo.BoardObjectType == BoardObject.eBoardObjectType.SPEED_MOD)
@@ -568,7 +574,11 @@ public class DaxEditor : Editor
             if (newSpeedModType != speedMod.SpeedModType)
             {
                 DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                
-                speedMod = mcp.CreateSpeedMod(selChannelNode, dax, newSpeedModType);
+                //speedMod = mcp.CreateSpeedMod(selChannelNode, dax, newSpeedModType);
+                string prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.SPEED_MOD] +
+                    SpeedMod.SPEED_MOD_STRINGS[(int)(SpeedMod.eSpeedModType)newSpeedModType];
+                mcp.CreateBoardObject<SpeedMod>(selChannelNode, dax, prefabString); 
+
             }        
             float minSpeedModVal, maxSpeedModVal;
             if(speedMod.SpeedModType == SpeedMod.eSpeedModType.RING_SPEED)

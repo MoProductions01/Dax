@@ -409,20 +409,7 @@ public class MCP : MonoBehaviour
                 channelNodes[1].InitFromCreation(channel);
                 channelNodes[2].InitFromCreation(channel);
             }
-        }
-
-        // Gather start nodes                
-       // wheel.StartNodes = wheel.transform.transform.GetComponentsInChildren<ChannelNode>().ToList();
-      //  wheel.StartNodes.RemoveAll(x => x.name.Contains("Ring_00_Start_Node") == false);        
-      //  wheel.StartNodes = wheel.StartNodes.OrderBy(o=>o.name).ToList();        
-
-        // Make sure the channel diodes are pointing at each other
-        /*List<Channel> channels = wheel.GetComponentsInChildren<Channel>().ToList();
-        foreach (Channel channel in channels) 
-        {
-            channel.StartNode.transform.LookAt(channel.EndNode.transform);
-            channel.EndNode.transform.LookAt(channel.StartNode.transform);   
-        }*/
+        }        
 
         // Get rid of objects used for location reference
         UnityEngine.Object.DestroyImmediate(locators);
@@ -442,7 +429,17 @@ public class MCP : MonoBehaviour
         ChangeFacetColor(colorFacet, color);        
     }      
 
-    public Hazard CreateHazard(ChannelNode channelNode, Dax dax, Hazard.eHazardType type)
+    public T CreateBoardObject<T>(ChannelNode channelNode, Dax dax, string prefabString) where T : BoardObject
+    {        
+        // monote - look into adding the type in code so changing things won't fuck up prefabs
+        Debug.Log("CreateBoardObject: " + typeof(T).FullName);
+        T prefab = Resources.Load<T>(prefabString);
+        T instantiaedObject = Instantiate<T>(prefab, channelNode.transform);
+        instantiaedObject.InitForChannelNode(channelNode, dax);
+        return instantiaedObject;        
+    }
+
+   /* public Hazard CreateHazard(ChannelNode channelNode, Dax dax, Hazard.eHazardType type)
     {                
         string prefabString = "Dax/Prefabs/Hazards/" + Hazard.HAZARD_STRINGS[(int)type];
         
@@ -450,11 +447,11 @@ public class MCP : MonoBehaviour
         Hazard hazard = Instantiate<Hazard>(hazardPrefab, channelNode.transform);
         hazard.InitForChannelNode(channelNode, dax);
         return hazard;        
-    }
+    }*/
     
     
 
-    public FacetCollect CreateFacetCollect(ChannelNode channelNode, Dax dax, FacetCollect.eFacetCollectTypes type)
+    /*public FacetCollect CreateFacetCollect(ChannelNode channelNode, Dax dax, FacetCollect.eFacetCollectTypes type)
     {
         FacetCollect facetCollectPrefab = null;
         switch (type)
@@ -470,19 +467,11 @@ public class MCP : MonoBehaviour
         FacetCollect facetCollect = Instantiate<FacetCollect>(facetCollectPrefab, channelNode.transform);
         facetCollect.InitForChannelNode(channelNode, dax);
         return facetCollect;
-    }
+    }*/
 
-    public T CreateBoardObject<T>(ChannelNode channelNode, Dax dax, string prefabString) where T : BoardObject
-    {        
-        // monote - look into adding the type in code so changing things won't fuck up prefabs
-        Debug.Log("CreateBoardObject: " + typeof(T).FullName);
-        T prefab = Resources.Load<T>(prefabString);
-        T instantiaedObject = Instantiate<T>(prefab, channelNode.transform);
-        instantiaedObject.InitForChannelNode(channelNode, dax);
-        return instantiaedObject;        
-    }
+    
 
-    public Shield CreateShield(ChannelNode channelNode, Dax dax, Shield.eShieldTypes type)
+    /*public Shield CreateShield(ChannelNode channelNode, Dax dax, Shield.eShieldTypes type)
     {
        // Debug.Log("CreateShield() type: " + type.ToString());
 
@@ -499,9 +488,9 @@ public class MCP : MonoBehaviour
         Shield shield = Instantiate<Shield>(shieldPrefab, channelNode.transform);       
         shield.InitForChannelNode(channelNode, dax);
         return shield;        
-    }
+    }*/
 
-    public SpeedMod CreateSpeedMod(ChannelNode channelNode, Dax dax, SpeedMod.eSpeedModType type)
+    /*public SpeedMod CreateSpeedMod(ChannelNode channelNode, Dax dax, SpeedMod.eSpeedModType type)
     {
         SpeedMod speedModPrefab = null;
         switch (type) // moupdate - send the Type to the functions instead of a different one for each type
@@ -536,7 +525,7 @@ public class MCP : MonoBehaviour
         GameMod gameMod = Instantiate<GameMod>(gameModPrefab, channelNode.transform);
         gameMod.InitForChannelNode(channelNode, dax);        
         return gameMod;
-    }
+    }*/
 
     
      
@@ -682,70 +671,54 @@ public class MCP : MonoBehaviour
                 gameMod.GameModType = (GameMod.eGameModType)boSave.IntList[0];
                 gameMod.GameModVal = boSave.IntList[1];
                 gameMod.GameModTime = boSave.FloatList[0];
-                break;
-            /*case BoardObject.eBoardObjectType.INTERACTABLE:
-                Interactable interactable = (Interactable)bo;
-                interactable.InteractableType = (Interactable.eInteractableType)boSave.IntList[0];
-                if (interactable.InteractableType == Interactable.eInteractableType.SWITCH)
-                {
-                    //Switch _switch = (Switch)bo;
-                    //string s = "SWITCH named: " + switchDiode.name + ": ";
-                    foreach (string name in boSave.StringList01)
-                    {
-                        //  s += ", turn off: " + name;
-                        ChannelPiece offPiece = GameObject.Find(name).GetComponent<ChannelPiece>();
-                        interactable.PiecesToTurnOff.Add(offPiece);
-                    }
-                    foreach (string name in boSave.StringList02)
-                    {
-                        //  s += ", turn on: " + name;
-                        ChannelPiece onPiece = GameObject.Find(name).GetComponent<ChannelPiece>();
-                        interactable.PiecesToTurnOn.Add(onPiece);
-                    }
-                    // Debug.Log(s);
-                }
-                else if (interactable.InteractableType == Interactable.eInteractableType.WARP_GATE)
-                {
-                    foreach (string name in boSave.StringList01)
-                    {
-                        GameObject go = GameObject.Find(name);
-                        Interactable destGate = GameObject.Find(name).GetComponent<Interactable>();
-                        interactable.DestGates.Add(destGate);
-                    }
-                }
-                break;*/
+                break;            
         }
     }
-
+    // public enum eBoardObjectType { PLAYER, FACET, HAZARD, FACET_COLLECT, SHIELD, SPEED_MOD, GAME_MOD };
+    public static List<string> PREFAB_ROOT_STRINGS = new List<string> {"Dax/Prefabs/Player_Diode", "Dax/Prefabs/Pickups/Facet/",
+        "Dax/Prefabs/Hazards/", "Dax/Prefabs/Pickups/Facet_Collects/", "Dax/Prefabs/Pickups/Shields/", 
+        "Dax/Prefabs/Pickups/Speed_Mods/", "Dax/Prefabs/Pickups/Point_Mods/"};
     public void CreateBoardObjectFromSaveData(ChannelNode channelNode, Dax.BoardObjectSave boSave, Dax dax)
     {
         //Debug.Log("Dax.CreateBoardObjectForNode(): " + channelNode.name + ", of type: " + boSave.Type); // moupdate *!!! this is being called 100 times for the player
 
+        string prefabString;
         switch (boSave.Type)
-        {
+        {                        
             case BoardObject.eBoardObjectType.FACET:
                 CreateFacet(channelNode, dax, (Facet.eFacetColors)(Facet.eFacetColors)boSave.IntList[0]);
                 break;
             case BoardObject.eBoardObjectType.HAZARD:
-                CreateHazard(channelNode, dax, (Hazard.eHazardType)boSave.IntList[0]);
+                prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.HAZARD] + 
+                    Hazard.HAZARD_STRINGS[(int)(Hazard.eHazardType)boSave.IntList[0]];
+                CreateBoardObject<Hazard>(channelNode, dax, prefabString);   
+                //CreateHazard(channelNode, dax, (Hazard.eHazardType)boSave.IntList[0]);
                 break;
-            case BoardObject.eBoardObjectType.GAME_MOD:
-                CreateGameMod(channelNode, dax, (GameMod.eGameModType)boSave.IntList[0]);
-                break;
-           // case BoardObject.eBoardObjectType.INTERACTABLE:
-            //    Interactable interactable = CreateInteractable(channelNode, dax, (Interactable.eInteractableType)boSave.IntList[0]);
-            //    break;
-            case BoardObject.eBoardObjectType.SHIELD:                
-                //Debug.LogError("Implement this");
-                CreateShield(channelNode, dax, (Shield.eShieldTypes)boSave.IntList[0]);
-                //shield.InitForChannelNode(channelNode, dax);
-                break;
-            case BoardObject.eBoardObjectType.SPEED_MOD:
-                SpeedMod speedMod = CreateSpeedMod(channelNode, dax, (SpeedMod.eSpeedModType)boSave.IntList[0]);
-                break;            
             case BoardObject.eBoardObjectType.FACET_COLLECT:                
-                CreateFacetCollect(channelNode, dax, (FacetCollect.eFacetCollectTypes)boSave.IntList[0]);
-                break;
+                //prefabString = "Dax/Prefabs/Pickups/Facet_Collects/" + 
+                prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.FACET_COLLECT] +
+                    FacetCollect.FACET_COLLECT_STRINGS[(int)(FacetCollect.eFacetCollectTypes)boSave.IntList[0]];
+                CreateBoardObject<FacetCollect>(channelNode, dax, prefabString);  
+                //CreateFacetCollect(channelNode, dax, (FacetCollect.eFacetCollectTypes)boSave.IntList[0]);
+                break;       
+            case BoardObject.eBoardObjectType.SHIELD:                                
+                prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.SHIELD] + 
+                    Shield.SHIELD_STRINGS[(int)(Shield.eShieldTypes)boSave.IntList[0]];
+                CreateBoardObject<Shield>(channelNode, dax, prefabString); 
+                //CreateShield(channelNode, dax, (Shield.eShieldTypes)boSave.IntList[0]);                
+                break;  
+            case BoardObject.eBoardObjectType.SPEED_MOD:
+                prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.SPEED_MOD] +
+                    SpeedMod.SPEED_MOD_STRINGS[(int)(SpeedMod.eSpeedModType)boSave.IntList[0]];
+                CreateBoardObject<SpeedMod>(channelNode, dax, prefabString); 
+                //SpeedMod speedMod = CreateSpeedMod(channelNode, dax, (SpeedMod.eSpeedModType)boSave.IntList[0]);
+                break;       
+            case BoardObject.eBoardObjectType.GAME_MOD:
+                prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.GAME_MOD] +
+                    GameMod.GAME_MOD_STRINGS[(int)(GameMod.eGameModType)boSave.IntList[0]];
+                CreateBoardObject<GameMod>(channelNode, dax, prefabString);   
+                //CreateGameMod(channelNode, dax, (GameMod.eGameModType)boSave.IntList[0]);
+                break;         
         }
     }
 

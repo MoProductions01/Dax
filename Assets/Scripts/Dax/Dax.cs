@@ -244,7 +244,14 @@ public class Dax : MonoBehaviour
                 channel.InnerChannel.SetActive(channelSave.InnerActive);
                 channel.OuterChannel.SetActive(channelSave.OuterActive);                
                 //if (channelSave.StartNodeBO != null) mcp.CreateBoardObjectFromSaveData(channel.StartNode, channelSave.StartNodeBO, this);                
-                if (channelSave.MidNodeBO != null) mcp.CreateBoardObjectFromSaveData(channel.MidNode, channelSave.MidNodeBO, this);
+                // Unity handles serialization by creating MidNodeBO's even if you set them to null, so 
+                // a lot of calls are attempted for empty objects, so check to see if there's a start channel defined.
+                // Not the best solution but sorting this out is a future task
+                if (channelSave.MidNodeBO != null && channelSave.MidNodeBO.StartChannel != "") 
+                {
+                    mcp.CreateBoardObjectFromSaveData(channel.MidNode, channelSave.MidNodeBO, this);
+                }
+                
                 //if (channelSave.EndNodeBO != null) mcp.CreateBoardObjectFromSaveData(channel.EndNode, channelSave.EndNodeBO, this);                                
             }            
             // bumpers
