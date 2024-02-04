@@ -92,6 +92,7 @@ public class MCP : MonoBehaviour
 
     /// <summary>
     /// Trashes any existing puzzle in the scene then creates and brand new one from scratch.
+    /// Also takes care of setting up existing GameObjects.  
     /// </summary>
     public static void CreateNewPuzzle()
     {      
@@ -109,24 +110,25 @@ public class MCP : MonoBehaviour
         ResetTransform(decGO.transform);                
         DaxPuzzleSetup daxSetup = decGO.AddComponent<DaxPuzzleSetup>();
 
+        // Dax is the main overall gameplay class.  Pretty much manages everything
         mcp._Dax = new GameObject("Dax").AddComponent<Dax>();        
         daxSetup._Dax = mcp._Dax;
 
-        // start off with just one wheel       
-        Wheel wheel = CreateWheel(mcp, mcp._Dax.gameObject, mcp._Dax, 0);
+        // Wheel is the container class for the gameboard (Rings, etc)
+        Wheel wheel = CreateWheel(mcp/*, mcp._Dax.gameObject, mcp._Dax, 0*/);
         mcp._Dax.CurWheel = wheel;
 
-        // set up the camera
+        // Set up the camera propertly
         Camera mainCamera = Camera.main;
         mainCamera.transform.position = new Vector3(0f, DaxPuzzleSetup.CAMERA_Y_VALUES[3], 0f);
         mainCamera.transform.eulerAngles = new Vector3(90f, 0f, 0f);        
         mainCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("UI"));
 
-        // load up the UI
+        // UI container
         UIRoot uiRootPrefab = Resources.Load<UIRoot>("Dax/Prefabs/UI/UI Root");
         mcp._UIRoot = UnityEngine.Object.Instantiate<UIRoot>(uiRootPrefab);
 
-        // create player and debug canvas
+        // Create the Player and set it up
         Player playerPrefab = Resources.Load<Player>("Dax/Prefabs/Player_Diode");
         Player player = UnityEngine.Object.Instantiate<Player>(playerPrefab, mcp._Dax.transform);        
         player.name = "Player Diode";        
@@ -136,24 +138,33 @@ public class MCP : MonoBehaviour
         player.InitForChannelNode(null, mcp._Dax);
         player.ResetForPuzzleRestart();        
         
-        // debug          
+        // We use a debug class that shows up on display 2 so it doesn't interfere with 
+        // the in game display          
         RifRafDebug rifRafDebugPrefab = Resources.Load<RifRafDebug>("_RifRafDebug");
         RifRafDebug rifRafDebug = UnityEngine.Object.Instantiate<RifRafDebug>(rifRafDebugPrefab, mcp._Dax.gameObject.transform);
         RRDManager.Init(rifRafDebug);        
         daxSetup.RifRafDebugRef = rifRafDebug;
     }
 
-    public static Wheel CreateWheel(MCP mcp, GameObject rootGO, Dax daxRef, int wheelNum)
+    /// <summary>
+    /// Creates the gameboard from prefabs via code.  It can be customized however you need it.
+    /// </summary>
+    /// <param name="mcp">MCP is the main project overseer class</param>
+    /// <returns></returns>
+    public static Wheel CreateWheel(MCP mcp/*, GameObject rootGO, Dax daxRef, int wheelNum*/)
     {
-        GameObject go = new GameObject("Wheel_" + wheelNum.ToString("D2"));
+        // Create the Wheel GameObject/Class and make it a child of Dax
+        GameObject go = new GameObject("Wheel");
         MCP.ResetTransform(go.transform);
-        go.transform.parent = rootGO.gameObject.transform;
+        go.transform.parent = mcp._Dax.gameObject.transform;
         Wheel wheel = go.AddComponent<Wheel>();
+        wheel.DaxRef = mcp._Dax;
 
+        // Create a list for the facets on board and collected based on the enum
         wheel.NumFacetsOnBoard = new List<int>(new int[((int)Facet.eFacetColors.ORANGE) + 1]);
         wheel.NumFacetsCollected = new List<int>(new int[((int)Facet.eFacetColors.ORANGE) + 1]);        
-        wheel.DaxRef = daxRef;
-
+        
+        // Various GameObjects and prefabs used in the creation of the rings
         GameObject ringColliderPrefab = null;
         GameObject ringGameObject = null;
         GameObject bumperGroup = null;
@@ -165,7 +176,7 @@ public class MCP : MonoBehaviour
         wheel.Rings.Clear();
         
         // Create rings
-        for (int ringIndex = 0; ringIndex <= 4; ringIndex++)
+        for (int ringIndex = 0; ringIndex <= Dax.MAX_NUM_RINGS; ringIndex++)
         {
             int locatorIndex;
             string ringIndexString = ringIndex.ToString("D2");
@@ -180,11 +191,13 @@ public class MCP : MonoBehaviour
             ringGameObject.GetComponent<MeshCollider>().convex = false;
             ringGameObject.transform.parent = wheel.gameObject.transform;
             ringGameObject.name = ringString;
-            /*if(ringIndex != 0)*/ ringGameObject.layer = LayerMask.NameToLayer("Main Touch Control");
+            ringGameObject.layer = LayerMask.NameToLayer("Main Touch Control");
             ringGameObject.AddComponent<Ring>();
 
+            // Add the Ring to the wheel
             wheel.Rings.Add(ringGameObject.GetComponent<Ring>());
 
+            // The center ring has no bumpers so if it's any other ring load up and create those
             if (ringIndex != 0)
             {
                 // Bumpers
@@ -193,17 +206,18 @@ public class MCP : MonoBehaviour
                 bumperGroup.AddComponent<BumperGroup>();
             }
 
-            // nodes
+            // Container for the node locations
             nodesContainer = nodes.transform.Find(ringString + "_Nodes").gameObject;
-
+            // Center ring has few channels than the rest
             int numChannels = (ringIndex == 0 ? Wheel.NUM_CENTER_RING_CHANNELS : Wheel.NUM_OUTER_RING_CHANNELS);
 
+            // Create each channel
             for (int i = 0; i < numChannels; i++)
             {
                 string channelString = (i + 1).ToString("D2");
-                string nodeLocatorChannelString = channelString;
-                //if (i != 0) nodeLocatorChannelString = (((numChannels) - i) + 1).ToString("D2");
+                string nodeLocatorChannelString = channelString;                
 
+                // Create bumpers if you're not on the center ring
                 if (ringIndex != 0)
                 {
                     // BUMPER
@@ -218,12 +232,17 @@ public class MCP : MonoBehaviour
                     bumper.gameObject.GetComponent<MeshRenderer>().material = mcp.GetBumperMaterial(Bumper.eBumperType.REGULAR, Facet.eFacetColors.ORANGE);                    
                 }
 
-                // CHANNEL CONTAINER
+                // Create the Channel object
                 GameObject channel = new GameObject(ringString + "_Channel_" + channelString);
                 channel.transform.parent = ringGameObject.transform;
                 channel.AddComponent<Channel>();
 
-                // INNER FLOOR
+                // Channels have an inner and outer section.
+                // Each of the two channel sections begin with a channel piece that
+                // will block the player.  Removing those is the main part of the 
+                // puzzle creation to let the player navigate the wheel.
+
+                // Inner floor
                 locatorIndex = i + (2 * numChannels);
                 if (ringIndex == 0) locatorIndex -= numChannels;
                 GameObject innerFloorLocator = locatorGroup.transform.GetChild(locatorIndex).gameObject;
@@ -233,7 +252,7 @@ public class MCP : MonoBehaviour
                 innerFloor.name = ringString + "_Inner_Floor_" + channelString;
                 innerFloor.gameObject.GetComponent<MeshRenderer>().enabled = false;
 
-                // INNER CHANNEL
+                // Inner channel
                 locatorIndex = i + numChannels;
                 if (ringIndex == 0) locatorIndex -= numChannels;
                 GameObject innerChannelLocator = locatorGroup.transform.GetChild(locatorIndex).gameObject;
@@ -243,11 +262,20 @@ public class MCP : MonoBehaviour
                 innerChannel.transform.name = ringString + "_Inner_Channel_" + channelString;
                 innerChannel.gameObject.layer = LayerMask.NameToLayer("Player Generic Collider");
                 innerChannel.AddComponent<MeshCollider>();
-                innerChannel.GetComponent<MeshCollider>().convex = true;
-                // if (channelString.Contains("01")) Debug.Log(innerChannel.name + ", " + innerChannel.GetComponent<MeshCollider>().bounds.extents.ToString("F6"));                                    
+                innerChannel.GetComponent<MeshCollider>().convex = true;                
                 innerChannel.AddComponent<ChannelPiece>();
 
-                // OUTER CHANNEL
+                 // Outer floor     
+                locatorIndex = i + (4 * numChannels);
+                if (ringIndex == 0) locatorIndex -= numChannels;
+                GameObject outerFloorLocator = locatorGroup.transform.GetChild(locatorIndex).gameObject;
+                GameObject outerFloorPrefab = Resources.Load<GameObject>("Dax/Board_Parts/" + ringString + "_Outer_Floor_01");
+                GameObject outerFloor = GameObject.Instantiate<GameObject>(outerFloorPrefab, outerFloorLocator.transform);
+                outerFloor.transform.parent = channel.transform;
+                outerFloor.name = ringString + "_Outer_Floor_" + channelString;
+                outerFloor.gameObject.GetComponent<MeshRenderer>().enabled = false;
+
+                // Outer channel
                 locatorIndex = i + (3 * numChannels);
                 if (ringIndex == 0) locatorIndex -= numChannels;
                 GameObject outerChannelLocator = locatorGroup.transform.GetChild(locatorIndex).gameObject;
@@ -257,25 +285,28 @@ public class MCP : MonoBehaviour
                 outerChannel.transform.name = ringString + "_Outer_Channel_" + channelString;
                 outerChannel.gameObject.layer = LayerMask.NameToLayer("Player Generic Collider");
                 outerChannel.AddComponent<MeshCollider>();
-                outerChannel.GetComponent<MeshCollider>().convex = true;
-                //if (channelString.Contains("01")) Debug.Log(outerChannel.name + ", " + outerChannel.GetComponent<MeshCollider>().bounds.extents.ToString("F6"));
+                outerChannel.GetComponent<MeshCollider>().convex = true;                
                 outerChannel.AddComponent<ChannelPiece>();
 
-                // START NODE
+                // Each channel has 3 nodes, a start, end and middle.  The start
+                // and end nodes are what the Player uses to jump from Ring to Ring.
+                // The middle node is where board objects are placed.
+
+                // Start node
                 GameObject startNodePrefab = nodesContainer.transform.Find(ringString + "_Start_Node_" + nodeLocatorChannelString).gameObject;
                 GameObject startNode = GameObject.Instantiate<GameObject>(startNodePrefab);
                 startNode.transform.parent = channel.transform;
                 startNode.transform.name = ringString + "_Start_Node_" + channelString;
                 startNode.AddComponent<ChannelNode>();
 
-                // MIDDLE NODE
+                // Middle node
                 GameObject middleNodePrefab = nodesContainer.transform.Find(ringString + "_Middle_Node_" + nodeLocatorChannelString).gameObject;
                 GameObject middleNode = GameObject.Instantiate<GameObject>(middleNodePrefab);
                 middleNode.transform.parent = channel.transform;
                 middleNode.transform.name = ringString + "_Middle_Node_" + channelString;
                 middleNode.AddComponent<ChannelNode>();
 
-                // END NODE
+                // End node
                 GameObject endNodePrefab = nodesContainer.transform.Find(ringString + "_End_Node_" + nodeLocatorChannelString).gameObject;
                 GameObject endNode = GameObject.Instantiate<GameObject>(endNodePrefab);
                 endNode.transform.parent = channel.transform;
@@ -314,23 +345,19 @@ public class MCP : MonoBehaviour
                 }*/
                // for(int i=0; i<)
 
-                // OUTER FLOOR      
-                locatorIndex = i + (4 * numChannels);
-                if (ringIndex == 0) locatorIndex -= numChannels;
-                GameObject outerFloorLocator = locatorGroup.transform.GetChild(locatorIndex).gameObject;
-                GameObject outerFloorPrefab = Resources.Load<GameObject>("Dax/Board_Parts/" + ringString + "_Outer_Floor_01");
-                GameObject outerFloor = GameObject.Instantiate<GameObject>(outerFloorPrefab, outerFloorLocator.transform);
-                outerFloor.transform.parent = channel.transform;
-                outerFloor.name = ringString + "_Outer_Floor_" + channelString;
-                outerFloor.gameObject.GetComponent<MeshRenderer>().enabled = false;
+               
 
 
             }
-            // do wedges separate so they are sorted correctly
+
+            // The wedges are the pieces inbetween the channels.  
+            // The player bounces off of them but they can't be
+            // modified for game play.
+            
+            // Create wedges
             for (int i = 0; i < numChannels; i++)
             {
-                string channelString = (i + 1).ToString("D2");
-                // WEDGE
+                string channelString = (i + 1).ToString("D2");                
                 locatorIndex = i + (5 * numChannels);
                 if (ringIndex == 0) locatorIndex -= numChannels;
                 GameObject wedgeLocator = locatorGroup.transform.GetChild(locatorIndex).gameObject;
@@ -342,22 +369,23 @@ public class MCP : MonoBehaviour
                 wedge.AddComponent<MeshCollider>();
                 wedge.GetComponent<MeshCollider>().convex = true;
             }
-        }
+        }        
 
-        // Init rings
-        for (int ringIndex = 0; ringIndex <= 4; ringIndex++)
+        // Now that the board componets are created, start assembling the Rings
+        for (int ringIndex = 0; ringIndex <= Dax.MAX_NUM_RINGS; ringIndex++)
         {
             Ring ring = wheel.Rings[ringIndex];
+            ring.DaxRef = mcp._Dax;
+            ring.RotateSpeed = 0f;
 
-            ring.DaxRef = daxRef;
+            // Add bumpers if we're not the center ring
             if (ringIndex != 0)
             {
                 ring.BumperGroup = wheel.gameObject.transform.Find(ring.name + "_Bumpers").GetComponent<BumperGroup>();
                 ring.BumperGroup.Bumpers = ring.BumperGroup.GetComponentsInChildren<Bumper>().ToList();
-            }
-            ring.RotateSpeed = 0f;//(ringIndex % 2 == 0 ? 10f : -10f);
+            }            
 
-            // channels            
+            // Add the channels 
             List<Channel> ringChannels = ring.transform.GetComponentsInChildren<Channel>().ToList();
             ringChannels = ringChannels.OrderBy(x => x.name).ToList();
             int numChannels = (ringIndex == 0 ? Wheel.NUM_CENTER_RING_CHANNELS : Wheel.NUM_OUTER_RING_CHANNELS);
@@ -383,40 +411,33 @@ public class MCP : MonoBehaviour
             }
         }
 
-        // Gather start nodes        
-        Debug.Log("Gather start nodes");
-        wheel.StartNodes = wheel.transform.transform.GetComponentsInChildren<ChannelNode>().ToList();
-        wheel.StartNodes.RemoveAll(x => x.name.Contains("Ring_00_Start_Node") == false);        
-        wheel.StartNodes = wheel.StartNodes.OrderBy(o=>o.name).ToList();        
+        // Gather start nodes                
+       // wheel.StartNodes = wheel.transform.transform.GetComponentsInChildren<ChannelNode>().ToList();
+      //  wheel.StartNodes.RemoveAll(x => x.name.Contains("Ring_00_Start_Node") == false);        
+      //  wheel.StartNodes = wheel.StartNodes.OrderBy(o=>o.name).ToList();        
 
         // Make sure the channel diodes are pointing at each other
-        List<Channel> channels = wheel.GetComponentsInChildren<Channel>().ToList();
-        foreach (Channel channel in channels) channel.HaveNodesLookAtEachOther();
+        /*List<Channel> channels = wheel.GetComponentsInChildren<Channel>().ToList();
+        foreach (Channel channel in channels) 
+        {
+            channel.StartNode.transform.LookAt(channel.EndNode.transform);
+            channel.EndNode.transform.LookAt(channel.StartNode.transform);   
+        }*/
 
+        // Get rid of objects used for location reference
         UnityEngine.Object.DestroyImmediate(locators);
         UnityEngine.Object.DestroyImmediate(nodes);
 
-        //daxRef.Wheels.Add(wheel);        
-        wheel.TurnOnRings(4);
+        // Make sure all the Rings are on        
+        wheel.TurnOnRings(Dax.MAX_NUM_RINGS);
 
         return wheel;
     }
 
     public Hazard CreateHazard(ChannelNode channelNode, Dax dax, Hazard.eHazardType type)
-    {
-        Hazard hazardPrefab = null;
-        switch(type)
-        {
-            case Hazard.eHazardType.ENEMY:
-                hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Enemy_Diode");
-                break;
-            case Hazard.eHazardType.GLUE:
-                hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Glue");
-                break;           
-            case Hazard.eHazardType.DYNAMITE:
-                hazardPrefab = Resources.Load<Hazard>("Dax/Prefabs/Hazards/Dynamite");
-                break;           
-        }
+    {                
+        string prefabString = "Dax/Prefabs/Hazards/" + Hazard.HAZARD_STRINGS[(int)type];
+        Hazard hazardPrefab = Resources.Load<Hazard>(prefabString);        
         Hazard hazard = Instantiate<Hazard>(hazardPrefab, channelNode.transform);
         hazard.InitForChannelNode(channelNode, dax);
         return hazard;        

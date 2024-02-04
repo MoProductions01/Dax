@@ -11,6 +11,8 @@ public class Dax : MonoBehaviour
     public static float MAX_SPIN_SPEED = 20f;
     public static float MAX_SPEED = 1f; 
 
+    public static int MAX_NUM_RINGS = 4;
+
     public string PuzzleName = "Default Puzzle";    
     public eGameState GameState;    
 

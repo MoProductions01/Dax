@@ -16,7 +16,7 @@ public class Wheel : MonoBehaviour
     public int NumActiveRings = 4;
     public bool CenterRingLock = false;
 
-    public List<ChannelNode> StartNodes = new List<ChannelNode>();
+    //public List<ChannelNode> StartNodes = new List<ChannelNode>();
 
     public Dax DaxRef;
 

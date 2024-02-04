@@ -6,6 +6,8 @@ using UnityEngine;
 public class Hazard : BoardObject
 {
     public enum eHazardType { ENEMY, GLUE, /*BOMB,*/ DYNAMITE, /*PROXIMITY_MINE, *//*TIMED_MINE */};
+    public static List<string> HAZARD_STRINGS = new List<string> {"Enemy_Diode", "Glue", "Dynamite"};
+    
     public static float DEFAULT_EFFECT_TIME = 2f; // moupdate -  look into using this to init the objects instead of the prefab
     public static float MAX_EFFECT_TIME = 10f;
 
