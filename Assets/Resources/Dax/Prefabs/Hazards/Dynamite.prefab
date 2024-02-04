@@ -4992,13 +4992,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef3989333ea283947bb26b038671060a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BoardObjectType: 1
+  BoardObjectType: 2
   StartDir: 0
   _Dax: {fileID: 0}
   CurChannel: {fileID: 0}
   Speed: 0
   SpawningNode: {fileID: 0}
-  DestGateJustWarpedTo: {fileID: 0}
   HazardType: 2
   EffectTime: 2
   EffectRadius: 0.05

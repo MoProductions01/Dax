@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
+
 [CustomEditor(typeof(DaxPuzzleSetup))]
 public class DaxEditor : Editor
 {
@@ -303,16 +304,7 @@ public class DaxEditor : Editor
                 EditorGUILayout.EndVertical();
             }
             
-            // If you've got a BoardObject selected then make sure the HandleBoardObject stuff is taken care of
-            if(selected.transform.parent != null && selected.transform.parent.GetComponent<BoardObject>() != null)
-            {                
-                BoardObject parent = selected.transform.parent.GetComponent<BoardObject>();
-                ChannelNode selChannelNode = parent.SpawningNode;
-                StartNewSelection(selChannelNode.name, "Channel Node");
-                HandleBoardObject(selChannelNode, mcp, dax);
-                EditorGUILayout.Separator();
-                EditorGUILayout.EndVertical();
-            }
+            
             // ************ Channel Node
             if (selected.GetComponent<ChannelNode>() != null)
             {
@@ -357,7 +349,17 @@ public class DaxEditor : Editor
                     selected.GetComponent<ChannelPiece>().Toggle();
                 }
                 EditorGUILayout.EndVertical();
-            }                        
+            }        
+            // If you've got a BoardObject selected then make sure the HandleBoardObject stuff is taken care of
+            if(selected.transform.parent != null && selected.transform.parent.GetComponent<BoardObject>() != null)
+            {                
+                BoardObject parent = selected.transform.parent.GetComponent<BoardObject>();
+                ChannelNode selChannelNode = parent.SpawningNode;
+                StartNewSelection(selChannelNode.name, "Channel Node");
+                HandleBoardObject(selChannelNode, mcp, dax);
+                EditorGUILayout.Separator();
+                EditorGUILayout.EndVertical();
+            }                
             #endregion            
         }
 
@@ -372,45 +374,57 @@ public class DaxEditor : Editor
         EditorUtility.SetDirty(daxSetup);
     }
 
+    
     void HandleCreateBoardObject(ChannelNode selChannelNode, MCP mcp, Dax dax)
     {
         float buttonWidth = 200f;
         if (GUILayout.Button("Create Facet", GUILayout.Width(buttonWidth)))
-        {
-            //mcp.CreateFacet(selChannelNode, dax, Facet.eFacetColors.WHITE);
+        {            
             mcp.CreateFacet(selChannelNode, dax, Facet.eFacetColors.RED);
         }
+        //******************************************************************************************
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Hazard", GUILayout.Width(buttonWidth)))
         {
-            mcp.CreateHazard(selChannelNode, dax, Hazard.eHazardType.ENEMY);
+            string prefabString = "Dax/Prefabs/Hazards/" + 
+                Hazard.HAZARD_STRINGS[(int)Hazard.eHazardType.ENEMY];
+            mcp.CreateBoardObject<Hazard>(selChannelNode, dax, prefabString);
+            //mcp.CreateHazard(selChannelNode, dax, Hazard.eHazardType.ENEMY);            
         }    
-        EditorGUILayout.Separator();
-        if (GUILayout.Button("Create Game Mod", GUILayout.Width(buttonWidth)))
-        {
-            mcp.CreateGameMod(selChannelNode, dax, GameMod.eGameModType.EXTRA_POINTS);
-        }    
-        EditorGUILayout.Separator();
-        if (GUILayout.Button("Create Shield", GUILayout.Width(buttonWidth)))
-        {
-            Shield shield = mcp.CreateShield(selChannelNode.transform, Shield.eShieldTypes.HIT);
-            shield.InitForChannelNode(selChannelNode, dax); // monote - why is this here
-        }
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Facet Collect", GUILayout.Width(buttonWidth)))
         {
-            mcp.CreateFacetCollect(selChannelNode, dax, FacetCollect.eFacetCollectTypes.RING);
-        }
-        //EditorGUILayout.Separator();
-       /* if (GUILayout.Button("Create Interactable", GUILayout.Width(buttonWidth)))
+            string prefabString = "Dax/Prefabs/Pickups/Facet_Collects/" + 
+                FacetCollect.FACET_COLLECT_STRINGS[(int)FacetCollect.eFacetCollectTypes.RING];
+            mcp.CreateBoardObject<FacetCollect>(selChannelNode, dax, prefabString);
+            //mcp.CreateFacetCollect(selChannelNode, dax, FacetCollect.eFacetCollectTypes.RING);
+        } 
+        EditorGUILayout.Separator();
+        if (GUILayout.Button("Create Shield", GUILayout.Width(buttonWidth)))
         {
-            mcp.CreateInteractable(selChannelNode, dax, Interactable.eInteractableType.TOGGLE);
-        }*/
+            string prefabString = "Dax/Prefabs/Pickups/Shields/" + 
+                Shield.SHIELD_STRINGS[(int)Shield.eShieldTypes.SINGLE_KILL];
+            mcp.CreateBoardObject<Shield>(selChannelNode, dax, prefabString);
+            //mcp.CreateShield(selChannelNode, dax, Shield.eShieldTypes.HIT);            
+        }
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Speed Mod", GUILayout.Width(buttonWidth)))
         {
-            mcp.CreateSpeedMod(selChannelNode, dax, SpeedMod.eSpeedModType.PLAYER_SPEED);
+            string prefabString = "Dax/Prefabs/Pickups/Speed_Mods/" +
+                SpeedMod.SPEED_MOD_STRINGS[(int)SpeedMod.eSpeedModType.PLAYER_SPEED];
+            mcp.CreateBoardObject<SpeedMod>(selChannelNode, dax, prefabString);            
+            //mcp.CreateSpeedMod(selChannelNode, dax, SpeedMod.eSpeedModType.PLAYER_SPEED);
         }
+        EditorGUILayout.Separator();
+        if (GUILayout.Button("Create Game Mod", GUILayout.Width(buttonWidth)))
+        {
+            string prefabString = "Dax/Prefabs/Pickups/Point_Mods/" +
+                GameMod.GAME_MOD_STRINGS[(int)GameMod.eGameModType.POINTS_MULTIPLIER];
+            mcp.CreateBoardObject<GameMod>(selChannelNode, dax, prefabString);
+            //mcp.CreateGameMod(selChannelNode, dax, GameMod.eGameModType.EXTRA_POINTS);          
+        }            
+               
+        
     }
 
     // moupdate - get the MCP/Dax confusion sorted out
@@ -487,19 +501,7 @@ public class DaxEditor : Editor
                         hazard.EffectTime = newEffectTime;
                         UpdateFloatProperty(selBoardObjectSO, "EffectTime", hazard.EffectTime);                        
                     }
-                }
-                /*if (hazard.HazardType == Hazard.eHazardType.PROXIMITY_MINE)
-                {   // proximity mine has a radius
-                    EditorGUILayout.Separator();
-
-                    float newEffectRadius = EditorGUILayout.Slider("Effect Radius", hazard.EffectRadius, .05f, .2f);
-                    if (newEffectRadius != hazard.EffectRadius)
-                    {
-                        hazard.EffectRadius = newEffectRadius;
-                        hazard.GetComponent<SphereCollider>().radius = hazard.EffectRadius;
-                        UpdateFloatProperty(selBoardObjectSO, "EffectRadius", hazard.EffectRadius);                                    
-                    }
-                }*/
+                }                
                 break;
         }
         if(bo.BoardObjectType == BoardObject.eBoardObjectType.GAME_MOD)
@@ -543,115 +545,7 @@ public class DaxEditor : Editor
                 facetCollect = mcp.CreateFacetCollect(selChannelNode, dax, newFacetCollectType);
             }            
         }                
-        /*else if(bo.BoardObjectType == BoardObject.eBoardObjectType.INTERACTABLE)
-        {
-            EditorGUILayout.Separator();
-            Interactable interactable = (Interactable)bo;
-
-            Interactable.eInteractableType newInteractableType = (Interactable.eInteractableType)EditorGUILayout.EnumPopup("Type: ", interactable.InteractableType);
-            if(newInteractableType != interactable.InteractableType)
-            {
-                DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject); // moupdate - make this consistent, like destroy interactlbe.gameobject instead                
-                interactable = mcp.CreateInteractable(selChannelNode, dax, newInteractableType);
-            }
-            if(interactable.InteractableType == Interactable.eInteractableType.SWITCH)
-            {                
-                selBoardObjectSO.Update();
-                SerializedProperty switchOffSP = selBoardObjectSO.FindProperty("PiecesToTurnOff");
-                EditorGUILayout.PropertyField(switchOffSP);
-                SerializedProperty switchOnSP = selBoardObjectSO.FindProperty("PiecesToTurnOn");
-                EditorGUILayout.PropertyField(switchOnSP);
-
-                if (selBoardObjectSO.ApplyModifiedProperties() == true)
-                {   // make sure there are no duplicates                
-                    interactable.PiecesToTurnOff = TrimDuplicates(interactable.PiecesToTurnOff);
-                    interactable.PiecesToTurnOn = TrimDuplicates(interactable.PiecesToTurnOn);
-                    selBoardObjectSO.ApplyModifiedProperties();
-                }
-            } 
-            if (interactable.InteractableType == Interactable.eInteractableType.WARP_GATE || interactable.InteractableType == Interactable.eInteractableType.WORMHOLE)
-            {
-                EditorGUILayout.Separator();                
-
-                if(interactable.InteractableType == Interactable.eInteractableType.WORMHOLE)
-                {
-                    float newSpeed = EditorGUILayout.Slider("Speed", interactable.Speed, 0f, Dax.MAX_SPEED); 
-                    if (newSpeed != interactable.Speed)
-                    {
-                        interactable.Speed = newSpeed;
-                        UpdateFloatProperty(selBoardObjectSO, "Speed", interactable.Speed);                       
-                    }
-                    EditorGUILayout.Separator();
-                }
-
-                List<Interactable> preChangeDestGates = interactable.DestGates.ToList();
-                selBoardObjectSO = new SerializedObject(interactable);
-                SerializedProperty selDiodeDestSP = selBoardObjectSO.FindProperty("DestGates");
-                EditorGUILayout.PropertyField(selDiodeDestSP);
-
-                if (selBoardObjectSO.ApplyModifiedProperties() == true)
-                {
-                    // check for duplicates
-                    interactable.DestGates = TrimDuplicates(interactable.DestGates);
-
-                    if (preChangeDestGates.Count < interactable.DestGates.Count)
-                    {
-                        // Debug.Log("Number of warp destinations has increased but the duplicate code above should take care of it.");
-                    }
-                    else if (preChangeDestGates.Count > interactable.DestGates.Count)
-                    {
-                        // Debug.LogWarning("Number of warp destinations has decreased so make sure all connections are still there.");
-                        // Unity removes the last elements in the list so just take care of the ones that got chopped off
-                        // // monote - I don't think we need this anymore since this is cleaning up DEST gate's WARP sources
-                        /* for (int i = warpDiode.DestGates.Count; i < preChangeDestGates.Count; i++)
-                         {
-                             if (preChangeDestGates[i] == null) continue;
-                             DestDiode removedDestDiode = preChangeDestGates[i];
-                             if (removedDestDiode.WarpSources.Contains(warpDiode) == false) { Debug.LogError("ERROR: this DESTINAION node: " + removedDestDiode.name + " was wiped out by shrinking paths size.  But the WARP node: " + warpDiode.name + " was never in the DESTINATION node's WarpSources list. Bailing."); break; }
-                             removedDestDiode.WarpSources.Remove(warpDiode);
-                         }
-                    }*/
-                   // else
-                   // {
-                        // Debug.Log("same number of destination nodes so something else must have changed");
-                        // number of destinations stayed the same so check for something else                   
-                    //    Interactable changedWarpGate = (Interactable)selDiodeDestSP.serializedObject.targetObject;
-                     //   for (int i = 0; i < interactable.DestGates.Count; i++)
-                     //   {
-                      //      if (preChangeDestGates[i] != changedWarpGate.DestGates[i])
-                      //      {
-                       //         if (preChangeDestGates[i] == null && changedWarpGate.DestGates[i] != null)
-                        //        {
-                                    // Debug.Log("added a new connection at spot: " + i + " + with new name: " + changedWarpdDiode.WarpDestinations[i].name);
-                                    /*DestDiode newDestDiode = changedWarpdDiode.DestGates[i];
-                                    if (newDestDiode.WarpSources.Contains(changedWarpdDiode) == true) { Debug.LogError("ERROR: Trying to add this new DESTINAION node: " + newDestDiode.name + " to this WARP node: " + changedWarpdDiode + " but the WARP node was already in the new DESTINATION node's WarpSources list. Bailing."); break; }
-                                    newDestDiode.WarpSources.Add(changedWarpdDiode);*/
-                           //     }
-                           //     else if (preChangeDestGates[i] != null && changedWarpGate.DestGates[i] == null)
-                           //     {
-                                    // Debug.Log("removed a connection");
-                                    /* DestDiode delDestDiode = preChangeDestGates[i];
-                                     if (delDestDiode.WarpSources.Contains(changedWarpdDiode) == false) { Debug.LogError("ERROR: Trying to remove this DESTINATION node: " + delDestDiode + " from this WARP node: " + changedWarpdDiode + " but the WARP node was never in the DESTINATION node's WarpSources list. Bailing"); break; }
-                                     delDestDiode.WarpSources.Remove(changedWarpdDiode);*/
-                             //   }
-                             //   else
-                             //   {
-                                    //  Debug.Log("changed a connection");
-                                    /* DestDiode oldDestDiode = preChangeDestGates[i];
-                                     DestDiode newDestDiode = changedWarpdDiode.DestGates[i];
-                                     // remove old one
-                                     if (oldDestDiode.WarpSources.Contains(changedWarpdDiode) == false) { Debug.LogError("ERROR: Trying to swap out this DESTINATION node: " + oldDestDiode + " with a new one but this WARP node: " + changedWarpdDiode + " was never in the old DESTINATION node's WarpSources list. Bailing."); break; }
-                                     oldDestDiode.WarpSources.Remove(changedWarpdDiode);
-                                     // add new one
-                                     if (newDestDiode.WarpSources.Contains(changedWarpdDiode) == true) { Debug.LogError("ERROR: Trying to swap out a DESTINATION node with this new one: " + newDestDiode + " on this WARP node: " + changedWarpdDiode + " but the new DESTINATION node already had the WARP node in it's WarpSources list. Bailing."); break; }
-                                     newDestDiode.WarpSources.Add(changedWarpdDiode);*/
-                              //  }
-                           // }
-                       // }
-                 //   }
-            //    }
-          //  }
-       // }
+        
         else if (bo.BoardObjectType == BoardObject.eBoardObjectType.SHIELD)
         {           
             EditorGUILayout.Separator();
@@ -660,20 +554,10 @@ public class DaxEditor : Editor
             Shield.eShieldTypes newShieldType = (Shield.eShieldTypes)EditorGUILayout.EnumPopup("Type: ", shield.ShieldType);
             if(newShieldType != shield.ShieldType)
             {
-                DestroyImmediate(shield.gameObject);
-                shield = mcp.CreateShield(selChannelNode.transform, newShieldType);
-                shield.InitForChannelNode(selChannelNode, dax); // moupdate check how shields do stuff
-            }
-           /* if(shield.ShieldType == Shield.eShieldTypes.TIMED || shield.ShieldType == Shield.eShieldTypes.TIMED_KILL)
-            {
-                float newTimer = EditorGUILayout.FloatField("Timer: ", shield.Timer);
-                if (newTimer < 1.0f) newTimer = 1.0f;
-                if (newTimer != shield.Timer)
-                {
-                    shield.Timer = newTimer;
-                    UpdateFloatProperty(selBoardObjectSO, "GameModTime", shield.Timer);                    
-                }
-            }*/
+                //Debug.LogError("Implement this");
+                DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);
+                shield = mcp.CreateShield(selChannelNode, dax, newShieldType);                
+            }           
         }         
         else if(bo.BoardObjectType == BoardObject.eBoardObjectType.SPEED_MOD)
         {
@@ -704,15 +588,7 @@ public class DaxEditor : Editor
                 UpdateFloatProperty(selBoardObjectSO, "SpeedModVal", speedMod.SpeedModVal);                    
             }
 
-          /*  if((int)speedMod.SpeedModType <= (int)SpeedMod.eSpeedModType.WHEEL_DOWN)
-            {
-                float newSpeedModVal = EditorGUILayout.FloatField("Val: ", speedMod.SpeedModVal);
-                if (newSpeedModVal != speedMod.SpeedModVal)
-                {                    
-                    speedMod.SpeedModVal = newSpeedModVal;
-                    UpdateFloatProperty(selBoardObjectSO, "SpeedModVal", speedMod.SpeedModVal);                    
-                }
-            }     */       
+               
         }
     }      
     

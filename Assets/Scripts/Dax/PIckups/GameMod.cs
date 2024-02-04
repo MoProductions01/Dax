@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameMod : BoardObject // monote - make these generic
 {
     public enum eGameModType { EXTRA_POINTS, POINTS_MULTIPLIER };
+    public static List<string> GAME_MOD_STRINGS = new List<string> {"Extra_Points", "Points_Multiplier"};
 
     [Header("GameMod Data")]
     public eGameModType GameModType;

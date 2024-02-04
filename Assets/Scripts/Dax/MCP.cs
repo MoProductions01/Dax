@@ -266,7 +266,7 @@ public class MCP : MonoBehaviour
                 innerChannel.AddComponent<ChannelPiece>();
 
                  // Outer floor     
-                locatorIndex = i + (4 * numChannels);
+                locatorIndex = i + (Dax.MAX_NUM_RINGS * numChannels);
                 if (ringIndex == 0) locatorIndex -= numChannels;
                 GameObject outerFloorLocator = locatorGroup.transform.GetChild(locatorIndex).gameObject;
                 GameObject outerFloorPrefab = Resources.Load<GameObject>("Dax/Board_Parts/" + ringString + "_Outer_Floor_01");
@@ -434,16 +434,114 @@ public class MCP : MonoBehaviour
         return wheel;
     }
 
+    public void CreateFacet(ChannelNode channelNode, Dax dax, Facet.eFacetColors color)
+    {
+        Facet colorFacetPrefab = Resources.Load<Facet>("Dax/Prefabs/Pickups/Facet");
+        Facet colorFacet = Instantiate<Facet>(colorFacetPrefab, channelNode.transform);
+        colorFacet.InitForChannelNode(channelNode, dax);
+        ChangeFacetColor(colorFacet, color);        
+    }      
+
     public Hazard CreateHazard(ChannelNode channelNode, Dax dax, Hazard.eHazardType type)
     {                
         string prefabString = "Dax/Prefabs/Hazards/" + Hazard.HAZARD_STRINGS[(int)type];
+        
         Hazard hazardPrefab = Resources.Load<Hazard>(prefabString);        
         Hazard hazard = Instantiate<Hazard>(hazardPrefab, channelNode.transform);
         hazard.InitForChannelNode(channelNode, dax);
         return hazard;        
     }
     
-    public Interactable CreateInteractable(ChannelNode channelNode, Dax dax, Interactable.eInteractableType type)
+    
+
+    public FacetCollect CreateFacetCollect(ChannelNode channelNode, Dax dax, FacetCollect.eFacetCollectTypes type)
+    {
+        FacetCollect facetCollectPrefab = null;
+        switch (type)
+        {
+            case FacetCollect.eFacetCollectTypes.RING:
+                facetCollectPrefab = Resources.Load<FacetCollect>("Dax/Prefabs/Pickups/Facet_Collects/Facet_Collect_Ring");
+                break;
+            case FacetCollect.eFacetCollectTypes.WHEEL:
+                facetCollectPrefab = Resources.Load<FacetCollect>("Dax/Prefabs/Pickups/Facet_Collects/Facet_Collect_Wheel");
+                break;
+        }
+
+        FacetCollect facetCollect = Instantiate<FacetCollect>(facetCollectPrefab, channelNode.transform);
+        facetCollect.InitForChannelNode(channelNode, dax);
+        return facetCollect;
+    }
+
+    public T CreateBoardObject<T>(ChannelNode channelNode, Dax dax, string prefabString) where T : BoardObject
+    {        
+        // monote - look into adding the type in code so changing things won't fuck up prefabs
+        Debug.Log("CreateBoardObject: " + typeof(T).FullName);
+        T prefab = Resources.Load<T>(prefabString);
+        T instantiaedObject = Instantiate<T>(prefab, channelNode.transform);
+        instantiaedObject.InitForChannelNode(channelNode, dax);
+        return instantiaedObject;        
+    }
+
+    public Shield CreateShield(ChannelNode channelNode, Dax dax, Shield.eShieldTypes type)
+    {
+       // Debug.Log("CreateShield() type: " + type.ToString());
+
+        Shield shieldPrefab = null;
+        switch (type)
+        {   
+            case Shield.eShieldTypes.HIT:
+                shieldPrefab = Resources.Load<Shield>("Dax/Prefabs/Pickups/Shields/Hit_Shield");
+                break;
+            case Shield.eShieldTypes.SINGLE_KILL:
+                shieldPrefab = Resources.Load<Shield>("Dax/Prefabs/Pickups/Shields/Single_Kill_Shield");
+                break;           
+        }
+        Shield shield = Instantiate<Shield>(shieldPrefab, channelNode.transform);       
+        shield.InitForChannelNode(channelNode, dax);
+        return shield;        
+    }
+
+    public SpeedMod CreateSpeedMod(ChannelNode channelNode, Dax dax, SpeedMod.eSpeedModType type)
+    {
+        SpeedMod speedModPrefab = null;
+        switch (type) // moupdate - send the Type to the functions instead of a different one for each type
+        {   // moupdate - turn this into an array you look up based on index
+            case SpeedMod.eSpeedModType.PLAYER_SPEED:
+                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Player_Speed");
+                break;            
+            case SpeedMod.eSpeedModType.ENEMY_SPEED:
+                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Enemy_Speed");
+                break;           
+            case SpeedMod.eSpeedModType.RING_SPEED:
+                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Ring_Speed");
+                break;          
+        }
+        SpeedMod speedMod = Instantiate<SpeedMod>(speedModPrefab, channelNode.transform);
+        speedMod.InitForChannelNode(channelNode, dax);               
+        return speedMod;
+    }
+
+    public GameMod CreateGameMod(ChannelNode channelNode, Dax dax, GameMod.eGameModType type)
+    {
+        GameMod gameModPrefab;
+        if (type == GameMod.eGameModType.EXTRA_POINTS)
+        {
+            gameModPrefab = Resources.Load<GameMod>("Dax/Prefabs/Pickups/Point_Mods/Extra_Points"); // moupdate yeah use switch
+        }
+        else
+        {
+            gameModPrefab = Resources.Load<GameMod>("Dax/Prefabs/Pickups/Point_Mods/Points_Multiplier");
+        }
+
+        GameMod gameMod = Instantiate<GameMod>(gameModPrefab, channelNode.transform);
+        gameMod.InitForChannelNode(channelNode, dax);        
+        return gameMod;
+    }
+
+    
+     
+                 
+    /*public Interactable CreateInteractable(ChannelNode channelNode, Dax dax, Interactable.eInteractableType type)
     {
         Interactable interactablePrefab = null;
         switch(type)
@@ -465,71 +563,10 @@ public class MCP : MonoBehaviour
         interactable.InitForChannelNode(channelNode, dax);
         interactable.name = channelNode.name + "--Warp Gate"; // moupdate - get this whole init thing done
         return interactable;
-    }
-    public FacetCollect CreateFacetCollect(ChannelNode channelNode, Dax dax, FacetCollect.eFacetCollectTypes type)
-    {
-        FacetCollect facetCollectPrefab = null;
-        switch (type)
-        {
-            case FacetCollect.eFacetCollectTypes.RING:
-                facetCollectPrefab = Resources.Load<FacetCollect>("Dax/Prefabs/Pickups/Facet_Collects/Facet_Collect_Ring");
-                break;
-            case FacetCollect.eFacetCollectTypes.WHEEL:
-                facetCollectPrefab = Resources.Load<FacetCollect>("Dax/Prefabs/Pickups/Facet_Collects/Facet_Collect_Wheel");
-                break;
-        }
+    }*/
+   
 
-        FacetCollect facetCollect = Instantiate<FacetCollect>(facetCollectPrefab, channelNode.transform);
-        facetCollect.InitForChannelNode(channelNode, dax);
-        return facetCollect;
-    }
-
-    public SpeedMod CreateSpeedMod(ChannelNode channelNode, Dax dax, SpeedMod.eSpeedModType type)
-    {
-        SpeedMod speedModPrefab = null;
-        switch (type) // moupdate - send the Type to the functions instead of a different one for each type
-        {   // moupdate - turn this into an array you look up based on index
-            case SpeedMod.eSpeedModType.PLAYER_SPEED:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Player_Speed");
-                break;
-            //case SpeedMod.eSpeedModType.SPEED_DOWN:
-           //     speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Speed_Down");
-            //    break;
-            case SpeedMod.eSpeedModType.ENEMY_SPEED:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Enemy_Speed");
-                break;
-           // case SpeedMod.eSpeedModType.ENEMY_DOWN:
-           //     speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Enemy_Speed_Down");
-            //    break;
-            case SpeedMod.eSpeedModType.RING_SPEED:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Ring_Speed");
-                break;
-          //  case SpeedMod.eSpeedModType.RING_DOWN:
-          //      speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Ring_Speed_Down");
-          //      break;
-          /*  case SpeedMod.eSpeedModType.WHEEL_UP:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Wheel_Speed_Up");
-                break;
-            case SpeedMod.eSpeedModType.WHEEL_DOWN:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Wheel_Speed_Down");
-                break;*/
-           /* case SpeedMod.eSpeedModType.RING_STOP:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Ring_Stop");
-                break;
-            case SpeedMod.eSpeedModType.TIME_STOP:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Time_Stop");
-                break;
-            case SpeedMod.eSpeedModType.RING_REVERSE:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Ring_Reverse");
-                break;
-            case SpeedMod.eSpeedModType.MEGA_RING_REVERSE:
-                speedModPrefab = Resources.Load<SpeedMod>("Dax/Prefabs/Pickups/Speed_Mods/Mega_Ring_Reverse");
-                break;*/
-        }
-        SpeedMod speedMod = Instantiate<SpeedMod>(speedModPrefab, channelNode.transform);
-        speedMod.InitForChannelNode(channelNode, dax);               
-        return speedMod;
-    }
+    
     public GameObject CreateFacetCollectIcon( FacetCollect.eFacetCollectTypes type)
     {
         GameObject facetCollectIconPrefab = null;
@@ -560,25 +597,7 @@ public class MCP : MonoBehaviour
         GameObject shieldIcon = Instantiate<GameObject>(shieldIconPrefab, _Dax._UIRoot.transform);
         return shieldIcon;       
     }    
-    public Shield CreateShield(Transform parent, Shield.eShieldTypes type)
-    {
-        Debug.Log("CreateShield() type: " + type.ToString());
-
-        Shield shieldPrefab = null;
-        switch (type)
-        {   
-            case Shield.eShieldTypes.HIT:
-                shieldPrefab = Resources.Load<Shield>("Dax/Prefabs/Pickups/Shields/Hit_Shield");
-                break;
-            case Shield.eShieldTypes.SINGLE_KILL:
-                shieldPrefab = Resources.Load<Shield>("Dax/Prefabs/Pickups/Shields/Single_Kill_Shield");
-                break;           
-        }
-        Shield shield = Instantiate<Shield>(shieldPrefab, parent);
-        shield.name = transform.name + "--" + type.ToString();
-        //shield.InitForChannelNode(channelNode, dax);    // monote - why is it like this?  check DaxEditor.cs    
-        return shield;        
-    }
+   
   
     public Material GetFacetMaterial(Facet.eFacetColors color)
     {
@@ -614,23 +633,7 @@ public class MCP : MonoBehaviour
         }
     }
 
-    public GameMod CreateGameMod(ChannelNode channelNode, Dax dax, GameMod.eGameModType type)
-    {
-        GameMod gameModPrefab;
-        if (type == GameMod.eGameModType.EXTRA_POINTS)
-        {
-            gameModPrefab = Resources.Load<GameMod>("Dax/Prefabs/Pickups/Point_Mods/Extra_Points"); // moupdate yeah use switch
-        }
-        else
-        {
-            gameModPrefab = Resources.Load<GameMod>("Dax/Prefabs/Pickups/Point_Mods/Points_Multiplier");
-        }
-
-        GameMod gameMod = Instantiate<GameMod>(gameModPrefab, channelNode.transform);
-        gameMod.InitForChannelNode(channelNode, dax);
-        gameMod.GameModType = type;
-        return gameMod;
-    }    
+    
 
     
 
@@ -642,13 +645,7 @@ public class MCP : MonoBehaviour
         List<MeshRenderer> meshRenderers = facet.GetComponentsInChildren<MeshRenderer>().ToList();
         foreach (MeshRenderer mr in meshRenderers) mr.material = colorFacetMaterial;
     }
-    public void CreateFacet(ChannelNode channelNode, Dax dax, Facet.eFacetColors color)
-    {
-        Facet colorFacetPrefab = Resources.Load<Facet>("Dax/Prefabs/Pickups/Facet");
-        Facet colorFacet = Instantiate<Facet>(colorFacetPrefab, channelNode.transform);
-        colorFacet.InitForChannelNode(channelNode, dax);
-        ChangeFacetColor(colorFacet, color);        
-    }        
+        
     public void InitBoardObjectFromSave(BoardObject bo, Dax.BoardObjectSave boSave)
     {
         // get the starting channel
@@ -739,8 +736,9 @@ public class MCP : MonoBehaviour
             //    Interactable interactable = CreateInteractable(channelNode, dax, (Interactable.eInteractableType)boSave.IntList[0]);
             //    break;
             case BoardObject.eBoardObjectType.SHIELD:                
-                Shield shield = CreateShield(channelNode.transform, (Shield.eShieldTypes)boSave.IntList[0]);
-                shield.InitForChannelNode(channelNode, dax);
+                //Debug.LogError("Implement this");
+                CreateShield(channelNode, dax, (Shield.eShieldTypes)boSave.IntList[0]);
+                //shield.InitForChannelNode(channelNode, dax);
                 break;
             case BoardObject.eBoardObjectType.SPEED_MOD:
                 SpeedMod speedMod = CreateSpeedMod(channelNode, dax, (SpeedMod.eSpeedModType)boSave.IntList[0]);

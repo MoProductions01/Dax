@@ -5,6 +5,7 @@ using UnityEngine;
 public class FacetCollect : BoardObject
 {
     public enum eFacetCollectTypes { RING, WHEEL };
+    public static List<string> FACET_COLLECT_STRINGS = new List<string> {"Facet_Collect_Ring", "Facet_Collect_Wheel"};
 
     [Header("Facet Collect Data")]
     public eFacetCollectTypes FacetCollectType;

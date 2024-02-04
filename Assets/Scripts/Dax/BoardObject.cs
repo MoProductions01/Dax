@@ -5,7 +5,7 @@ using System.Linq;
 
 public class BoardObject : MonoBehaviour
 {    
-    public enum eBoardObjectType { PLAYER, HAZARD, FACET, FACET_COLLECT, /*INTERACTABLE,*/ SHIELD, SPEED_MOD, GAME_MOD, NONE };
+    public enum eBoardObjectType { PLAYER, FACET, HAZARD, FACET_COLLECT, SHIELD, SPEED_MOD, GAME_MOD };
     public eBoardObjectType BoardObjectType;
 
     public enum eStartDir {OUTWARD, INWARD}; // monewsave
@@ -61,8 +61,7 @@ public class BoardObject : MonoBehaviour
         _Dax = dax;
     }
     public virtual void InitForChannelNode(ChannelNode spawnNode, Dax dax)
-    {
-        Debug. Log("BoardObject.InitFromCreation(): " + this.name + " --MoSave--");        
+    {        
         _Dax = dax;       
        
         if (spawnNode != null) // if it's not the player do the spawn stuff right away moupdate - we now have another thing for initting on player
