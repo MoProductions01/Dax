@@ -21,6 +21,7 @@ public class Hazard : BoardObject
 
     public override void InitForChannelNode(ChannelNode spawnNode, Dax dax)
     {        
+        name = spawnNode.name + "--Hazard--" + HazardType.ToString();
         base.InitForChannelNode(spawnNode, dax);
     }
 

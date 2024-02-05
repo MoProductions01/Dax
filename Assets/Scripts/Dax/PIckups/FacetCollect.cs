@@ -11,14 +11,14 @@ public class FacetCollect : BoardObject
     public eFacetCollectTypes FacetCollectType;
     public override void InitForChannelNode(ChannelNode spawnNode, Dax dax)
     {
-        name = spawnNode.name + "--Facet Collect";
+        name = spawnNode.name + "--FacetCollect--" + FacetCollectType.ToString();
        // BoardObjectType = eBoardObjectType.FACET_COLLECT;
         base.InitForChannelNode(spawnNode, dax);        
     }
     // facetCollect.SpawningNode.MyChannel.MyRing.CollectAllPickupFacets();        
     public static void ActivateFacetCollectType(eFacetCollectTypes type, Player player)
     {
-        switch(type)
+        switch(type) 
         {
             case eFacetCollectTypes.RING:
                 player.CurChannel.MyRing.CollectAllPickupFacets();

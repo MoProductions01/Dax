@@ -9,7 +9,14 @@ public class SpeedMod : BoardObject
     public static float DEFAULT_MOD_VAL = 2f;    
 
 
-    [Header("Speed Mod Specific")]    
+    [Header("Speed Mod Data")]    
     public eSpeedModType SpeedModType;
     public float SpeedModVal = DEFAULT_MOD_VAL;
+
+    public override void InitForChannelNode(ChannelNode spawnNode, Dax dax)
+    {       
+        name = spawnNode.name + "--SpeedMod--" + SpeedModType.ToString();
+        //BoardObjectType = eBoardObjectType.SHIELD;
+        base.InitForChannelNode(spawnNode, dax);       
+    }
 }

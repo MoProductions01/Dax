@@ -375,7 +375,7 @@ public class DaxEditor : Editor
         Undo.RecordObject(daxSetup, "OnInspectorGUI");
         EditorUtility.SetDirty(daxSetup);
     }   
-    // modead
+    
     void HandleCreateBoardObject(ChannelNode selChannelNode, MCP mcp, Dax dax)
     {
         float buttonWidth = 200f;
@@ -422,7 +422,7 @@ public class DaxEditor : Editor
         BoardObject bo = selChannelNode.SpawnedBoardObject;
         SerializedObject selBoardObjectSO = new SerializedObject(bo);
         selBoardObjectSO.Update();
-        string boName = bo.GetBoardObjectName();
+        string boName = BoardObject.BOARD_OBJECT_EDITOR_NAMES[(int)bo.BoardObjectType];//bo.GetBoardObjectName();
 
         // ****** Ping/Delete board object
         if (GUILayout.Button("Ping " + boName, GUILayout.Width(150f)))

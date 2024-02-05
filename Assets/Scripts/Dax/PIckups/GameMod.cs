@@ -13,7 +13,7 @@ public class GameMod : BoardObject // monote - make these generic
     public float GameModTime = 5f;
     public override void InitForChannelNode(ChannelNode spawnNode, Dax dax)
     {
-        name = spawnNode.name + "--GameMod";
+        name = spawnNode.name + "--GameMod--" + GameModType.ToString();
         // BoardObjectType = eBoardObjectType.MAGNET;
         base.InitForChannelNode(spawnNode, dax);
     }

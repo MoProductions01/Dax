@@ -21,49 +21,9 @@ public class BoardObject : MonoBehaviour
     [Header("Starting State Stuff")]
     public ChannelNode SpawningNode = null;    
 
-    //public Interactable DestGateJustWarpedTo = null;
-
-    private void Awake()
-    {
-       // Debug.Log("Awake() Diode: " + this.name + " of type: " + DiodeType.ToString());   
-    }
-
-    private void Start()
-    {
-       // Debug.Log("Start() Diode: " + this.name + " of type: " + DiodeType.ToString());
-    }
-
-    /*public void SetMovementInfo(eMoveDir movedir, float speed)
-    {
-        MoveDir = movedir;
-        Speed = speed;
-    }*/
-
-    // monote - change to array
-    public string GetBoardObjectName()
-    {
-        switch(BoardObjectType)
-        {
-            case eBoardObjectType.PLAYER: return "Player";
-            case eBoardObjectType.HAZARD: return "Hazard";            
-            case eBoardObjectType.FACET: return "Facet";
-            case eBoardObjectType.FACET_COLLECT: return "Facet Collect";             
-            //case eBoardObjectType.INTERACTABLE: return "Interactable";
-            case eBoardObjectType.SHIELD: return "Shield";
-            case eBoardObjectType.SPEED_MOD: return "Speed Mod";
-            case eBoardObjectType.GAME_MOD: return "Game Mod";
-            default: return "ERROR: UNKNOWN Board Object TYPE: " + BoardObjectType.ToString();
-        }
-    }    
-
-    public virtual void InitForPlayer(Player player, Dax dax)
-    {
-        _Dax = dax;
-    }
     public virtual void InitForChannelNode(ChannelNode spawnNode, Dax dax)
-    {        
-        _Dax = dax;       
-       
+    {                
+        _Dax = dax;              
         if (spawnNode != null) // if it's not the player do the spawn stuff right away moupdate - we now have another thing for initting on player
         {
             SpawningNode = spawnNode;
@@ -73,8 +33,12 @@ public class BoardObject : MonoBehaviour
             transform.position = SpawningNode.transform.position;                                              
             transform.LookAt(CurChannel.EndNode.transform);
         }        
-    }    
+    }   
 
+    public static List<string> BOARD_OBJECT_EDITOR_NAMES = new List<string> {"Player", "Facet", "Hazard", "Facet Collect", 
+                                                                                "Shield", "Speed Mod", "Game Mod"};   
+
+    
     private void CheckForNewChannel(List<Collider> overlapColliders)
     {
         // Channel nodes

@@ -659,18 +659,7 @@ public class MCP : MonoBehaviour
         colorFacet.InitForChannelNode(channelNode, dax);
         ChangeFacetColor(colorFacet, color);        
     }      
-
-   /* public Hazard CreateHazard(ChannelNode channelNode, Dax dax, Hazard.eHazardType type)
-    {                
-        string prefabString = "Dax/Prefabs/Hazards/" + Hazard.HAZARD_STRINGS[(int)type];
-        
-        Hazard hazardPrefab = Resources.Load<Hazard>(prefabString);        
-        Hazard hazard = Instantiate<Hazard>(hazardPrefab, channelNode.transform);
-        hazard.InitForChannelNode(channelNode, dax);
-        return hazard;        
-    }*/
-    // public enum eBoardObjectType { PLAYER, FACET, HAZARD, FACET_COLLECT, SHIELD, SPEED_MOD, GAME_MOD };
-    //public static List<string> HAZARD_STRINGS = new List<string> {"Enemy_Diode", "Glue", "Dynamite"};
+   
     public static List<string> PREFAB_ROOT_STRINGS = new List<string> {"Dax/Prefabs/", "Dax/Prefabs/Pickups/",
         "Dax/Prefabs/Hazards/", "Dax/Prefabs/Pickups/Facet_Collects/", "Dax/Prefabs/Pickups/Shields/", 
         "Dax/Prefabs/Pickups/Speed_Mods/", "Dax/Prefabs/Pickups/Point_Mods/"};

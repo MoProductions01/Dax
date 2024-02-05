@@ -14,9 +14,8 @@ public class Shield : BoardObject
 
     // monote
     public override void InitForChannelNode(ChannelNode spawnNode, Dax dax)
-    {
-       // Debug.Log("new shield create --MoNew--");
-        //name = spawnNode.name + "--" + ShieldType.ToString();
+    {       
+        name = spawnNode.name + "--Shield--" + ShieldType.ToString();
         //BoardObjectType = eBoardObjectType.SHIELD;
         base.InitForChannelNode(spawnNode, dax);       
     }
