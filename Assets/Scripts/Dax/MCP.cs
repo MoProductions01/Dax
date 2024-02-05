@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class MCP : MonoBehaviour
 {
@@ -421,33 +423,7 @@ public class MCP : MonoBehaviour
         return wheel;
     }
 
-    public void CreateFacet(ChannelNode channelNode, Dax dax, Facet.eFacetColors color)
-    {
-        Facet colorFacetPrefab = Resources.Load<Facet>("Dax/Prefabs/Pickups/Facet");
-        Facet colorFacet = Instantiate<Facet>(colorFacetPrefab, channelNode.transform);
-        colorFacet.InitForChannelNode(channelNode, dax);
-        ChangeFacetColor(colorFacet, color);        
-    }      
-
-    public T CreateBoardObject<T>(ChannelNode channelNode, Dax dax, string prefabString) where T : BoardObject
-    {        
-        // monote - look into adding the type in code so changing things won't fuck up prefabs
-        Debug.Log("CreateBoardObject: " + typeof(T).FullName);
-        T prefab = Resources.Load<T>(prefabString);
-        T instantiaedObject = Instantiate<T>(prefab, channelNode.transform);
-        instantiaedObject.InitForChannelNode(channelNode, dax);
-        return instantiaedObject;        
-    }
-
-   /* public Hazard CreateHazard(ChannelNode channelNode, Dax dax, Hazard.eHazardType type)
-    {                
-        string prefabString = "Dax/Prefabs/Hazards/" + Hazard.HAZARD_STRINGS[(int)type];
-        
-        Hazard hazardPrefab = Resources.Load<Hazard>(prefabString);        
-        Hazard hazard = Instantiate<Hazard>(hazardPrefab, channelNode.transform);
-        hazard.InitForChannelNode(channelNode, dax);
-        return hazard;        
-    }*/
+    
     
     
 
@@ -674,50 +650,87 @@ public class MCP : MonoBehaviour
                 break;            
         }
     }
+    
+
+    public void CreateFacet(ChannelNode channelNode, Dax dax, Facet.eFacetColors color)
+    {
+        Facet colorFacetPrefab = Resources.Load<Facet>("Dax/Prefabs/Pickups/Facet");
+        Facet colorFacet = Instantiate<Facet>(colorFacetPrefab, channelNode.transform);
+        colorFacet.InitForChannelNode(channelNode, dax);
+        ChangeFacetColor(colorFacet, color);        
+    }      
+
+   /* public Hazard CreateHazard(ChannelNode channelNode, Dax dax, Hazard.eHazardType type)
+    {                
+        string prefabString = "Dax/Prefabs/Hazards/" + Hazard.HAZARD_STRINGS[(int)type];
+        
+        Hazard hazardPrefab = Resources.Load<Hazard>(prefabString);        
+        Hazard hazard = Instantiate<Hazard>(hazardPrefab, channelNode.transform);
+        hazard.InitForChannelNode(channelNode, dax);
+        return hazard;        
+    }*/
     // public enum eBoardObjectType { PLAYER, FACET, HAZARD, FACET_COLLECT, SHIELD, SPEED_MOD, GAME_MOD };
-    public static List<string> PREFAB_ROOT_STRINGS = new List<string> {"Dax/Prefabs/Player_Diode", "Dax/Prefabs/Pickups/Facet/",
+    //public static List<string> HAZARD_STRINGS = new List<string> {"Enemy_Diode", "Glue", "Dynamite"};
+    public static List<string> PREFAB_ROOT_STRINGS = new List<string> {"Dax/Prefabs/", "Dax/Prefabs/Pickups/",
         "Dax/Prefabs/Hazards/", "Dax/Prefabs/Pickups/Facet_Collects/", "Dax/Prefabs/Pickups/Shields/", 
         "Dax/Prefabs/Pickups/Speed_Mods/", "Dax/Prefabs/Pickups/Point_Mods/"};
+
+    public static List<List<string>> PREFAB_BOARDOBJECT_STRINGS = new List<List<string>> 
+    {
+        new List<string> { "Player_Diode" }, // Player
+        new List<string> { "Facet" },   // Facet
+        new List<string> {"Enemy_Diode", "Glue", "Dynamite" }, // Hazard
+        new List<string> {"Facet_Collect_Ring", "Facet_Collect_Wheel"}, // Facet Collect
+        new List<string> {"Hit_Shield", "Single_Kill_Shield"}, // Sheild
+        new List<string> {"Player_Speed", "Enemy_Speed", "Ring_Speed"}, // Speed Mod
+        new List<string> {"Extra_Points", "Points_Multiplier"} // Point Mod
+    };   
+
+    public string CreatePrefabString(int boardObjectIndex, int boardObjectTypeIndex)
+    {                
+        return PREFAB_ROOT_STRINGS[boardObjectIndex] + 
+            PREFAB_BOARDOBJECT_STRINGS[boardObjectIndex][boardObjectTypeIndex];          
+    }
+   
+    public T CreateBoardObject<T>(ChannelNode channelNode, Dax dax, 
+        int boardObjectIndex, int boardObjectTypeIndex) where T : BoardObject
+    {                        
+        string prefabString = CreatePrefabString(boardObjectIndex, boardObjectTypeIndex);
+        T prefab = Resources.Load<T>(prefabString);
+        T instantiaedObject = Instantiate<T>(prefab, channelNode.transform);
+        instantiaedObject.InitForChannelNode(channelNode, dax);
+        return instantiaedObject;        
+    }
+
     public void CreateBoardObjectFromSaveData(ChannelNode channelNode, Dax.BoardObjectSave boSave, Dax dax)
     {
         //Debug.Log("Dax.CreateBoardObjectForNode(): " + channelNode.name + ", of type: " + boSave.Type); // moupdate *!!! this is being called 100 times for the player
 
-        string prefabString;
+        
         switch (boSave.Type)
         {                        
             case BoardObject.eBoardObjectType.FACET:
                 CreateFacet(channelNode, dax, (Facet.eFacetColors)(Facet.eFacetColors)boSave.IntList[0]);
                 break;
-            case BoardObject.eBoardObjectType.HAZARD:
-                prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.HAZARD] + 
-                    Hazard.HAZARD_STRINGS[(int)(Hazard.eHazardType)boSave.IntList[0]];
-                CreateBoardObject<Hazard>(channelNode, dax, prefabString);   
-                //CreateHazard(channelNode, dax, (Hazard.eHazardType)boSave.IntList[0]);
+            case BoardObject.eBoardObjectType.HAZARD:                
+                CreateBoardObject<Hazard>(channelNode, dax, 
+                    (int)BoardObject.eBoardObjectType.HAZARD, boSave.IntList[0]);         
                 break;
-            case BoardObject.eBoardObjectType.FACET_COLLECT:                
-                //prefabString = "Dax/Prefabs/Pickups/Facet_Collects/" + 
-                prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.FACET_COLLECT] +
-                    FacetCollect.FACET_COLLECT_STRINGS[(int)(FacetCollect.eFacetCollectTypes)boSave.IntList[0]];
-                CreateBoardObject<FacetCollect>(channelNode, dax, prefabString);  
-                //CreateFacetCollect(channelNode, dax, (FacetCollect.eFacetCollectTypes)boSave.IntList[0]);
+            case BoardObject.eBoardObjectType.FACET_COLLECT:                                
+                CreateBoardObject<FacetCollect>(channelNode, dax, 
+                    (int)BoardObject.eBoardObjectType.FACET_COLLECT, boSave.IntList[0]);
                 break;       
-            case BoardObject.eBoardObjectType.SHIELD:                                
-                prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.SHIELD] + 
-                    Shield.SHIELD_STRINGS[(int)(Shield.eShieldTypes)boSave.IntList[0]];
-                CreateBoardObject<Shield>(channelNode, dax, prefabString); 
-                //CreateShield(channelNode, dax, (Shield.eShieldTypes)boSave.IntList[0]);                
+            case BoardObject.eBoardObjectType.SHIELD:                                                    
+                CreateBoardObject<Shield>(channelNode, dax, 
+                    (int)BoardObject.eBoardObjectType.SHIELD, boSave.IntList[0]);
                 break;  
-            case BoardObject.eBoardObjectType.SPEED_MOD:
-                prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.SPEED_MOD] +
-                    SpeedMod.SPEED_MOD_STRINGS[(int)(SpeedMod.eSpeedModType)boSave.IntList[0]];
-                CreateBoardObject<SpeedMod>(channelNode, dax, prefabString); 
-                //SpeedMod speedMod = CreateSpeedMod(channelNode, dax, (SpeedMod.eSpeedModType)boSave.IntList[0]);
+            case BoardObject.eBoardObjectType.SPEED_MOD:                
+                CreateBoardObject<SpeedMod>(channelNode, dax, 
+                    (int)BoardObject.eBoardObjectType.SPEED_MOD, boSave.IntList[0]);
                 break;       
-            case BoardObject.eBoardObjectType.GAME_MOD:
-                prefabString = MCP.PREFAB_ROOT_STRINGS[(int)BoardObject.eBoardObjectType.GAME_MOD] +
-                    GameMod.GAME_MOD_STRINGS[(int)(GameMod.eGameModType)boSave.IntList[0]];
-                CreateBoardObject<GameMod>(channelNode, dax, prefabString);   
-                //CreateGameMod(channelNode, dax, (GameMod.eGameModType)boSave.IntList[0]);
+            case BoardObject.eBoardObjectType.GAME_MOD:                
+                CreateBoardObject<GameMod>(channelNode, dax, 
+                    (int)BoardObject.eBoardObjectType.GAME_MOD, boSave.IntList[0]);
                 break;         
         }
     }
