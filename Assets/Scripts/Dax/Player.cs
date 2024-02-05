@@ -202,6 +202,11 @@ public class Player : BoardObject
         transform.LookAt(SpawningNode.transform);
     }
 
+    public ChannelNode GetStartChannelNode()
+    {
+        return SpawningNode;
+    }
+
 
 
 #if true

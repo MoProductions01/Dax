@@ -264,14 +264,7 @@ public class Dax : MonoBehaviour
                     Bumper bumper = bumpers[j];
                     bumper.BumperType = ringSave.BumperSaves[j].BumperType;
                     bumper.BumperColor = ringSave.BumperSaves[j]._Color;
-                    if(bumper.BumperType == Bumper.eBumperType.REGULAR)
-                    { 
-                        bumper.gameObject.GetComponent<MeshRenderer>().material = mcp.GetBumperMaterial(Bumper.eBumperType.REGULAR, bumper.BumperColor);                                                
-                    }
-                    else if(bumper.BumperType == Bumper.eBumperType.COLOR_MATCH)
-                    {
-                        bumper.gameObject.GetComponent<MeshRenderer>().material = mcp.GetBumperMaterial(Bumper.eBumperType.COLOR_MATCH, bumper.BumperColor);                        
-                    }                    
+                    bumper.gameObject.GetComponent<MeshRenderer>().material = mcp.GetBumperMaterial(bumper.BumperType, bumper.BumperColor);                                                                                        
                 }
             }
            // else Debug.Log("ringSave.BumperSaves is null so must be center ring");

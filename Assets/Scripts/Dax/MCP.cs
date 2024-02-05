@@ -487,7 +487,8 @@ public class MCP : MonoBehaviour
         }
         else
         {
-            return (FindObjectOfType<MCP>().GetFacetMaterial(color));
+            //return (FindObjectOfType<MCP>().GetFacetMaterial(color));
+            return GetFacetMaterial(color);
         }
     }
 

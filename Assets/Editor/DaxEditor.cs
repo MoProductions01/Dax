@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,17 +11,17 @@ using UnityEngine;
 public class DaxEditor : Editor
 {   
     public GameObject SelectedGameObject;   // The GameObject the engine says we have selected.  Can be manually re-assigned if necessary
-    public GameObject LastSelectedGameObject;    // Used for checking for changes in the selected object
-    
+    public GameObject LastSelectedGameObject;    // Used for checking for changes in the selected object    
     MCP _MCP;   // The Master Control Program object from the main game
     Dax _Dax;   // The Dax object from the main game
     DaxPuzzleSetup _DaxPuzzleSetup; // The MonoBehavior that this editor script extends
     SerializedObject DaxSetupSO;    // The SerializedObject for the DaxPuzzleSetup object    
     SerializedObject DaxSO; // The SerializedObject for the _Dax object
 
-    int SelectedRing = 0; // Index of our currently selected ring      
-    bool RingsChangePopupActive = false; // To confirm if the user does in fact want to reduce the number of rings since that also destroys objects
+    int SelectedRing = 0; // Index of our currently selected ring          
     int NumRingsUserWants = 4; // How many rings the user wants to change to
+    bool RingsNumChangePopupActive = false; // For confirmation if the user does in fact want to reduce the number of rings since that also destroys objects
+    bool RingsResetPopupActive = false; // For confirmation if the user wants to reset the Ring since it clears all BoardObjects and resets ChannelPieces
 
     /* These are helper functions to take care of the multiple serialized property updates */
     void UpdateStringProperty(SerializedObject so, string propName, string stringValue)
@@ -97,20 +98,20 @@ public class DaxEditor : Editor
         EditorGUILayout.Separator();
         // If you reduce the number of rings you get a popup warning you that all the objects on the rings that will 
         // go away will be destroyed.
-        if (RingsChangePopupActive == true)
+        if (RingsNumChangePopupActive == true)
         {   
             bool newNumRingsResponse = EditorUtility.DisplayDialog("Are you sure you want to decrease the number of rings?", 
                                                                     "This will reset all rings beyond the new number.", "Yes", "No");
             if (newNumRingsResponse == true)
             {   // User wants to reduce rings, so sort that out.
-                RingsChangePopupActive = false;         
+                RingsNumChangePopupActive = false;         
                 // ResetRing destroys all the board objects and restores any removed ChannelPieces      
                 for (int i = _Dax.CurWheel.NumActiveRings; i > NumRingsUserWants; i--) _MCP.ResetRing(_Dax.CurWheel.Rings[i]);                      
                 Selection.activeGameObject = null;
                 SelectedRing = 0;
                 _Dax.CurWheel.TurnOnRings(NumRingsUserWants); // This will turn on the correct # of puzzle rings
             }
-            else RingsChangePopupActive = false; // User chose no so just shut off the popup            
+            else RingsNumChangePopupActive = false; // User chose no so just shut off the popup            
         }
         else
         {   // Number of rings
@@ -123,7 +124,7 @@ public class DaxEditor : Editor
                 }
                 else
                 {   // We're decreasing the number of rings, which will destroy all the stuff on them, so give the user a popup
-                    RingsChangePopupActive = true;
+                    RingsNumChangePopupActive = true;
                     NumRingsUserWants = newNumRings;
                 }
             }
@@ -219,26 +220,170 @@ public class DaxEditor : Editor
         }   
     }
 
+    /// <summary>
+    /// User has selected a Ring from the tool so handle that
+    /// </summary>
     void HandleRingSelected()
     {
         StartNewSelection(SelectedGameObject.name, "Ring");
         Ring selRing = SelectedGameObject.GetComponent<Ring>();
-        // Check for a difference in ring rotation speed
-        float newSpeed = EditorGUILayout.FloatField("Rotate Speed: ", selRing.RotateSpeed);
-        if (newSpeed != selRing.RotateSpeed)
+        // Check if the reset ring popup is active
+        if(RingsResetPopupActive)
         {
-            // User changed ring rotation speed so sort that out and update serialized data
-            selRing.RotateSpeed = newSpeed;
-            SerializedObject selRingSO = new SerializedObject(selRing);
-            selRingSO.Update();
-            UpdateFloatProperty(selRingSO, "RotateSpeed", selRing.RotateSpeed);                    
-        }            
-        EditorGUILayout.Separator();
-        // Check if the user wants to reset the ring.  This clears out all BoardObjects and puts back the ChannelPieces
-        if (GUILayout.Button("Reset Ring", GUILayout.Width(300)))
-        {
-            _MCP.ResetRing(selRing);
+            bool ringResetResponse = EditorUtility.DisplayDialog("Are you sure you want to reset this Ring?", 
+                                                                "This will remove all BoardObjects and reset Channel Pieces", "Yes", "No");
+            if(ringResetResponse == true)
+            {   // User chose to reset, so reset the Ring
+                _MCP.ResetRing(selRing);
+            }
+            RingsResetPopupActive = false;
         }
+        else
+        {
+            // Check for a difference in ring rotation speed
+            float newSpeed = EditorGUILayout.FloatField("Rotate Speed: ", selRing.RotateSpeed);
+            if (newSpeed != selRing.RotateSpeed)
+            {
+                // User changed ring rotation speed so sort that out and update serialized data
+                selRing.RotateSpeed = newSpeed;
+                SerializedObject selRingSO = new SerializedObject(selRing);
+                selRingSO.Update();
+                UpdateFloatProperty(selRingSO, "RotateSpeed", selRing.RotateSpeed);                    
+            }            
+            EditorGUILayout.Separator();
+            // Check if the user wants to reset the ring. This spawns a popup for confirmation
+            if (GUILayout.Button("Reset Ring", GUILayout.Width(300)))
+            {                
+                RingsResetPopupActive = true;
+            }
+        }        
+        EditorGUILayout.EndVertical();
+    }   
+
+    /// <summary>
+    /// Handle user selecting Player
+    /// </summary>
+    void HandlePlayerSelected()
+    {
+        StartNewSelection(SelectedGameObject.name, "Player");
+        Player player = SelectedGameObject.GetComponent<Player>();
+        SerializedObject playerSO = new SerializedObject(player);
+        playerSO.Update();
+        // Check if the starting speed has changed
+        float newSpeed = EditorGUILayout.Slider("Speed", player.Speed, 0f, Dax.MAX_SPEED);
+        if (newSpeed != player.Speed)
+        {
+            player.Speed = newSpeed;
+            UpdateFloatProperty(playerSO, "Speed", player.Speed);                    
+        }                                
+        EditorGUILayout.EndVertical();
+    }     
+
+    /// <summary>
+    /// Handle bumper is selected
+    /// </summary>
+    void HandleBumperSelected()
+    {
+        StartNewSelection(SelectedGameObject.name, "Bumper");
+        Bumper selBumper = SelectedGameObject.GetComponent<Bumper>();
+        SerializedObject selBumperSO = new SerializedObject(selBumper);
+        selBumperSO.Update();
+
+        // Check for changing bumper type
+        Bumper.eBumperType newBumperType = (Bumper.eBumperType)EditorGUILayout.EnumPopup("Bumper Type", selBumper.BumperType);                
+        if (newBumperType != selBumper.BumperType)
+        {   // Bumper type has changed so update that and the material
+            selBumper.BumperType = newBumperType;                        
+            selBumper.gameObject.GetComponent<MeshRenderer>().material = _MCP.GetBumperMaterial(newBumperType, selBumper.BumperColor);                    
+            UpdateEnumProperty(selBumperSO, "BumperType", (int)selBumper.BumperType);            
+        }
+        EditorGUILayout.Separator();
+        if (selBumper.BumperType == Bumper.eBumperType.COLOR_MATCH)
+        {   // Check for new Bumper color
+            Facet.eFacetColors newBumperColor = (Facet.eFacetColors)EditorGUILayout.EnumPopup("Bumper Color", selBumper.BumperColor);
+            if (newBumperColor != selBumper.BumperColor)
+            {
+                // Color changed so update the data and material
+                selBumper.BumperColor = newBumperColor;
+                selBumper.gameObject.GetComponent<MeshRenderer>().material = _MCP.GetBumperMaterial(selBumper.BumperType, newBumperColor);
+                UpdateEnumProperty(selBumperSO, "BumperColor", (int)selBumper.BumperColor);
+            }
+        }
+        EditorGUILayout.EndVertical();
+    }    
+
+    /// <summary>
+    /// Handles toggling Channel Pieces on and off
+    /// </summary>
+    void HandleChannelPiece()
+    {
+        StartNewSelection(SelectedGameObject.name, "Channel Piece");                
+        ChannelPiece selChannelPiece = SelectedGameObject.GetComponent<ChannelPiece>();               
+        // Set up the button text
+        string s = selChannelPiece.IsActive() == true ? "Turn Off" : "Turn On";
+        if (GUILayout.Button(s, GUILayout.Width(150f)))
+        {   // User clicked the button so toggle the ChannelPiece
+            SelectedGameObject.GetComponent<ChannelPiece>().Toggle();
+        }
+        EditorGUILayout.EndVertical();
+    }
+
+    /// <summary>
+    /// Channel Nodes are the core of setting up the level because these are 
+    /// where you place all of the BoardObjects.
+    /// </summary>
+    void HandleChannelNode()
+    {
+        StartNewSelection(SelectedGameObject.name, "Channel Node");               
+        ChannelNode selChannelNode = SelectedGameObject.GetComponent<ChannelNode>();
+        
+        // For creating BoardObjects make sure it's a middle node since those are the
+        // only ones that can have anything spawned on it.
+        if (selChannelNode.IsMidNode() == true)
+        {
+            // Nodes can only have one BoardObject on them
+            if(selChannelNode.SpawnedBoardObject == null)
+            {   // no board object so handle creating one
+                HandleCreateBoardObject(selChannelNode);                  
+            }
+            else
+            {   // There's a BoardObject on this node so handle that
+                HandleBoardObject(selChannelNode);                    
+            }
+        }    
+        else if( selChannelNode.name.Contains("Ring_00_Start")) 
+        {
+            // If it's not a middle node make sure it's a start node
+            // on the center ring because those are the ones used to
+            // select the Player's starting channel
+            Player player = FindObjectOfType<Player>();
+            // Check if the selected node is already the start node
+            if(selChannelNode != player.GetStartChannelNode())
+            {
+                if (GUILayout.Button("Make Starting Channel", GUILayout.Width(200f)))
+                {   // Change the player's starting channel based on the selected node
+                    int startChannelIndex = Int32.Parse(selChannelNode.name.Substring(19, 2)) - 1;                                               
+                    player.SetStartChannel(startChannelIndex);                            
+                }
+            }            
+        }                                                                                                                                      
+        
+        EditorGUILayout.Separator();
+        EditorGUILayout.EndVertical();
+    }
+
+    /// <summary>
+    /// This is a special case since sometimes a BoardObject on the node can make it difficult to
+    /// select the node itself in the editor.  So if you've clicked on the BoardObject spawned on
+    /// the node handle it as if Selection.activeGameObject is the node underneath.  
+    /// </summary>
+    void HandleSpawnedBoardObjectSelected()
+    {
+        BoardObject parent = SelectedGameObject.transform.parent.GetComponent<BoardObject>();
+        ChannelNode selChannelNode = parent.SpawningNode;
+        StartNewSelection(selChannelNode.name, "Channel Node");
+        HandleBoardObject(selChannelNode);
+        EditorGUILayout.Separator();
         EditorGUILayout.EndVertical();
     }
 
@@ -248,11 +393,34 @@ public class DaxEditor : Editor
     /// </summary>
     void HandleActiveGameObject()
     {
-        // Ring (not actually handled via engine but by the editor tool)    
+        // Handle the selected game object depending on what it is
+
         if (SelectedGameObject.GetComponent<Ring>() != null)
         {
             HandleRingSelected();            
-        }
+        }        
+        if (SelectedGameObject.GetComponent<Player>() != null)
+        {
+            HandlePlayerSelected();
+        }        
+        if (SelectedGameObject.GetComponent<Bumper>() != null)
+        {
+            HandleBumperSelected();
+        }        
+        if (SelectedGameObject.GetComponent<ChannelPiece>() != null)
+        {
+            HandleChannelPiece();
+        }         
+        if (SelectedGameObject.GetComponent<ChannelNode>() != null)
+        {
+            HandleChannelNode();
+        }        
+        if(SelectedGameObject.transform.parent != null && SelectedGameObject.transform.parent.GetComponent<BoardObject>() != null)
+        {          
+            // This is a special case for when the user clicks on a spawned BoardObject. 
+            // See function's comments for full explanation.
+            HandleSpawnedBoardObjectSelected();
+        }  
     }
 
     /// <summary>
@@ -290,111 +458,7 @@ public class DaxEditor : Editor
         if (SelectedGameObject != null)
         {
             // The engine is telling us we have a GameObject selected so handle that.
-            HandleActiveGameObject();
-            
-            // ******* Player            
-            if (SelectedGameObject.GetComponent<Player>() != null)
-            {
-                StartNewSelection(SelectedGameObject.name, "Player");
-                Player player = SelectedGameObject.GetComponent<Player>();
-                SerializedObject playerSO = new SerializedObject(player);
-                playerSO.Update();
-                float newSpeed = EditorGUILayout.Slider("Speed", player.Speed, 0f, Dax.MAX_SPEED);
-                if (newSpeed != player.Speed)
-                {
-                    player.Speed = newSpeed;
-                    UpdateFloatProperty(playerSO, "Speed", player.Speed);                    
-                }                                
-                EditorGUILayout.EndVertical();
-            }
-            // ************ Bumper
-            if (SelectedGameObject.GetComponent<Bumper>() != null)
-            {
-                StartNewSelection(SelectedGameObject.name, "Bumper");
-                Bumper selBumper = SelectedGameObject.GetComponent<Bumper>();
-                SerializedObject selBumperSO = new SerializedObject(selBumper);
-                selBumperSO.Update();
-
-                Bumper.eBumperType newBumperType = (Bumper.eBumperType)EditorGUILayout.EnumPopup("Bumper Type", selBumper.BumperType);                
-                if (newBumperType != selBumper.BumperType)
-                {
-                    selBumper.BumperType = newBumperType;
-                    UpdateEnumProperty(selBumperSO, "BumperType", (int)selBumper.BumperType);
-                   // if (newBumperType == Bumper.eBumperType.COLOR_MATCH) selBumper.BumperColor = Facet.eFacetColors.RED;
-                    //else selBumper.BumperColor = Facet.eFacetColors.WHITE;
-                    selBumper.BumperColor = Facet.eFacetColors.RED;
-                    selBumper.gameObject.GetComponent<MeshRenderer>().material = GetBumperMaterial(newBumperType, selBumper.BumperColor);                    
-                    UpdateEnumProperty(selBumperSO, "BumperColor", (int)selBumper.BumperColor);
-                }
-                EditorGUILayout.Separator();
-                if (selBumper.BumperType == Bumper.eBumperType.COLOR_MATCH)
-                {
-                    Facet.eFacetColors newBumperColor = (Facet.eFacetColors)EditorGUILayout.EnumPopup("Bumper Color", selBumper.BumperColor);
-                    if (newBumperColor != selBumper.BumperColor)
-                    {
-                        //if (newBumperColor == Facet.eFacetColors.WHITE) { Debug.LogError("Bumper Color can't be White."); return; }
-                        selBumper.BumperColor = newBumperColor;
-                        selBumper.gameObject.GetComponent<MeshRenderer>().material = GetBumperMaterial(selBumper.BumperType, newBumperColor);
-                        UpdateEnumProperty(selBumperSO, "BumperColor", (int)selBumper.BumperColor);
-                    }
-                }
-                EditorGUILayout.EndVertical();
-            }
-            
-            
-            // ************ Channel Node
-            if (SelectedGameObject.GetComponent<ChannelNode>() != null)
-            {
-                StartNewSelection(SelectedGameObject.name, "Channel Node");               
-                ChannelNode selChannelNode = SelectedGameObject.GetComponent<ChannelNode>();
-               // if (selChannelNode.IsMidNode() == false) return; // only mid nodes can spawn objets                                                                                                                                             
-                if (selChannelNode.IsMidNode() == true) // only mid nodes can spawn objets   
-                {
-                    // only one type of object can be spawned on each node                    
-                    if(selChannelNode.SpawnedBoardObject == null)
-                    {   // no board object so handle creating one
-                        HandleCreateBoardObject(selChannelNode);                  
-                    }
-                    else
-                    {   // there's a board object on this node so handle that
-                        HandleBoardObject(selChannelNode);                    
-                    }
-                }    
-                else if( selChannelNode.name.Contains("Ring_00_Start"))
-                {
-                    //Debug.Log("Selected a potential start node");                    
-                    if (GUILayout.Button("Make Starting Channel", GUILayout.Width(200f)))
-                    {                                                
-                        int startChannelIndex = Int32.Parse(selChannelNode.name.Substring(19, 2)) - 1;                                               
-                        FindObjectOfType<Player>().SetStartChannel(startChannelIndex);                            
-                    }
-                }                                                                                                                                      
-                
-                EditorGUILayout.Separator();
-                EditorGUILayout.EndVertical();
-            }
-            // CHANNEL PIECE
-            if (SelectedGameObject.GetComponent<ChannelPiece>() != null)
-            {
-                StartNewSelection(SelectedGameObject.name, "Channel Piece");                
-                ChannelPiece selChannelPiece = SelectedGameObject.GetComponent<ChannelPiece>();               
-                string s = selChannelPiece.IsActive() == true ? "Turn Off" : "Turn On";
-                if (GUILayout.Button(s, GUILayout.Width(150f)))
-                {
-                    SelectedGameObject.GetComponent<ChannelPiece>().Toggle();
-                }
-                EditorGUILayout.EndVertical();
-            }        
-            // If you've got a BoardObject selected then make sure the HandleBoardObject stuff is taken care of
-            if(SelectedGameObject.transform.parent != null && SelectedGameObject.transform.parent.GetComponent<BoardObject>() != null)
-            {                
-                BoardObject parent = SelectedGameObject.transform.parent.GetComponent<BoardObject>();
-                ChannelNode selChannelNode = parent.SpawningNode;
-                StartNewSelection(selChannelNode.name, "Channel Node");
-                HandleBoardObject(selChannelNode);
-                EditorGUILayout.Separator();
-                EditorGUILayout.EndVertical();
-            }                                   
+            HandleActiveGameObject();                                                                                                                                        
         }
 
         // Save data                        
@@ -615,23 +679,5 @@ public class DaxEditor : Editor
 
                
         }
-    }      
-    
-    /* Get the Material that the bumper needs for it's type and/or color if it's a COLOR_MATCH type */
-    public Material GetBumperMaterial(Bumper.eBumperType type, Facet.eFacetColors color)
-    {
-        if (type != Bumper.eBumperType.COLOR_MATCH)
-        {
-            switch (type)
-            {
-                case Bumper.eBumperType.REGULAR: return Instantiate<Material>(Resources.Load<Material>("Dax/Bumper Materials/Bumper None"));
-                case Bumper.eBumperType.DEATH: return Instantiate<Material>(Resources.Load<Material>("Dax/Bumper Materials/Bumper Death"));
-                default: Debug.LogError("GetBumperMaterial(): Invalid Bumper type: " + type); return null;
-            }
-        }
-        else
-        {
-            return (FindObjectOfType<MCP>().GetFacetMaterial(color));            // monote - sort out the MCP bit
-        }
-    }    
+    }              
 }
