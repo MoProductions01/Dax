@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
-using System.Reflection;
-using Codice.CM.SEIDInfo;
+
 
 
 [CustomEditor(typeof(DaxPuzzleSetup))]
 public class DaxEditor : Editor
-{
-    public GameObject LastSelectedObject = null;    // used for checking for changes in the selected object
-    int SelectedRing = 0; // index of our currently selected ring   
-   // bool IsDialogueShowing = false; // this is to get around a weird Unity bug where dialogues show up twice.  FUN
-   // bool StartChannelError = false; // if we're waiting for a system popup on a start channel error    
-    bool RingsChangePopupActive = false; // to confirm if the user does in fact want to reduce the number of rings since that also destroys objects
-    int NumRingsUserWants = 4; // how many rings the user wants to change to
+{   
+    public GameObject SelectedGameObject;   // The GameObject the engine says we have selected.  Can be manually re-assigned if necessary
+    public GameObject LastSelectedGameObject;    // Used for checking for changes in the selected object
+    
+    MCP _MCP;   // The Master Control Program object from the main game
+    Dax _Dax;   // The Dax object from the main game
+    DaxPuzzleSetup _DaxPuzzleSetup; // The MonoBehavior that this editor script extends
+    SerializedObject DaxSetupSO;    // The SerializedObject for the DaxPuzzleSetup object    
+    SerializedObject DaxSO; // The SerializedObject for the _Dax object
+
+    int SelectedRing = 0; // Index of our currently selected ring      
+    bool RingsChangePopupActive = false; // To confirm if the user does in fact want to reduce the number of rings since that also destroys objects
+    int NumRingsUserWants = 4; // How many rings the user wants to change to
 
     /* These are helper functions to take care of the multiple serialized property updates */
     void UpdateStringProperty(SerializedObject so, string propName, string stringValue)
@@ -36,14 +39,16 @@ public class DaxEditor : Editor
         so.ApplyModifiedProperties();
     }
     void UpdateEnumProperty(SerializedObject so, string propName, int enumValue)
-    {
-        if(so.hasModifiedProperties == true) Debug.Log("so: " + so.ToString() + ", hasModifiedProperties");
+    {        
         so.FindProperty(propName).enumValueIndex = enumValue;
-        bool changesMade = so.ApplyModifiedProperties();
-        if(changesMade == true) Debug.Log("so: " + so.ToString() + ", enum: " + propName + ", changed to: " + enumValue);
+        so.ApplyModifiedProperties();        
     }
 
-    /* Helper to get a new section of the interface going */
+    /// <summary>
+    /// Utility function when you want to start a new section of the level creator
+    /// </summary>
+    /// <param name="selectionName">The name of the currently selected GameObject. </param>
+    /// <param name="selectionType">Non-coding name of selection we're creating.</param>
     void StartNewSelection(string selectionName, string selectionType)
     {
         EditorGUILayout.Separator();
@@ -54,10 +59,13 @@ public class DaxEditor : Editor
         EditorGUILayout.Separator();
     }
 
-    /* This is for keyboard shortcuts */
+    /// <summary>
+    /// This is for handling keyboard shortcuts.
+    /// </summary>
     private void OnSceneGUI()
     {
         if (Selection.activeGameObject == null) return;
+        // Since adding/removing Channel Pieces is so common we hooked it up to the 'B' key.
         if (Selection.activeGameObject.GetComponent<ChannelPiece>() != null)
         {           
             Event e = Event.current;
@@ -72,188 +80,223 @@ public class DaxEditor : Editor
     /* This is to make sure the RifRafDebug object is always hidden.  It's hacky but it's editor code so I'm ok with it */
     void HandleSceneView()
     {
-        RifRafDebug rrd = FindObjectOfType<RifRafDebug>();
+        return; // monote - might not need this
+        /*RifRafDebug rrd = FindObjectOfType<RifRafDebug>();
         if (rrd != null)
         {
             SceneVisibilityManager sv = SceneVisibilityManager.instance;
             if (sv.IsHidden(rrd.gameObject) == false) sv.Hide(rrd.gameObject, true);
-        }
+        }*/
     }        
 
-    /* Main control code for the engine */
-    public override void OnInspectorGUI()
-    {
-        HandleSceneView(); // make sure the RifRaf Debug object is not visible        
-                
-        MCP mcp = GameObject.FindObjectOfType<MCP>();
-        DaxPuzzleSetup daxSetup = (DaxPuzzleSetup)target;        
-        SerializedObject daxSetupSO = new SerializedObject(daxSetup);
-        daxSetupSO.Update();
-        Dax dax = mcp._Dax.GetComponent<Dax>();
-        SerializedObject daxSO = new SerializedObject(dax);
-        daxSO.Update();
-
-        if (dax == null) { Debug.LogError("ERROR: no Dax component on this game object: " + this.name); return; }
-
-#region PUZZLE_INFO
-        // ************ Puzzle Name
+    /// <summary>
+    /// Handles the number of rings and ring selection
+    /// </summary>    
+    void HandleNumRingsAndRingSelection()
+    {           
         EditorGUILayout.Separator();
-        string newName = EditorGUILayout.TextField(dax.PuzzleName);
-        if(newName != dax.PuzzleName)
-        {
-            dax.PuzzleName = newName;
-            UpdateStringProperty(daxSO, "PuzzleName", dax.PuzzleName);            
-        }                
-
-        // ************ Level Time
-        EditorGUILayout.Separator();
-        float newLevelTime = EditorGUILayout.FloatField("Level Time ", dax.LevelTime);
-        if (newLevelTime <= 10f) newLevelTime = 10f;
-        if(newLevelTime != dax.LevelTime)
-        {
-            dax.LevelTime = newLevelTime;
-            UpdateFloatProperty(daxSO, "LevelTime", dax.LevelTime);           
-        }
-        // ************ Victory Condition
-        EditorGUILayout.Separator();
-        Dax.eVictoryConditions newVictoryCondition = (Dax.eVictoryConditions)EditorGUILayout.EnumPopup("Victory Conditions", dax.CurWheel.VictoryCondition);
-        if (newVictoryCondition != dax.CurWheel.VictoryCondition)
-        {
-            dax.CurWheel.VictoryCondition = newVictoryCondition;
-            UpdateEnumProperty(new SerializedObject(dax.CurWheel), "VictoryCondition", (int)dax.CurWheel.VictoryCondition);            
-        }
-        // ************ Pickup Facets on board/to collect
-        EditorGUILayout.Separator();
-        for (int i = 0; i < dax.CurWheel.NumFacetsOnBoard.Count-1; i++)
-        {
-            Facet.eFacetColors curColor = (Facet.eFacetColors)i;
-            EditorGUILayout.LabelField(curColor.ToString() + " To Collect: " + dax.CurWheel.NumFacetsOnBoard[(int)curColor]);
-        }  
-       /* if(dax.CurWheel.VictoryCondition == Dax.eVictoryConditions.COLLECTION)
-        {            
-            EditorGUILayout.LabelField("Pickup Facets To Collect " + dax.CurWheel.NumFacetsOnBoard[(int)Facet.eFacetColors.WHITE]);
-        }
-        // ************ Color Facets on board/to match
-        if (dax.CurWheel.VictoryCondition == Dax.eVictoryConditions.COLOR_MATCH)
-        {           
-            for (int i = 0; i < dax.CurWheel.NumFacetsOnBoard.Count-1; i++)
-            {
-                Facet.eFacetColors curColor = (Facet.eFacetColors)i;
-                EditorGUILayout.LabelField(curColor.ToString() + " To Collect: " + dax.CurWheel.NumFacetsOnBoard[(int)curColor]);
-            }           
-        }   */    
-
-        // ************ Rings        
-        EditorGUILayout.Separator();
+        // If you reduce the number of rings you get a popup warning you that all the objects on the rings that will 
+        // go away will be destroyed.
         if (RingsChangePopupActive == true)
-        {   // Waiting on to decide to reduce the number of rings.  This has a lot of board matinence involved so warn the user about this if necessary.      
-            bool newNumRingsResponse = EditorUtility.DisplayDialog("Are you sure you want to decrease the number of rings?", "This will reset all rings beyond the new number.", "yes", "no");
+        {   
+            bool newNumRingsResponse = EditorUtility.DisplayDialog("Are you sure you want to decrease the number of rings?", 
+                                                                    "This will reset all rings beyond the new number.", "Yes", "No");
             if (newNumRingsResponse == true)
-            {
-                RingsChangePopupActive = false;               
-                if (NumRingsUserWants < dax.CurWheel.NumActiveRings)
-                {   // reducing numer of rings, so make sure to 
-                    for (int i = dax.CurWheel.NumActiveRings; i > NumRingsUserWants; i--) mcp.ResetRing(dax.CurWheel.Rings[i]);                    
-                }
+            {   // User wants to reduce rings, so sort that out.
+                RingsChangePopupActive = false;         
+                // ResetRing destroys all the board objects and restores any removed ChannelPieces      
+                for (int i = _Dax.CurWheel.NumActiveRings; i > NumRingsUserWants; i--) _MCP.ResetRing(_Dax.CurWheel.Rings[i]);                      
                 Selection.activeGameObject = null;
                 SelectedRing = 0;
-                dax.CurWheel.TurnOnRings(NumRingsUserWants);                
+                _Dax.CurWheel.TurnOnRings(NumRingsUserWants); // This will turn on the correct # of puzzle rings
             }
-            else RingsChangePopupActive = false;
-            RemoveWarpNullEntries(dax.CurWheel);
+            else RingsChangePopupActive = false; // User chose no so just shut off the popup            
         }
         else
-        {   // ************ Number of rings
-            int newNumRings = EditorGUILayout.IntPopup("Number of Rings", dax.CurWheel.NumActiveRings, DaxPuzzleSetup.NUM_RINGS_NAMES, DaxPuzzleSetup.NUM_RINGS_TOTALS);
-            if (newNumRings != dax.CurWheel.NumActiveRings)
+        {   // Number of rings
+            int newNumRings = EditorGUILayout.IntPopup("Number of Rings", _Dax.CurWheel.NumActiveRings, DaxPuzzleSetup.NUM_RINGS_NAMES, DaxPuzzleSetup.NUM_RINGS_TOTALS);
+            if (newNumRings != _Dax.CurWheel.NumActiveRings)
             {
-                if (newNumRings > dax.CurWheel.NumActiveRings)
-                {   // if we're increasing the number of rings just go ahead and do it because the rings have been cleared already                    
-                    dax.CurWheel.TurnOnRings(newNumRings);
+                if (newNumRings > _Dax.CurWheel.NumActiveRings)
+                {   // If we're increasing the number of rings just go ahead and do it because the rings have been cleared already                    
+                    _Dax.CurWheel.TurnOnRings(newNumRings);
                 }
                 else
-                {   // we're decreasing the number of rings, which will destroy all the stuff on them, so give the user a popup
+                {   // We're decreasing the number of rings, which will destroy all the stuff on them, so give the user a popup
                     RingsChangePopupActive = true;
                     NumRingsUserWants = newNumRings;
                 }
             }
         }
-        #endregion
-        #region OBJECT_SELECTION
-        // ************ Ring selection is handled via the tool Inspector window
+
+        // Ring selection is handled via the tool Inspector window since there's so many other colliders on the board
         EditorGUILayout.Separator();
         if (Selection.activeGameObject == null || (Selection.activeGameObject != null && Selection.activeGameObject.GetComponent<Ring>() == null))
-        {   // we have something other than a ring selected now so make sure that there's no ring selected
-            SelectedRing = 0;
+        {   // We have something other than a ring selected now so make sure that there's no ring selected
+            SelectedRing = 0;            
         }
+        // You always have at least one Ring other than the Center ring so
+        // set up the enum list based on the # of rings after that
         List<string> ringNames = new List<string> { "None", "Center", "Ring 01" };
-        for (int i = 2; i <= dax.CurWheel.NumActiveRings; i++) ringNames.Add("Ring " + i.ToString("D2"));        
+        for (int i = 2; i <= _Dax.CurWheel.NumActiveRings; i++) ringNames.Add("Ring " + i.ToString("D2"));        
         string[] ringNamesArray = ringNames.ToArray();
+        // Set up the enum pulldown
         int newRing = EditorGUILayout.Popup("Select Ring", SelectedRing, ringNamesArray);
         if (newRing != SelectedRing)
         {
             if (newRing == 0)
-            {
+            {   // If you selected "None" on the enum list then you will have no active selected object
                 Selection.activeGameObject = null;
             }
             else
-            {
-                Selection.activeGameObject = dax.CurWheel.Rings[newRing - 1].gameObject;
+            {   // You've chosen a ring so make that the activeGameObject
+                Selection.activeGameObject = _Dax.CurWheel.Rings[newRing - 1].gameObject;
             }
             SelectedRing = newRing;
         }
-         #region INIT_SAVE
-            // **** Puzzle initialization/saving
-            EditorGUILayout.Separator();
-            //EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-            if (GUILayout.Button("Init Puzzle"))
-            {
-                // check to see if the chosen start channel is valid
-                // StartChannelError = !dax._Player.CurChannel.IsValidStartChannel();                               
-                //if (StartChannelError == true) return; // bail if the player's starting channel isn't valid                
-                dax.CurWheel.InitWheelFacets();
-                dax.CreateSaveData(dax);
-                Debug.Log("*******Puzzle Initted*********"); // moupdate - restrict to center nodes
-            }
-            EditorGUILayout.Separator();
-            if(GUILayout.Button("Save Puzzle"))
-            {
-                mcp.SavePuzzle();                
-            }             
-            #endregion
+    }
 
-        // ********** Objects selected by mouse
-        GameObject selected = Selection.activeGameObject;              
-
-        if (LastSelectedObject != selected) LastSelectedObject = selected;        
-        if (selected != null)
+    /// <summary>
+    /// The overall puzzle info is always in the inspector.  Individual
+    /// puzzle elements change depending on what's selected.
+    /// </summary>    
+    void HandlePuzzleInfo()
+    {
+        // Puzzle Name
+        EditorGUILayout.Separator();
+        string newName = EditorGUILayout.TextField(_Dax.PuzzleName);
+        if(newName != _Dax.PuzzleName)
         {
-            // ******* Ring (selected via tool above)      
-            if (selected.GetComponent<Ring>() != null)
-            {
-                StartNewSelection(selected.name, "Ring");
-                Ring selRing = selected.GetComponent<Ring>();
-                float newSpeed = EditorGUILayout.FloatField("Rotate Speed: ", selRing.RotateSpeed);
-                if (newSpeed != selRing.RotateSpeed)
-                {
-                    selRing.RotateSpeed = newSpeed;
-                    SerializedObject selRingSO = new SerializedObject(selRing);
-                    selRingSO.Update();
-                    UpdateFloatProperty(selRingSO, "RotateSpeed", selRing.RotateSpeed);                    
-                }
+            _Dax.PuzzleName = newName;
+            UpdateStringProperty(DaxSO, "PuzzleName", _Dax.PuzzleName);            
+        }                
+
+        // Level Time
+        EditorGUILayout.Separator();
+        float newLevelTime = EditorGUILayout.FloatField("Level Time ", _Dax.LevelTime);
+        if (newLevelTime <= 10f) newLevelTime = 10f;
+        if(newLevelTime != _Dax.LevelTime)
+        {
+            _Dax.LevelTime = newLevelTime;
+            UpdateFloatProperty(DaxSO, "LevelTime", _Dax.LevelTime);           
+        }
+
+        // Victory Condition
+        EditorGUILayout.Separator();
+        Dax.eVictoryConditions newVictoryCondition = (Dax.eVictoryConditions)EditorGUILayout.EnumPopup("Victory Conditions", _Dax.CurWheel.VictoryCondition);
+        if (newVictoryCondition != _Dax.CurWheel.VictoryCondition)
+        {
+            _Dax.CurWheel.VictoryCondition = newVictoryCondition;
+            UpdateEnumProperty(new SerializedObject(_Dax.CurWheel), "VictoryCondition", (int)_Dax.CurWheel.VictoryCondition);            
+        }
+
+        // A list of all the facets that you need to collect on the board
+        EditorGUILayout.Separator();
+        for (int i = 0; i < _Dax.CurWheel.NumFacetsOnBoard.Count-1; i++)
+        {
+            Facet.eFacetColors curColor = (Facet.eFacetColors)i;
+            EditorGUILayout.LabelField(curColor.ToString() + " To Collect: " + _Dax.CurWheel.NumFacetsOnBoard[(int)curColor]);
+        }         
+
+        // Handle the number of rings and Ring selection
+        HandleNumRingsAndRingSelection();
+
+        // Puzzle initialization/saving
+        EditorGUILayout.Separator();        
+        if (GUILayout.Button("Init Puzzle"))
+        {
+            // You need to initialize the puzzle in order for a restart without restarting
+            // the editor.  It creates in-game save data which will be used to reload the
+            // level if you win or die and want to restart.     
+            _Dax.CurWheel.InitWheelFacets();
+            _Dax.CreateSaveData(_Dax);            
+        }
+        // This saves the puzzle in a binary format
+        EditorGUILayout.Separator();
+        if(GUILayout.Button("Save Puzzle"))
+        {
+            _MCP.SavePuzzle();                
+        }   
+    }
+
+    void HandleRingSelected()
+    {
+        StartNewSelection(SelectedGameObject.name, "Ring");
+        Ring selRing = SelectedGameObject.GetComponent<Ring>();
+        // Check for a difference in ring rotation speed
+        float newSpeed = EditorGUILayout.FloatField("Rotate Speed: ", selRing.RotateSpeed);
+        if (newSpeed != selRing.RotateSpeed)
+        {
+            // User changed ring rotation speed so sort that out and update serialized data
+            selRing.RotateSpeed = newSpeed;
+            SerializedObject selRingSO = new SerializedObject(selRing);
+            selRingSO.Update();
+            UpdateFloatProperty(selRingSO, "RotateSpeed", selRing.RotateSpeed);                    
+        }            
+        EditorGUILayout.Separator();
+        // Check if the user wants to reset the ring.  This clears out all BoardObjects and puts back the ChannelPieces
+        if (GUILayout.Button("Reset Ring", GUILayout.Width(300)))
+        {
+            _MCP.ResetRing(selRing);
+        }
+        EditorGUILayout.EndVertical();
+    }
+
+    /// <summary>
+    /// This handles the case where the engine says we have an active
+    /// GameObject selected
+    /// </summary>
+    void HandleActiveGameObject()
+    {
+        // Ring (not actually handled via engine but by the editor tool)    
+        if (SelectedGameObject.GetComponent<Ring>() != null)
+        {
+            HandleRingSelected();            
+        }
+    }
+
+    /// <summary>
+    /// This is the callback from the engine that is the core of interacting
+    /// with the in-engine tool Inspector window
+    /// </summary>
+    public override void OnInspectorGUI()
+    {
+        HandleSceneView(); // make sure the RifRaf Debug object is not visible        
                 
-                EditorGUILayout.Separator();
-                if (GUILayout.Button("Reset Ring", GUILayout.Width(300)))
-                {
-                    mcp.ResetRing(selRing);
-                }
-                EditorGUILayout.EndVertical();
-            }
+        #if false
+        MCP _MCP;   // The Master Control Program object from the main game
+        DaxPuzzleSetup _DaxPuzzleSetup; // The MonoBehavior that this editor script extends
+        SerializedObject DaxSetupSO;    // The SerializedObject for the DaxPuzzleSetup object
+        Dax _Dax;   // The Dax object from the main game
+        SerializedObject DaxSO; // The SerializedObject for the _Dax object
+        #endif                
+    
+        // Gather the main GameObjects and SerializedObjects used for everything
+        _MCP = GameObject.FindObjectOfType<MCP>();
+        _DaxPuzzleSetup = (DaxPuzzleSetup)target;        
+        DaxSetupSO = new SerializedObject(_DaxPuzzleSetup);
+        DaxSetupSO.Update();
+        _Dax = _MCP._Dax.GetComponent<Dax>();
+        DaxSO = new SerializedObject(_Dax);
+        DaxSO.Update();        
+
+        // This is for the overall puzzle data, not individual objects on the puzzle
+        HandlePuzzleInfo();
+           
+        // Check to see if the engine is telling us we have a GameObject selected
+        SelectedGameObject = Selection.activeGameObject;              
+        if (LastSelectedGameObject != SelectedGameObject) LastSelectedGameObject = SelectedGameObject;        
+
+        if (SelectedGameObject != null)
+        {
+            // The engine is telling us we have a GameObject selected so handle that.
+            HandleActiveGameObject();
+            
             // ******* Player            
-            if (selected.GetComponent<Player>() != null)
+            if (SelectedGameObject.GetComponent<Player>() != null)
             {
-                StartNewSelection(selected.name, "Player");
-                Player player = selected.GetComponent<Player>();
+                StartNewSelection(SelectedGameObject.name, "Player");
+                Player player = SelectedGameObject.GetComponent<Player>();
                 SerializedObject playerSO = new SerializedObject(player);
                 playerSO.Update();
                 float newSpeed = EditorGUILayout.Slider("Speed", player.Speed, 0f, Dax.MAX_SPEED);
@@ -261,22 +304,14 @@ public class DaxEditor : Editor
                 {
                     player.Speed = newSpeed;
                     UpdateFloatProperty(playerSO, "Speed", player.Speed);                    
-                }
-                
-                /*EditorGUILayout.Separator();
-                BoardObject.eMoveDir newMoveDir = (BoardObject.eMoveDir)EditorGUILayout.EnumPopup("Start Direction:", player.MoveDir);
-                if (newMoveDir != player.MoveDir)
-                {
-                    player.MoveDir = newMoveDir;
-                    UpdateEnumProperty(playerSO, "MoveDir", (int)player.MoveDir);                    
-                }*/
+                }                                
                 EditorGUILayout.EndVertical();
             }
             // ************ Bumper
-            if (selected.GetComponent<Bumper>() != null)
+            if (SelectedGameObject.GetComponent<Bumper>() != null)
             {
-                StartNewSelection(selected.name, "Bumper");
-                Bumper selBumper = selected.GetComponent<Bumper>();
+                StartNewSelection(SelectedGameObject.name, "Bumper");
+                Bumper selBumper = SelectedGameObject.GetComponent<Bumper>();
                 SerializedObject selBumperSO = new SerializedObject(selBumper);
                 selBumperSO.Update();
 
@@ -308,21 +343,21 @@ public class DaxEditor : Editor
             
             
             // ************ Channel Node
-            if (selected.GetComponent<ChannelNode>() != null)
+            if (SelectedGameObject.GetComponent<ChannelNode>() != null)
             {
-                StartNewSelection(selected.name, "Channel Node");               
-                ChannelNode selChannelNode = selected.GetComponent<ChannelNode>();
+                StartNewSelection(SelectedGameObject.name, "Channel Node");               
+                ChannelNode selChannelNode = SelectedGameObject.GetComponent<ChannelNode>();
                // if (selChannelNode.IsMidNode() == false) return; // only mid nodes can spawn objets                                                                                                                                             
                 if (selChannelNode.IsMidNode() == true) // only mid nodes can spawn objets   
                 {
                     // only one type of object can be spawned on each node                    
                     if(selChannelNode.SpawnedBoardObject == null)
                     {   // no board object so handle creating one
-                        HandleCreateBoardObject(selChannelNode, mcp, dax);                  
+                        HandleCreateBoardObject(selChannelNode);                  
                     }
                     else
                     {   // there's a board object on this node so handle that
-                        HandleBoardObject(selChannelNode, mcp, dax);                    
+                        HandleBoardObject(selChannelNode);                    
                     }
                 }    
                 else if( selChannelNode.name.Contains("Ring_00_Start"))
@@ -330,10 +365,8 @@ public class DaxEditor : Editor
                     //Debug.Log("Selected a potential start node");                    
                     if (GUILayout.Button("Make Starting Channel", GUILayout.Width(200f)))
                     {                                                
-                        int startChannelIndex = Int32.Parse(selChannelNode.name.Substring(19, 2)) - 1;                        
-                       // dax.StartChannelIndex = startChannelIndex;
-                        FindObjectOfType<Player>().SetStartChannel(startChannelIndex);
-                       // UpdateIntProperty(daxSO, "StartChannelIndex", dax.StartChannelIndex);                                    
+                        int startChannelIndex = Int32.Parse(selChannelNode.name.Substring(19, 2)) - 1;                                               
+                        FindObjectOfType<Player>().SetStartChannel(startChannelIndex);                            
                     }
                 }                                                                                                                                      
                 
@@ -341,83 +374,80 @@ public class DaxEditor : Editor
                 EditorGUILayout.EndVertical();
             }
             // CHANNEL PIECE
-            if (selected.GetComponent<ChannelPiece>() != null)
+            if (SelectedGameObject.GetComponent<ChannelPiece>() != null)
             {
-                StartNewSelection(selected.name, "Channel Piece");                
-                ChannelPiece selChannelPiece = selected.GetComponent<ChannelPiece>();               
+                StartNewSelection(SelectedGameObject.name, "Channel Piece");                
+                ChannelPiece selChannelPiece = SelectedGameObject.GetComponent<ChannelPiece>();               
                 string s = selChannelPiece.IsActive() == true ? "Turn Off" : "Turn On";
                 if (GUILayout.Button(s, GUILayout.Width(150f)))
                 {
-                    selected.GetComponent<ChannelPiece>().Toggle();
+                    SelectedGameObject.GetComponent<ChannelPiece>().Toggle();
                 }
                 EditorGUILayout.EndVertical();
             }        
             // If you've got a BoardObject selected then make sure the HandleBoardObject stuff is taken care of
-            if(selected.transform.parent != null && selected.transform.parent.GetComponent<BoardObject>() != null)
+            if(SelectedGameObject.transform.parent != null && SelectedGameObject.transform.parent.GetComponent<BoardObject>() != null)
             {                
-                BoardObject parent = selected.transform.parent.GetComponent<BoardObject>();
+                BoardObject parent = SelectedGameObject.transform.parent.GetComponent<BoardObject>();
                 ChannelNode selChannelNode = parent.SpawningNode;
                 StartNewSelection(selChannelNode.name, "Channel Node");
-                HandleBoardObject(selChannelNode, mcp, dax);
+                HandleBoardObject(selChannelNode);
                 EditorGUILayout.Separator();
                 EditorGUILayout.EndVertical();
-            }                
-            #endregion            
+            }                                   
         }
 
-        // Save data                
-        if(daxSetupSO.hasModifiedProperties == true) Debug.Log("daxSetupSO.hasModifiedProperties == true"); //else Debug.Log("daxSetupSO.hasModifiedProperties == false");
-        if(daxSO.hasModifiedProperties == true) Debug.Log("daxSO.hasModifiedProperties == true"); //else Debug.Log("daxSO.hasModifiedProperties == false");
-        bool daxSetupChanged = daxSetupSO.ApplyModifiedProperties();
-        bool daxChanged = daxSO.ApplyModifiedProperties();
-        if(daxSetupChanged == true) Debug.Log("daxSetupChanged == true"); //else Debug.Log("daxSetupChanged == false");
-        if(daxChanged == true) Debug.Log("daxChanged == true");  //else Debug.Log("daxChanged == false");              
-        Undo.RecordObject(daxSetup, "OnInspectorGUI");
-        EditorUtility.SetDirty(daxSetup);
+        // Save data                        
+        DaxSetupSO.ApplyModifiedProperties();
+        DaxSO.ApplyModifiedProperties();            
+        Undo.RecordObject(_DaxPuzzleSetup, "OnInspectorGUI");
+        EditorUtility.SetDirty(_DaxPuzzleSetup);
     }   
     
-    void HandleCreateBoardObject(ChannelNode selChannelNode, MCP mcp, Dax dax)
+    void HandleCreateBoardObject(ChannelNode selChannelNode)
     {
         float buttonWidth = 200f;
         if (GUILayout.Button("Create Facet", GUILayout.Width(buttonWidth)))
-        {            
-            mcp.CreateFacet(selChannelNode, dax, Facet.eFacetColors.RED);
+        {                        
+            Facet facet = _MCP.CreateBoardObject<Facet>(selChannelNode, _Dax, 
+               (int)BoardObject.eBoardObjectType.FACET, 0);
+            _MCP.ChangeFacetColor(facet, Facet.eFacetColors.RED);                 
         }
         //******************************************************************************************                     
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Hazard", GUILayout.Width(buttonWidth)))
         {                          
-            mcp.CreateBoardObject<Hazard>(selChannelNode, dax, 
+            _MCP.CreateBoardObject<Hazard>(selChannelNode, _Dax, 
                (int)BoardObject.eBoardObjectType.HAZARD, (int)Hazard.eHazardType.ENEMY);                                  
         }             
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Facet Collect", GUILayout.Width(buttonWidth)))
         {            
-            mcp.CreateBoardObject<FacetCollect>(selChannelNode, dax, 
+            _MCP.CreateBoardObject<FacetCollect>(selChannelNode, _Dax, 
                 (int)BoardObject.eBoardObjectType.FACET_COLLECT, (int)FacetCollect.eFacetCollectTypes.RING);                            
         } 
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Shield", GUILayout.Width(buttonWidth)))
         {            
-            mcp.CreateBoardObject<Shield>(selChannelNode, dax, 
+            _MCP.CreateBoardObject<Shield>(selChannelNode, _Dax, 
                 (int)BoardObject.eBoardObjectType.SHIELD, (int)Shield.eShieldTypes.HIT);                  
         }
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Speed Mod", GUILayout.Width(buttonWidth)))
         {            
-            mcp.CreateBoardObject<SpeedMod>(selChannelNode, dax, 
+            _MCP.CreateBoardObject<SpeedMod>(selChannelNode, _Dax, 
                 (int)BoardObject.eBoardObjectType.SPEED_MOD, (int)SpeedMod.eSpeedModType.PLAYER_SPEED);                        
         }
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Game Mod", GUILayout.Width(buttonWidth)))
         {            
-            mcp.CreateBoardObject<GameMod>(selChannelNode, dax, 
+            _MCP.CreateBoardObject<GameMod>(selChannelNode, _Dax, 
                 (int)BoardObject.eBoardObjectType.GAME_MOD, (int)GameMod.eGameModType.EXTRA_POINTS);                   
         }                                   
     }
 
     // moupdate - get the MCP/Dax confusion sorted out
-    void HandleBoardObject(ChannelNode selChannelNode, MCP mcp, Dax dax)
+    void HandleBoardObject(ChannelNode selChannelNode)
     {
         BoardObject bo = selChannelNode.SpawnedBoardObject;
         SerializedObject selBoardObjectSO = new SerializedObject(bo);
@@ -448,7 +478,7 @@ public class DaxEditor : Editor
                 if (newFacetColor != facet._Color)
                 {
                     facet._Color = newFacetColor;
-                    mcp.ChangeFacetColor(facet, facet._Color);
+                    _MCP.ChangeFacetColor(facet, facet._Color);
                     UpdateEnumProperty(selBoardObjectSO, "_Color", (int)facet._Color);                    
                 }
                 break;
@@ -458,7 +488,7 @@ public class DaxEditor : Editor
                 if (newHazardType != hazard.HazardType)
                 {
                     DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                                        
-                    hazard = mcp.CreateBoardObject<Hazard>(selChannelNode, dax, 
+                    hazard = _MCP.CreateBoardObject<Hazard>(selChannelNode, _Dax, 
                         (int)BoardObject.eBoardObjectType.HAZARD, (int)newHazardType); 
 
                 }
@@ -503,7 +533,7 @@ public class DaxEditor : Editor
             if (newGameModType != gameMod.GameModType)
             {
                 DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                          
-                gameMod = mcp.CreateBoardObject<GameMod>(selChannelNode, dax, 
+                gameMod = _MCP.CreateBoardObject<GameMod>(selChannelNode, _Dax, 
                     (int)BoardObject.eBoardObjectType.GAME_MOD, (int)newGameModType);
             }
 
@@ -534,7 +564,7 @@ public class DaxEditor : Editor
             if (newFacetCollectType != facetCollect.FacetCollectType)
             {
                 DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                                
-                facetCollect = mcp.CreateBoardObject<FacetCollect>(selChannelNode, dax, 
+                facetCollect = _MCP.CreateBoardObject<FacetCollect>(selChannelNode, _Dax, 
                     (int)BoardObject.eBoardObjectType.FACET_COLLECT, (int)newFacetCollectType);
             }            
         }                
@@ -548,7 +578,7 @@ public class DaxEditor : Editor
             if(newShieldType != shield.ShieldType)
             {                
                 DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                
-                shield = mcp.CreateBoardObject<Shield>(selChannelNode, dax, 
+                shield = _MCP.CreateBoardObject<Shield>(selChannelNode, _Dax, 
                     (int)BoardObject.eBoardObjectType.SHIELD, (int)newShieldType);     
             }           
         }         
@@ -561,7 +591,7 @@ public class DaxEditor : Editor
             if (newSpeedModType != speedMod.SpeedModType)
             {
                 DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                                
-                speedMod = mcp.CreateBoardObject<SpeedMod>(selChannelNode, dax, 
+                speedMod = _MCP.CreateBoardObject<SpeedMod>(selChannelNode, _Dax, 
                     (int)BoardObject.eBoardObjectType.SPEED_MOD, (int)newSpeedModType);
 
             }        
@@ -601,29 +631,7 @@ public class DaxEditor : Editor
         }
         else
         {
-            return (FindObjectOfType<MCP>().GetFacetMaterial(color));            
+            return (FindObjectOfType<MCP>().GetFacetMaterial(color));            // monote - sort out the MCP bit
         }
-    }
-
-    /* This removes all the null DestGate entries from WarpGates and Wormholes in case puzzle changes */
-    void RemoveWarpNullEntries(Wheel wheel)
-    {
-        // clean up any warp gates or wormholes
-        List<Interactable> warpGates = wheel.GetComponentsInChildren<Interactable>().ToList();
-        warpGates.RemoveAll((x => (x.InteractableType != Interactable.eInteractableType.WARP_GATE && x.InteractableType != Interactable.eInteractableType.WORMHOLE)));
-        foreach (Interactable warpGate in warpGates)
-        {
-            warpGate.DestGates.RemoveAll(x => x == null);
-        }
-    }
-
-    /* Trims duplicates from a list but keeps any empty entries around */
-    List<T> TrimDuplicates<T>(List<T> list)
-    {
-        int numOffBefore = list.Count; // get the size of the List before duplicate trimming
-        list = list.Distinct().ToList(); // get rid of the duplicates
-        int numToAdd = numOffBefore - list.Count; // find the number of entries to add       
-        list.AddRange(new T[numToAdd]); // re-add the null objects to the end
-        return list;
-    }
+    }    
 }

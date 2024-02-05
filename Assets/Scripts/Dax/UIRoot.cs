@@ -62,26 +62,7 @@ public class UIRoot : MonoBehaviour
         }
         SetTimerText();
         ScoreText.SetText(0.ToString());
-        /*if(_Dax.CurWheel.VictoryCondition == Dax.eVictoryConditions.COLLECTION)
-        {
-            Material greyMaterial = Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Grey"));
-            Material whiteMaterial = _MCP.GetFacetMaterial(Facet.eFacetColors.WHITE);            
-            for (int i = 0; i < ColorCounters.Length; i++)
-            {
-                ColorCounters[i].GetComponent<MeshRenderer>().material = greyMaterial;
-                ColorCounterTexts[i].SetText("");                
-            }
-            ColorCounters[(int)Facet.eFacetColors.BLUE].GetComponent<MeshRenderer>().material = whiteMaterial;
-            ColorCounterTexts[(int)Facet.eFacetColors.BLUE].SetText(0.ToString());
-        }
-        else
-        {
-            for (int i = 0; i < ColorCounters.Length; i++)
-            {
-                ColorCounters[i].GetComponent<MeshRenderer>().material = _MCP.GetFacetMaterial((Facet.eFacetColors)i);
-                ColorCounterTexts[i].SetText(0.ToString());
-            }
-        }*/
+        
         for (int i = 0; i < ColorCounters.Length; i++)
         {
             ColorCounters[i].GetComponent<MeshRenderer>().material = _MCP.GetFacetMaterial((Facet.eFacetColors)i);
