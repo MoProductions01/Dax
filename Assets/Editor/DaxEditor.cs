@@ -6,12 +6,19 @@ using UnityEditor;
 using UnityEngine;
 
 
-
+/// <summary>
+/// This is the class for handling all of the in-engine puzzle design and layout functionality.
+/// Because it's all self-contained in one file and isn't game play code I just used globals for everything.
+/// The game play code uses normal coding practices.
+/// </summary>
 [CustomEditor(typeof(DaxPuzzleSetup))]
 public class DaxEditor : Editor
 {   
-    public GameObject SelectedGameObject;   // The GameObject the engine says we have selected.  Can be manually re-assigned if necessary
-    public GameObject LastSelectedGameObject;    // Used for checking for changes in the selected object    
+    GameObject SelectedGameObject;   // The GameObject the engine says we have selected.  Can be manually re-assigned if necessary        
+    ChannelNode SelectedChannelNode; // The middle Channel Node that the user has selected for creating/modifying BoardObjects    
+    BoardObject SelectedBoardObject; // BoardObject specific class for the BoardObject the user has selected on the board
+    SerializedObject SelectedBoardObjectSO; // SerializedObject for the currently selected BoardObject        
+
     MCP _MCP;   // The Master Control Program object from the main game
     Dax _Dax;   // The Dax object from the main game
     DaxPuzzleSetup _DaxPuzzleSetup; // The MonoBehavior that this editor script extends
@@ -335,34 +342,34 @@ public class DaxEditor : Editor
     void HandleChannelNode()
     {
         StartNewSelection(SelectedGameObject.name, "Channel Node");               
-        ChannelNode selChannelNode = SelectedGameObject.GetComponent<ChannelNode>();
+        SelectedChannelNode = SelectedGameObject.GetComponent<ChannelNode>();
         
         // For creating BoardObjects make sure it's a middle node since those are the
         // only ones that can have anything spawned on it.
-        if (selChannelNode.IsMidNode() == true)
+        if (SelectedChannelNode.IsMidNode() == true)
         {
             // Nodes can only have one BoardObject on them
-            if(selChannelNode.SpawnedBoardObject == null)
+            if(SelectedChannelNode.SpawnedBoardObject == null)
             {   // no board object so handle creating one
-                HandleCreateBoardObject(selChannelNode);                  
+                HandleCreateBoardObject();                  
             }
             else
             {   // There's a BoardObject on this node so handle that
-                HandleBoardObject(selChannelNode);                    
+                HandleSelectedBoardObjectNode();                    
             }
         }    
-        else if( selChannelNode.name.Contains("Ring_00_Start")) 
+        else if( SelectedChannelNode.name.Contains("Ring_00_Start")) 
         {
             // If it's not a middle node make sure it's a start node
             // on the center ring because those are the ones used to
             // select the Player's starting channel
             Player player = FindObjectOfType<Player>();
             // Check if the selected node is already the start node
-            if(selChannelNode != player.GetStartChannelNode())
+            if(SelectedChannelNode != player.GetStartChannelNode())
             {
                 if (GUILayout.Button("Make Starting Channel", GUILayout.Width(200f)))
                 {   // Change the player's starting channel based on the selected node
-                    int startChannelIndex = Int32.Parse(selChannelNode.name.Substring(19, 2)) - 1;                                               
+                    int startChannelIndex = Int32.Parse(SelectedChannelNode.name.Substring(19, 2)) - 1;                                               
                     player.SetStartChannel(startChannelIndex);                            
                 }
             }            
@@ -380,9 +387,9 @@ public class DaxEditor : Editor
     void HandleSpawnedBoardObjectSelected()
     {
         BoardObject parent = SelectedGameObject.transform.parent.GetComponent<BoardObject>();
-        ChannelNode selChannelNode = parent.SpawningNode;
-        StartNewSelection(selChannelNode.name, "Channel Node");
-        HandleBoardObject(selChannelNode);
+        SelectedChannelNode = parent.SpawningNode;
+        StartNewSelection(SelectedChannelNode.name, "Channel Node");
+        HandleSelectedBoardObjectNode();
         EditorGUILayout.Separator();
         EditorGUILayout.EndVertical();
     }
@@ -453,7 +460,7 @@ public class DaxEditor : Editor
            
         // Check to see if the engine is telling us we have a GameObject selected
         SelectedGameObject = Selection.activeGameObject;              
-        if (LastSelectedGameObject != SelectedGameObject) LastSelectedGameObject = SelectedGameObject;        
+        //if (LastSelectedGameObject != SelectedGameObject) LastSelectedGameObject = SelectedGameObject;        
 
         if (SelectedGameObject != null)
         {
@@ -468,216 +475,262 @@ public class DaxEditor : Editor
         EditorUtility.SetDirty(_DaxPuzzleSetup);
     }   
     
-    void HandleCreateBoardObject(ChannelNode selChannelNode)
+    /// <summary>
+    /// Handles when the user has an empty middle node selected and is
+    /// ready to add a BoardObject
+    /// </summary>    
+    void HandleCreateBoardObject()
     {
         float buttonWidth = 200f;
         if (GUILayout.Button("Create Facet", GUILayout.Width(buttonWidth)))
         {                        
-            Facet facet = _MCP.CreateBoardObject<Facet>(selChannelNode, _Dax, 
+            Facet facet = _MCP.CreateBoardObject<Facet>(SelectedChannelNode, _Dax, 
                (int)BoardObject.eBoardObjectType.FACET, 0);
             _MCP.ChangeFacetColor(facet, Facet.eFacetColors.RED);                 
-        }
-        //******************************************************************************************                     
+        }        
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Hazard", GUILayout.Width(buttonWidth)))
         {                          
-            _MCP.CreateBoardObject<Hazard>(selChannelNode, _Dax, 
+            _MCP.CreateBoardObject<Hazard>(SelectedChannelNode, _Dax, 
                (int)BoardObject.eBoardObjectType.HAZARD, (int)Hazard.eHazardType.ENEMY);                                  
         }             
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Facet Collect", GUILayout.Width(buttonWidth)))
         {            
-            _MCP.CreateBoardObject<FacetCollect>(selChannelNode, _Dax, 
+            _MCP.CreateBoardObject<FacetCollect>(SelectedChannelNode, _Dax, 
                 (int)BoardObject.eBoardObjectType.FACET_COLLECT, (int)FacetCollect.eFacetCollectTypes.RING);                            
         } 
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Shield", GUILayout.Width(buttonWidth)))
         {            
-            _MCP.CreateBoardObject<Shield>(selChannelNode, _Dax, 
+            _MCP.CreateBoardObject<Shield>(SelectedChannelNode, _Dax, 
                 (int)BoardObject.eBoardObjectType.SHIELD, (int)Shield.eShieldTypes.HIT);                  
         }
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Speed Mod", GUILayout.Width(buttonWidth)))
         {            
-            _MCP.CreateBoardObject<SpeedMod>(selChannelNode, _Dax, 
+            _MCP.CreateBoardObject<SpeedMod>(SelectedChannelNode, _Dax, 
                 (int)BoardObject.eBoardObjectType.SPEED_MOD, (int)SpeedMod.eSpeedModType.PLAYER_SPEED);                        
         }
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Game Mod", GUILayout.Width(buttonWidth)))
         {            
-            _MCP.CreateBoardObject<GameMod>(selChannelNode, _Dax, 
+            _MCP.CreateBoardObject<GameMod>(SelectedChannelNode, _Dax, 
                 (int)BoardObject.eBoardObjectType.GAME_MOD, (int)GameMod.eGameModType.EXTRA_POINTS);                   
         }                                   
     }
 
-    // moupdate - get the MCP/Dax confusion sorted out
-    void HandleBoardObject(ChannelNode selChannelNode)
+    /// <summary>
+    /// User has a FACET type selected
+    /// </summary>
+    void HandleFacetSelected()
     {
-        BoardObject bo = selChannelNode.SpawnedBoardObject;
-        SerializedObject selBoardObjectSO = new SerializedObject(bo);
-        selBoardObjectSO.Update();
-        string boName = BoardObject.BOARD_OBJECT_EDITOR_NAMES[(int)bo.BoardObjectType];//bo.GetBoardObjectName();
+        Facet facet = (Facet)SelectedBoardObject;
+        Facet.eFacetColors newFacetColor = (Facet.eFacetColors)EditorGUILayout.EnumPopup("Facet Color", facet._Color);
+        if (newFacetColor != facet._Color)
+        {   // User wants to change color of the facet so handle that
+            facet._Color = newFacetColor;
+            _MCP.ChangeFacetColor(facet, facet._Color);
+            UpdateEnumProperty(SelectedBoardObjectSO, "_Color", (int)facet._Color);                    
+        }
+    }
 
-        // ****** Ping/Delete board object
-        if (GUILayout.Button("Ping " + boName, GUILayout.Width(150f)))
+    /// <summary>
+    /// Handle a HAZARD type BoardObject selected
+    /// </summary>    
+    void HandleHazardSelected()
+    {
+        Hazard hazard = (Hazard)SelectedBoardObject;
+        Hazard.eHazardType newHazardType = (Hazard.eHazardType)EditorGUILayout.EnumPopup("Type: ", hazard.HazardType);
+        if (newHazardType != hazard.HazardType)
+        {   // User wants to change the type of HAZARD, so trash the current one and create the new one
+            DestroyImmediate(SelectedChannelNode.SpawnedBoardObject.gameObject);                                        
+            hazard = _MCP.CreateBoardObject<Hazard>(SelectedChannelNode, _Dax, 
+                (int)BoardObject.eBoardObjectType.HAZARD, (int)newHazardType); 
+        }
+        if (hazard.HazardType == Hazard.eHazardType.ENEMY )
+        {   // Handle an ENEMY type of HAZARD
+            EditorGUILayout.Separator();            
+            BoardObject.eStartDir newStartDir = (BoardObject.eStartDir)EditorGUILayout.EnumPopup("Start Direction:", SelectedBoardObject.StartDir);
+            if (newStartDir != SelectedBoardObject.StartDir) // monewsave
+            {   // Change of direction the enemy will move when the game begins
+                SelectedBoardObject.StartDir = newStartDir;
+                UpdateEnumProperty(SelectedBoardObjectSO, "StartDir", (int)SelectedBoardObject.StartDir);                        
+                hazard.transform.LookAt(SelectedBoardObject.StartDir == BoardObject.eStartDir.OUTWARD ? hazard.CurChannel.EndNode.transform : hazard.CurChannel.StartNode.transform);
+            }                      
+            EditorGUILayout.Separator();
+            float newSpeed = EditorGUILayout.Slider("Speed", SelectedBoardObject.Speed, 0f, Dax.MAX_SPEED);
+            if (newSpeed != SelectedBoardObject.Speed)
+            {   // Change the starting speed of the ENEMY
+                SelectedBoardObject.Speed = newSpeed;
+                UpdateFloatProperty(SelectedBoardObjectSO, "Speed",  SelectedBoardObject.Speed);                        
+            }                                                         
+        }
+        if (hazard.HazardType == Hazard.eHazardType.GLUE )
+        {   // Handle a GLUE type of HAZARD
+            EditorGUILayout.Separator();
+            float newEffectTime = EditorGUILayout.Slider("Effect Time", hazard.EffectTime, .1f, Hazard.MAX_EFFECT_TIME);
+            if (newEffectTime != hazard.EffectTime)
+            {   // Change of the amount of time the GLUE will keep the player in place
+                hazard.EffectTime = newEffectTime;
+                UpdateFloatProperty(SelectedBoardObjectSO, "EffectTime", hazard.EffectTime);                        
+            }
+        }  
+    }
+
+    /// <summary>
+    /// Handle a FacetCollect BoardObject type selected
+    /// </summary>    
+    void HandleFacetCollectSelected()
+    {
+        EditorGUILayout.Separator();
+        FacetCollect facetCollect = (FacetCollect)SelectedBoardObject;
+        
+        FacetCollect.eFacetCollectTypes newFacetCollectType = (FacetCollect.eFacetCollectTypes)EditorGUILayout.EnumPopup("Type: ", facetCollect.FacetCollectType);
+        if (newFacetCollectType != facetCollect.FacetCollectType)
+        {   // User changed the type of FacetCollect so trash old one and create a new one
+            DestroyImmediate(SelectedChannelNode.SpawnedBoardObject.gameObject);                                
+            facetCollect = _MCP.CreateBoardObject<FacetCollect>(SelectedChannelNode, _Dax, 
+                (int)BoardObject.eBoardObjectType.FACET_COLLECT, (int)newFacetCollectType);
+        } 
+    }
+
+    /// <summary>
+    /// Handle a Shield BoardObject type selected
+    /// </summary>
+    void HandleShieldSelected()
+    {
+        EditorGUILayout.Separator();
+        Shield shield = (Shield)SelectedBoardObject;
+        
+        Shield.eShieldTypes newShieldType = (Shield.eShieldTypes)EditorGUILayout.EnumPopup("Type: ", shield.ShieldType);
+        if(newShieldType != shield.ShieldType)
+        {   // User changed Shield type so trash old one and create new one
+            DestroyImmediate(SelectedChannelNode.SpawnedBoardObject.gameObject);                
+            shield = _MCP.CreateBoardObject<Shield>(SelectedChannelNode, _Dax, 
+                (int)BoardObject.eBoardObjectType.SHIELD, (int)newShieldType);     
+        }   
+    }
+
+    /// <summary>
+    /// Handle a SpeedMod BoardObject type selected
+    /// </summary>
+    void HandleSpeedModSelected()
+    {
+        EditorGUILayout.Separator();
+        SpeedMod speedMod = (SpeedMod)SelectedBoardObject;
+
+        SpeedMod.eSpeedModType newSpeedModType = (SpeedMod.eSpeedModType)EditorGUILayout.EnumPopup("Type: ", speedMod.SpeedModType);
+        if (newSpeedModType != speedMod.SpeedModType)
+        {   // User changed SpeedMod type so trash old one and create a new one
+            DestroyImmediate(SelectedChannelNode.SpawnedBoardObject.gameObject);                                
+            speedMod = _MCP.CreateBoardObject<SpeedMod>(SelectedChannelNode, _Dax, 
+                (int)BoardObject.eBoardObjectType.SPEED_MOD, (int)newSpeedModType);
+
+        }        
+        // Different min and max values for the SpeedMod type
+        float minSpeedModVal, maxSpeedModVal;
+        if(speedMod.SpeedModType == SpeedMod.eSpeedModType.RING_SPEED)
         {
-            EditorGUIUtility.PingObject(bo);
-            Selection.activeGameObject = bo.gameObject;
+            minSpeedModVal = -10f;
+            maxSpeedModVal = 10f;
+        }
+        else
+        {
+            minSpeedModVal = 0f;
+            maxSpeedModVal = 1f;
+        }
+        float newSpeedModVal =  EditorGUILayout.Slider("Speed Mod:", speedMod.SpeedModVal, minSpeedModVal, maxSpeedModVal);
+        if (newSpeedModVal != speedMod.SpeedModVal)
+        {   // SpeedMod value changed so update and save data                        
+            speedMod.SpeedModVal = newSpeedModVal;
+            UpdateFloatProperty(SelectedBoardObjectSO, "SpeedModVal", speedMod.SpeedModVal);                    
+        }   
+    }
+
+    /// <summary>
+    /// Handle a GameMod BoardObject type selected
+    /// </summary>    
+    void HandleGameModSelected()
+    {
+        EditorGUILayout.Separator();
+        GameMod gameMod = (GameMod)SelectedBoardObject;
+
+        GameMod.eGameModType newGameModType = (GameMod.eGameModType)EditorGUILayout.EnumPopup("Game Mod Type: ", gameMod.GameModType);
+        if (newGameModType != gameMod.GameModType)
+        {   // User is changing the type of GameMod so destroy the current one and create a new one
+            DestroyImmediate(SelectedChannelNode.SpawnedBoardObject.gameObject);                          
+            gameMod = _MCP.CreateBoardObject<GameMod>(SelectedChannelNode, _Dax, 
+                (int)BoardObject.eBoardObjectType.GAME_MOD, (int)newGameModType);
+        }
+        // the GameModVal is either how many points the user will get or how much of a 
+        // multiplier the user will get.
+        int newGameModVal = EditorGUILayout.IntField("Game Mod Val: ", gameMod.GameModVal);
+        if (newGameModVal <= 0f) newGameModVal = 1; // Make sure it's at least 1
+        if (newGameModVal != gameMod.GameModVal)
+        {   // Update the GameModVal
+            gameMod.GameModVal = newGameModVal;
+            UpdateIntProperty(SelectedBoardObjectSO, "GameModVal", gameMod.GameModVal);                
+        }
+        if(gameMod.GameModType == GameMod.eGameModType.POINTS_MULTIPLIER)
+        {   // PointsMultipliers have a timer
+            float newTimer = EditorGUILayout.FloatField("Timer: ", gameMod.GameModTime);
+            if (newTimer < 1.0f) newTimer = 1.0f; // Make sure at least 1 second for the timer
+            if (newTimer != gameMod.GameModTime)
+            {   // Update changed mod timer
+                gameMod.GameModTime = newTimer;
+                UpdateFloatProperty(SelectedBoardObjectSO, "GameModTime", gameMod.GameModTime);                   
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handle when the user has selected a node with a BoardObject
+    /// spawned on it.
+    /// </summary>    
+    void HandleSelectedBoardObjectNode()
+    {
+        SelectedBoardObject = SelectedChannelNode.SpawnedBoardObject;
+        SelectedBoardObjectSO = new SerializedObject(SelectedBoardObject);
+        SelectedBoardObjectSO.Update();
+        string selectedBoardObjectName = BoardObject.BOARD_OBJECT_EDITOR_NAMES[(int)SelectedBoardObject.BoardObjectType];
+
+        // If the user clicks the "ping" button it will show the BoardObject
+        // in the editor's Heirarchy window
+        if (GUILayout.Button("Ping " + selectedBoardObjectName, GUILayout.Width(150f)))
+        {
+            EditorGUIUtility.PingObject(SelectedBoardObject);            
         }
         EditorGUILayout.Separator();
-        if (GUILayout.Button("Delete " + boName, GUILayout.Width(150f)))
-        {
-           // if(bo.LastPositionObject != null) DestroyImmediate(bo.LastPositionObject);
-            DestroyImmediate(bo.gameObject);
-            selChannelNode.SpawnedBoardObject = null;
+        // Handles deleting the spawned BoardObject
+        if (GUILayout.Button("Delete " + selectedBoardObjectName, GUILayout.Width(150f)))
+        {           
+            DestroyImmediate(SelectedBoardObject.gameObject);
+            SelectedChannelNode.SpawnedBoardObject = null;
         }
-
         EditorGUILayout.Separator();
-        // BEGIN BOARD OBJECTS
-        switch (bo.BoardObjectType)
+        
+        // Start handling the different kinds of BoardObjects that can be selected/modified
+        switch (SelectedBoardObject.BoardObjectType)
         {
             case BoardObject.eBoardObjectType.FACET:
-                Facet facet = (Facet)bo;
-                Facet.eFacetColors newFacetColor = (Facet.eFacetColors)EditorGUILayout.EnumPopup("Facet Color", facet._Color);
-                if (newFacetColor != facet._Color)
-                {
-                    facet._Color = newFacetColor;
-                    _MCP.ChangeFacetColor(facet, facet._Color);
-                    UpdateEnumProperty(selBoardObjectSO, "_Color", (int)facet._Color);                    
-                }
+                HandleFacetSelected();
                 break;
             case BoardObject.eBoardObjectType.HAZARD:
-                Hazard hazard = (Hazard)bo;
-                Hazard.eHazardType newHazardType = (Hazard.eHazardType)EditorGUILayout.EnumPopup("Type: ", hazard.HazardType);
-                if (newHazardType != hazard.HazardType)
-                {
-                    DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                                        
-                    hazard = _MCP.CreateBoardObject<Hazard>(selChannelNode, _Dax, 
-                        (int)BoardObject.eBoardObjectType.HAZARD, (int)newHazardType); 
-
-                }
-                if (hazard.HazardType == Hazard.eHazardType.ENEMY /*|| hazard.HazardType == Hazard.eHazardType.EMP (|| hazard.HazardType == Hazard.eHazardType.BOMB*/)
-                {   // Speed and Starting Direction
-                    EditorGUILayout.Separator();
-                    EditorGUILayout.Separator();
-                    BoardObject.eStartDir newStartDir = (BoardObject.eStartDir)EditorGUILayout.EnumPopup("Start Direction:", bo.StartDir);
-                    if (newStartDir != bo.StartDir) // monewsave
-                    {
-                        bo.StartDir = newStartDir;
-                        UpdateEnumProperty(selBoardObjectSO, "StartDir", (int)bo.StartDir);                        
-                        hazard.transform.LookAt(bo.StartDir == BoardObject.eStartDir.OUTWARD ? hazard.CurChannel.EndNode.transform : hazard.CurChannel.StartNode.transform);
-                    }                      
-
-                    EditorGUILayout.Separator();
-                    float newSpeed = EditorGUILayout.Slider("Speed", bo.Speed, 0f, Dax.MAX_SPEED);
-                    if (newSpeed != bo.Speed)
-                    {
-                        bo.Speed = newSpeed;
-                        UpdateFloatProperty(selBoardObjectSO, "Speed",  bo.Speed);                        
-                    }                                                         
-                }
-                if (hazard.HazardType == Hazard.eHazardType.GLUE /*|| hazard.HazardType == Hazard.eHazardType.TIMED_MINE*/)
-                {   // These have an Effect Timer
-                    EditorGUILayout.Separator();
-
-                    float newEffectTime = EditorGUILayout.Slider("Effect Time", hazard.EffectTime, .1f, Hazard.MAX_EFFECT_TIME);
-                    if (newEffectTime != hazard.EffectTime)
-                    {
-                        hazard.EffectTime = newEffectTime;
-                        UpdateFloatProperty(selBoardObjectSO, "EffectTime", hazard.EffectTime);                        
-                    }
-                }                
+                HandleHazardSelected();
                 break;
-        }
-        if(bo.BoardObjectType == BoardObject.eBoardObjectType.GAME_MOD)
-        {
-            EditorGUILayout.Separator();
-            GameMod gameMod = (GameMod)bo;
-            GameMod.eGameModType newGameModType = (GameMod.eGameModType)EditorGUILayout.EnumPopup("Game Mod Type: ", gameMod.GameModType);
-            if (newGameModType != gameMod.GameModType)
-            {
-                DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                          
-                gameMod = _MCP.CreateBoardObject<GameMod>(selChannelNode, _Dax, 
-                    (int)BoardObject.eBoardObjectType.GAME_MOD, (int)newGameModType);
-            }
-
-            int newGameModVal = EditorGUILayout.IntField("Game Mod Val: ", gameMod.GameModVal);
-            if (newGameModVal <= 0f) newGameModVal = 1;
-            if (newGameModVal != gameMod.GameModVal)
-            {
-                gameMod.GameModVal = newGameModVal;
-                UpdateIntProperty(selBoardObjectSO, "GameModVal", gameMod.GameModVal);                
-            }
-            if(gameMod.GameModType == GameMod.eGameModType.POINTS_MULTIPLIER)
-            {
-                float newTimer = EditorGUILayout.FloatField("Timer: ", gameMod.GameModTime);
-                if (newTimer < 1.0f) newTimer = 1.0f;
-                if (newTimer != gameMod.GameModTime)
-                {
-                    gameMod.GameModTime = newTimer;
-                    UpdateFloatProperty(selBoardObjectSO, "GameModTime", gameMod.GameModTime);                   
-                }
-            }
-        }             
-        else if (bo.BoardObjectType == BoardObject.eBoardObjectType.FACET_COLLECT)
-        {
-            EditorGUILayout.Separator();
-            FacetCollect facetCollect = (FacetCollect)bo;
-            
-            FacetCollect.eFacetCollectTypes newFacetCollectType = (FacetCollect.eFacetCollectTypes)EditorGUILayout.EnumPopup("Type: ", facetCollect.FacetCollectType);
-            if (newFacetCollectType != facetCollect.FacetCollectType)
-            {
-                DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                                
-                facetCollect = _MCP.CreateBoardObject<FacetCollect>(selChannelNode, _Dax, 
-                    (int)BoardObject.eBoardObjectType.FACET_COLLECT, (int)newFacetCollectType);
-            }            
-        }                
-        
-        else if (bo.BoardObjectType == BoardObject.eBoardObjectType.SHIELD)
-        {           
-            EditorGUILayout.Separator();
-            Shield shield = (Shield)bo;
-            
-            Shield.eShieldTypes newShieldType = (Shield.eShieldTypes)EditorGUILayout.EnumPopup("Type: ", shield.ShieldType);
-            if(newShieldType != shield.ShieldType)
-            {                
-                DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                
-                shield = _MCP.CreateBoardObject<Shield>(selChannelNode, _Dax, 
-                    (int)BoardObject.eBoardObjectType.SHIELD, (int)newShieldType);     
-            }           
-        }         
-        else if(bo.BoardObjectType == BoardObject.eBoardObjectType.SPEED_MOD)
-        {
-            EditorGUILayout.Separator();
-            SpeedMod speedMod = (SpeedMod)bo;
-
-            SpeedMod.eSpeedModType newSpeedModType = (SpeedMod.eSpeedModType)EditorGUILayout.EnumPopup("Type: ", speedMod.SpeedModType);
-            if (newSpeedModType != speedMod.SpeedModType)
-            {
-                DestroyImmediate(selChannelNode.SpawnedBoardObject.gameObject);                                
-                speedMod = _MCP.CreateBoardObject<SpeedMod>(selChannelNode, _Dax, 
-                    (int)BoardObject.eBoardObjectType.SPEED_MOD, (int)newSpeedModType);
-
-            }        
-            float minSpeedModVal, maxSpeedModVal;
-            if(speedMod.SpeedModType == SpeedMod.eSpeedModType.RING_SPEED)
-            {
-                minSpeedModVal = -10f;
-                maxSpeedModVal = 10f;
-            }
-            else
-            {
-                minSpeedModVal = 0f;
-                maxSpeedModVal = 1f;
-            }
-            float newSpeedModVal =  EditorGUILayout.Slider("Speed Mod:", speedMod.SpeedModVal, minSpeedModVal, maxSpeedModVal);
-            if (newSpeedModVal != speedMod.SpeedModVal)
-            {                                    
-                speedMod.SpeedModVal = newSpeedModVal;
-                UpdateFloatProperty(selBoardObjectSO, "SpeedModVal", speedMod.SpeedModVal);                    
-            }
-
-               
+            case BoardObject.eBoardObjectType.FACET_COLLECT:
+                HandleFacetCollectSelected();
+                break;
+            case BoardObject.eBoardObjectType.SHIELD:
+                HandleShieldSelected();
+                break;
+            case BoardObject.eBoardObjectType.SPEED_MOD:
+                HandleSpeedModSelected();
+                break;
+            case BoardObject.eBoardObjectType.GAME_MOD:
+                HandleGameModSelected();
+                break;
         }
     }              
 }
