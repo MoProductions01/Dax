@@ -26,7 +26,7 @@ public class DaxPuzzleSetup : MonoBehaviour
         for (int i = 0; i < DiodesToShow.Length; i++) DiodesToShow[i] = true;
     }
 
-    public RifRafDebug RifRafDebugRef;    
+    public RadientDebug RadientDebugRef;    
     public Dax _Dax;       
 
     // DEBUG

@@ -8,20 +8,53 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 
+/// <summary>
+/// This class is the main overseer of the of the project.  Manages 
+/// the rest of the
+/// </summary>
 public class MCP : MonoBehaviour
 {
-    public Dax _Dax;
+    public Dax _Dax;    
     public UIRoot _UIRoot;
 
+    /// <summary>
+    /// List of the root strings for board object prefabs.  Combined with the
+    /// info for the board object will get you the correct string to load
+    /// </summary>
+    public static List<string> PREFAB_ROOT_STRINGS = new List<string> {"Dax/Prefabs/", "Dax/Prefabs/Pickups/",
+    "Dax/Prefabs/Hazards/", "Dax/Prefabs/Pickups/Facet_Collects/", "Dax/Prefabs/Pickups/Shields/", 
+    "Dax/Prefabs/Pickups/Speed_Mods/", "Dax/Prefabs/Pickups/Point_Mods/"};
+
+    // Strings for the specific board objects to load.  Combined with the root to get the correct string 
+    // for the board object to load
+    public static List<List<string>> PREFAB_BOARDOBJECT_STRINGS = new List<List<string>> 
+    {
+        new List<string> { "Player_Diode" }, // Player
+        new List<string> { "Facet" },   // Facet
+        new List<string> {"Enemy_Diode", "Glue", "Dynamite" }, // Hazard
+        new List<string> {"Facet_Collect_Ring", "Facet_Collect_Wheel"}, // Facet Collect
+        new List<string> {"Hit_Shield", "Single_Kill_Shield"}, // Sheild
+        new List<string> {"Player_Speed", "Enemy_Speed", "Ring_Speed"}, // Speed Mod
+        new List<string> {"Extra_Points", "Points_Multiplier"} // Point Mod
+    };  
+
+    /// <summary>
+    /// Loads up a saved puzzle
+    /// </summary>
+    /// <param name="puzzlePath">Name of puzzle</param>
     public void LoadPuzzle(string puzzlePath)
     {        
-        // This assumes that the current puzzle has been trashed and re-created by the RifRafGames.LoadPuzzle() stuff
+        // This assumes that the current puzzle has been trashed and re-created by the RadientGames.LoadPuzzle() stuff
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Open(puzzlePath, FileMode.Open);
         Dax.PuzzleSaveData saveData = (Dax.PuzzleSaveData)bf.Deserialize(file);
         file.Close();
         _Dax.ResetPuzzleFromSave(saveData);        
     }
+
+    /// <summary>
+    /// Serializes the puzzle data and saves it to a binary file
+    /// </summary>
     public void SavePuzzle() 
     {
         BinaryFormatter bf = new BinaryFormatter();
@@ -40,6 +73,11 @@ public class MCP : MonoBehaviour
         bf.Serialize(file, puzzleSave);
         file.Close();
     }   
+
+    /// <summary>
+    /// Destroys all of the board objects on the currently selected ring
+    /// </summary>
+    /// <param name="ring">The ring to destroy all the board objets on</param>
     void ResetBoardObjects(Ring ring)
     {
         BoardObject[] boardObjects = ring.GetComponentsInChildren<BoardObject>();
@@ -51,29 +89,46 @@ public class MCP : MonoBehaviour
             DestroyImmediate(boardObject.gameObject);
         }
     }
+
+    /// <summary>
+    /// Restores all of the chanel pieces on the selected ring
+    /// </summary>
+    /// <param name="ring">The ring to reset all the channel pieces for</param>
     void ResetRingChannels(Ring ring)
-    {
-        //Debug.Log("ResetringChannels(): " + ring.name);
+    {        
         List<ChannelPiece> channelPieces = ring.GetComponentsInChildren<ChannelPiece>().ToList();
         foreach (ChannelPiece channelPiece in channelPieces)
         {
             channelPiece.SetActive(true);
         }
     }
+
+    /// <summary>
+    /// Resets all of the Ring details 
+    /// </summary>
+    /// <param name="ring">The ring to reset</param>
     public void ResetRing(Ring ring)
     {
-        ring.transform.eulerAngles = Vector3.zero;
+        ring.transform.eulerAngles = Vector3.zero;  
         ring.RotateSpeed = 0;
         ResetBoardObjects(ring);
         ResetRingChannels(ring);
     }    
+
+    /// <summary>
+    /// Resets all of the Rings and the number of facets collected
+    /// </summary>
+    /// <param name="wheel"></param>
     public void ResetWheel(Wheel wheel)
     {        
         foreach (Ring ring in wheel.Rings)
         {
             ResetRing(ring);
         }
-        for (int i = 0; i < wheel.NumFacetsCollected.Count; i++) wheel.NumFacetsCollected[i] = 0;       
+        for (int i = 0; i < wheel.NumFacetsCollected.Count; i++) 
+        {
+            wheel.NumFacetsCollected[i] = 0;       
+        }
     }
 
     /// <summary>
@@ -118,7 +173,7 @@ public class MCP : MonoBehaviour
 
         // Wheel is the container class for the gameboard (Rings, etc)
         Wheel wheel = CreateWheel(mcp/*, mcp._Dax.gameObject, mcp._Dax, 0*/);
-        mcp._Dax.CurWheel = wheel;
+        mcp._Dax.Wheel = wheel;
 
         // Set up the camera propertly
         Camera mainCamera = Camera.main;
@@ -142,11 +197,11 @@ public class MCP : MonoBehaviour
         
         // We use a debug class that shows up on display 2 so it doesn't interfere with 
         // the in game display          
-        RifRafDebug rifRafDebugPrefab = Resources.Load<RifRafDebug>("_RifRafDebug");
-        RifRafDebug rifRafDebug = UnityEngine.Object.Instantiate<RifRafDebug>(rifRafDebugPrefab, mcp._Dax.gameObject.transform);
+        RadientDebug rifRafDebugPrefab = Resources.Load<RadientDebug>("_RadientDebug");
+        RadientDebug rifRafDebug = UnityEngine.Object.Instantiate<RadientDebug>(rifRafDebugPrefab, mcp._Dax.gameObject.transform);
         RRDManager.Init(rifRafDebug);        
-        daxSetup.RifRafDebugRef = rifRafDebug;
-    }
+        daxSetup.RadientDebugRef = rifRafDebug;
+    }    
 
     /// <summary>
     /// Creates the gameboard from prefabs via code.  It can be customized however you need it.
@@ -313,43 +368,7 @@ public class MCP : MonoBehaviour
                 GameObject endNode = GameObject.Instantiate<GameObject>(endNodePrefab);
                 endNode.transform.parent = channel.transform;
                 endNode.transform.name = ringString + "_End_Node_" + channelString;
-                endNode.AddComponent<ChannelNode>();
-
-                
-               /* if(ringIndex == 0)
-                {
-                    for(int channelIndex=0; channelIndex<numChannels; channelIndex++)
-                    {
-                        Transform startNode_ = nodesContainer.transform.GetChild(channelIndex*3);
-                        Transform endNode_ = nodesContainer.transform.GetChild(channelIndex*3 + 2);
-
-                        double radian = Math.Atan2(endNode_.transform.position.z - startNode_.transform.position.z,
-                                                    endNode_.transform.position.x - startNode_.transform.position.x);
-                        double angle = radian * (180 / Math.PI);
-                        Debug.Log("-------------------------------------------\nchannelIndex: " + channelIndex + ", startNode transform.position: " + startNode_.transform.position + 
-                        ", endNode: transform.position: " + endNode_.transform.position + "\n startNode transform.localPosition: " + startNode_.transform.localPosition + 
-                        ", endNode: transform.localPosition: " + endNode_.transform.localPosition + ", radian: " + radian + ", angle: " + angle);
-
-                        Vector3 newPosA = Vector3.zero;
-                        newPosA.x = startNode_.position.x + (endNode_.position.x - startNode_.position.x) / 2;
-                        newPosA.y = startNode_.position.y + (endNode_.position.y - startNode_.position.y) / 2;
-                        newPosA.z = startNode_.position.z + (endNode_.position.z - startNode_.position.z) / 2;
-                        Vector3 newPosB = Vector3.Lerp(startNode_.transform.position, endNode_.transform.position, .5f);
-                        Debug.Log( "transform.position newPosA: " + newPosA + ", newPosB: " + newPosB);
-                        newPosA.x = startNode_.localPosition.x + (endNode_.localPosition.x - startNode_.localPosition.x) / 2;
-                        newPosA.y = startNode_.localPosition.y + (endNode_.localPosition.y - startNode_.localPosition.y) / 2;
-                        newPosA.z = startNode_.localPosition.z + (endNode_.localPosition.z - startNode_.localPosition.z) / 2;
-                        newPosB = Vector3.Lerp(startNode_.transform.localPosition, endNode_.transform.localPosition, .5f);
-                        Debug.Log( "transform.localPosition newPosA: " + newPosA + ", newPosB: " + newPosB);
-
-
-                    }
-                }*/
-               // for(int i=0; i<)
-
-               
-
-
+                endNode.AddComponent<ChannelNode>();                                                       
             }
 
             // The wedges are the pieces inbetween the channels.  
@@ -424,9 +443,14 @@ public class MCP : MonoBehaviour
     }
 
     
-    
+    /// <summary>
+    /// When you get a powerup that will collect all the facets on either a ring or the 
+    /// entire wheel, put an icon in the center of the wheel for the user to click on.
+    /// </summary>
+    /// <param name="type">Whether it's a collect facet powerup for a ring or the whole wheel</param>
+    /// <returns></returns>
     public GameObject CreateFacetCollectIcon( FacetCollect.eFacetCollectTypes type)
-    {
+    {        
         GameObject facetCollectIconPrefab = null;
         switch (type)
         {
@@ -437,9 +461,15 @@ public class MCP : MonoBehaviour
                 facetCollectIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/Facet_Collect_Wheel_HUD");
                 break;
         }
-        GameObject shieldIcon = Instantiate<GameObject>(facetCollectIconPrefab, _Dax._UIRoot.transform);
-        return shieldIcon;
+        GameObject facetCollectIcon = Instantiate<GameObject>(facetCollectIconPrefab, _Dax._UIRoot.transform);
+        return facetCollectIcon;
     }
+
+    /// <summary>
+    /// Creates a shield icon for the center of the wheel when the user collects a shield powerup
+    /// </summary>
+    /// <param name="type">Hit Shield or Single Kill shield</param>
+    /// <returns></returns>
     public GameObject CreateShieldIcon(Shield.eShieldTypes type)
     {
         GameObject shieldIconPrefab = null;
@@ -456,7 +486,11 @@ public class MCP : MonoBehaviour
         return shieldIcon;       
     }    
    
-  
+    /// <summary>
+    /// Instantiates and returns a material for a specific facet color
+    /// </summary>
+    /// <param name="color">Color of the facet</param>
+    /// <returns></returns>
     public Material GetFacetMaterial(Facet.eFacetColors color)
     {
         switch (color)
@@ -465,19 +499,22 @@ public class MCP : MonoBehaviour
             case Facet.eFacetColors.GREEN: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Green"));
             case Facet.eFacetColors.BLUE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Blue"));
             case Facet.eFacetColors.YELLOW: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Yellow"));
-            case Facet.eFacetColors.PURPLE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Purple"));
-            //case Facet.eFacetColors.PINK: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Pink"));
-            case Facet.eFacetColors.ORANGE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Orange"));
-           // case Facet.eFacetColors.WHITE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_White"));
+            case Facet.eFacetColors.PURPLE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Purple"));            
+            case Facet.eFacetColors.ORANGE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Orange"));           
             default: Debug.LogError("GetFacetMaterial(): Invalid Bumper color: " + color); return null;
         }
     }
-    // moassetstoget
-    // bumer matierials None and Death
+
+    /// <summary>
+    /// Gets the material for the type and color of the bumper
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="color"></param>
+    /// <returns></returns>
     public Material GetBumperMaterial(Bumper.eBumperType type, Facet.eFacetColors color)
     {
         if (type != Bumper.eBumperType.COLOR_MATCH)
-        {
+        {   // When the bumper type is either non colored or a death bumper
             switch (type)
             {
                 case Bumper.eBumperType.REGULAR: return Instantiate<Material>(Resources.Load<Material>("Dax/Bumper Materials/Bumper None"));
@@ -487,16 +524,16 @@ public class MCP : MonoBehaviour
         }
         else
         {
-            //return (FindObjectOfType<MCP>().GetFacetMaterial(color));
+            // This is a color match bumper so use this
             return GetFacetMaterial(color);
         }
     }
-
-    
-
-    
-
-    
+            
+    /// <summary>
+    /// Called from the DaxEditor to change the color of a facet
+    /// </summary>
+    /// <param name="facet">The selected facet</param>
+    /// <param name="color">The color to change it to</param>
     public void ChangeFacetColor(Facet facet, Facet.eFacetColors color)
     {
         facet._Color = color;
@@ -505,20 +542,25 @@ public class MCP : MonoBehaviour
         foreach (MeshRenderer mr in meshRenderers) mr.material = colorFacetMaterial;
     }
         
+    /// <summary>
+    /// This initializes all of the data and information for a board object if loaded from a save file
+    /// </summary>
+    /// <param name="bo">The board object to initialize</param>
+    /// <param name="boSave">Save data for the board object</param>
     public void InitBoardObjectFromSave(BoardObject bo, Dax.BoardObjectSave boSave)
     {
         // get the starting channel
         bo.CurChannel = GameObject.Find(boSave.StartChannel).GetComponent<Channel>();
-        bo.StartDir = boSave.StartDir; // monewsave
-        bo.Speed = boSave.Speed; // moupdate
-                                 // Debug.Log("MCP.InitBoardObject(): " + bo.name + ", bo.CurChannel: " + bo.CurChannel.name);
-                                 //if (bo.CurChannel == null) Debug.LogError("dfsd");
+        // Init the starting direction and speed
+        bo.StartDir = boSave.StartDir; 
+        bo.Speed = boSave.Speed; 
+
+        // Get the information out of the save datat depending on what kind of board object it is
         switch (bo.BoardObjectType)
         {
             case BoardObject.eBoardObjectType.SHIELD:
                 Shield shield = (Shield)bo;
-                shield.ShieldType = (Shield.eShieldTypes)boSave.IntList[0]; // moupdate - check if this is necessary 
-               // shield.Timer = boSave.FloatList[0];
+                shield.ShieldType = (Shield.eShieldTypes)boSave.IntList[0];               
                 break;
             case BoardObject.eBoardObjectType.SPEED_MOD:
                 SpeedMod speedMod = (SpeedMod)bo;
@@ -531,10 +573,9 @@ public class MCP : MonoBehaviour
                 hazard.EffectTime = boSave.FloatList[0];
                 hazard.EffectRadius = boSave.FloatList[1];
                 if(hazard.HazardType == Hazard.eHazardType.ENEMY)
-                { // monewsave
+                { 
                     hazard.transform.LookAt(bo.StartDir == BoardObject.eStartDir.OUTWARD ? hazard.CurChannel.EndNode.transform : hazard.CurChannel.StartNode.transform);
-                }
-               // if (hazard.HazardType == Hazard.eHazardType.PROXIMITY_MINE) hazard.GetComponent<SphereCollider>().radius = hazard.EffectRadius;                
+                }               
                 break;
             case BoardObject.eBoardObjectType.GAME_MOD:
                 GameMod gameMod = (GameMod)bo;
@@ -543,53 +584,55 @@ public class MCP : MonoBehaviour
                 gameMod.GameModTime = boSave.FloatList[0];
                 break;            
         }
-    }
-    
+    }      
 
-        
-   
-    public static List<string> PREFAB_ROOT_STRINGS = new List<string> {"Dax/Prefabs/", "Dax/Prefabs/Pickups/",
-        "Dax/Prefabs/Hazards/", "Dax/Prefabs/Pickups/Facet_Collects/", "Dax/Prefabs/Pickups/Shields/", 
-        "Dax/Prefabs/Pickups/Speed_Mods/", "Dax/Prefabs/Pickups/Point_Mods/"};
-
-    public static List<List<string>> PREFAB_BOARDOBJECT_STRINGS = new List<List<string>> 
-    {
-        new List<string> { "Player_Diode" }, // Player
-        new List<string> { "Facet" },   // Facet
-        new List<string> {"Enemy_Diode", "Glue", "Dynamite" }, // Hazard
-        new List<string> {"Facet_Collect_Ring", "Facet_Collect_Wheel"}, // Facet Collect
-        new List<string> {"Hit_Shield", "Single_Kill_Shield"}, // Sheild
-        new List<string> {"Player_Speed", "Enemy_Speed", "Ring_Speed"}, // Speed Mod
-        new List<string> {"Extra_Points", "Points_Multiplier"} // Point Mod
-    };   
-
+    /// <summary>
+    /// Creates the string for the prefab to load
+    /// </summary>
+    /// <param name="boardObjectIndex">The root board object to load</param>
+    /// <param name="boardObjectTypeIndex">The index of that board object to load</param>
+    /// <returns></returns>
     public string CreatePrefabString(int boardObjectIndex, int boardObjectTypeIndex)
     {                
+        // Combine the boardObjectIndex and boardObjectTypeIndex to build
+        // the string out of the static definitions above
         return PREFAB_ROOT_STRINGS[boardObjectIndex] + 
             PREFAB_BOARDOBJECT_STRINGS[boardObjectIndex][boardObjectTypeIndex];          
     }
    
+    /// <summary>
+    /// Creates a board object from scratch
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="channelNode">The channel node this board object will be on</param>
+    /// <param name="dax">Reference to the main game play object</param>
+    /// <param name="boardObjectIndex">For getting the prefab root folder string</param>
+    /// <param name="boardObjectTypeIndex">For getting the specific type of board object</param>
+    /// <returns></returns>
     public T CreateBoardObject<T>(ChannelNode channelNode, Dax dax, 
                                   int boardObjectIndex, int boardObjectTypeIndex) where T : BoardObject
     {                        
-        Debug.Log("CreateBoardObject: " + ((BoardObject.eBoardObjectType) boardObjectIndex).ToString());
-
-        string prefabString = CreatePrefabString(boardObjectIndex, boardObjectTypeIndex);
+        //Debug.Log("CreateBoardObject: " + ((BoardObject.eBoardObjectType) boardObjectIndex).ToString());
+        string prefabString = CreatePrefabString(boardObjectIndex, boardObjectTypeIndex); // Create the prefab string to load
         T prefab = Resources.Load<T>(prefabString);
         T instantiaedObject = Instantiate<T>(prefab, channelNode.transform);
         instantiaedObject.InitForChannelNode(channelNode, dax);
         return instantiaedObject;        
     }    
 
+    /// <summary>
+    /// This creates a board object from save data
+    /// </summary>
+    /// <param name="channelNode">Channel node this object will spawn on</param>
+    /// <param name="boSave">Save info for the board object</param>
+    /// <param name="dax">Root gameplay object</param>
     public void CreateBoardObjectFromSaveData(ChannelNode channelNode, Dax.BoardObjectSave boSave, Dax dax)
     {
-        //Debug.Log("Dax.CreateBoardObjectForNode(): " + channelNode.name + ", of type: " + boSave.Type); // moupdate *!!! this is being called 100 times for the player
-
-        
+        //Debug.Log("Dax.CreateBoardObjectForNode(): " + channelNode.name + ", of type: " + boSave.Type); // moupdate *!!! this is being called 100 times for the player        
+        // Create the board object based on the type in the save data
         switch (boSave.Type)
         {                        
-            case BoardObject.eBoardObjectType.FACET:
-                //CreateFacet(channelNode, dax, (Facet.eFacetColors)(Facet.eFacetColors)boSave.IntList[0]);
+            case BoardObject.eBoardObjectType.FACET:                
                 Facet facet = CreateBoardObject<Facet>(channelNode, dax, 
                     (int)BoardObject.eBoardObjectType.FACET, 0);
                 ChangeFacetColor(facet, (Facet.eFacetColors)boSave.IntList[0]);     
@@ -617,10 +660,43 @@ public class MCP : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Helper function to reset all of the info for the transform
+    /// </summary>
+    /// <param name="t">Transform to reset</param>
     public static void ResetTransform(Transform t)
     {
         t.position = Vector3.zero;
         t.eulerAngles = Vector3.zero;
         t.localScale = Vector3.one;
     }    
+
+    // This was used to get some debug info about the board
+ /* if(ringIndex == 0)
+    { 
+        for(int channelIndex=0; channelIndex<numChannels; channelIndex++)
+        {
+            Transform startNode_ = nodesContainer.transform.GetChild(channelIndex*3);
+            Transform endNode_ = nodesContainer.transform.GetChild(channelIndex*3 + 2);
+
+            double radian = Math.Atan2(endNode_.transform.position.z - startNode_.transform.position.z,
+                                        endNode_.transform.position.x - startNode_.transform.position.x);
+            double angle = radian * (180 / Math.PI);
+            Debug.Log("-------------------------------------------\nchannelIndex: " + channelIndex + ", startNode transform.position: " + startNode_.transform.position + 
+            ", endNode: transform.position: " + endNode_.transform.position + "\n startNode transform.localPosition: " + startNode_.transform.localPosition + 
+            ", endNode: transform.localPosition: " + endNode_.transform.localPosition + ", radian: " + radian + ", angle: " + angle);
+
+            Vector3 newPosA = Vector3.zero;
+            newPosA.x = startNode_.position.x + (endNode_.position.x - startNode_.position.x) / 2;
+            newPosA.y = startNode_.position.y + (endNode_.position.y - startNode_.position.y) / 2;
+            newPosA.z = startNode_.position.z + (endNode_.position.z - startNode_.position.z) / 2;
+            Vector3 newPosB = Vector3.Lerp(startNode_.transform.position, endNode_.transform.position, .5f);
+            Debug.Log( "transform.position newPosA: " + newPosA + ", newPosB: " + newPosB);
+            newPosA.x = startNode_.localPosition.x + (endNode_.localPosition.x - startNode_.localPosition.x) / 2;
+            newPosA.y = startNode_.localPosition.y + (endNode_.localPosition.y - startNode_.localPosition.y) / 2;
+            newPosA.z = startNode_.localPosition.z + (endNode_.localPosition.z - startNode_.localPosition.z) / 2;
+            newPosB = Vector3.Lerp(startNode_.transform.localPosition, endNode_.transform.localPosition, .5f);
+            Debug.Log( "transform.localPosition newPosA: " + newPosA + ", newPosB: " + newPosB);
+        }
+    }*/ 
 }

@@ -3,49 +3,56 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// This is the main root object for the gameplay.
+/// </summary>
 public class Dax : MonoBehaviour
 {   
+    // The victory conditions (or game type).
+    // COLLECTION: Player needs to run over the facets to collect them.  When they have them all you win.
+    // COLOR_MATCH: Player must run over the facet to start carrying it. Then
+    //              run into a bumper at the edge of the ring of the corresponding color
     public enum eVictoryConditions { COLLECTION, COLOR_MATCH };
-    public enum eGameState { PRE_GAME, RUNNING, GAME_OVER };
-    
-    public static float MAX_SPIN_SPEED = 20f;
-    public static float MAX_SPEED = 1f; 
 
-    public static int MAX_NUM_RINGS = 4;
-
-    public string PuzzleName = "Default Puzzle";    
+    public enum eGameState { PRE_GAME, RUNNING, GAME_OVER }; // Various states the game can me in
     public eGameState GameState;    
-
-       
     
-    public Wheel CurWheel;
-    public Ring CurTouchedRing = null;
+    public static float MAX_SPIN_SPEED = 20f; // Maximum speed the player can spin a ring
+    public static float MAX_SPEED = 1f; // Maximum speed a board object or the player can go
 
-    //public int StartChannelIndex = 0;
+    public static int MAX_NUM_RINGS = 4; // Maximum number of rings the game can have
+
+    public string PuzzleName = "Default Puzzle"; //Name of the puzzle    
+           
+    public Wheel Wheel; // Ref to the wheel in the game
+    public Ring CurTouchedRing = null; // The ring the user is currently touching
+        
+    // Ring Controls // monote - add headers
+    LayerMask RingMask; // Layer mask for rings
+    Vector2 RingCenterPoint = Vector3.zero; // Center for the currently selected ring
+    Vector2 MousePosition;  // Position of the mouse
+    float RingRot = 0f;      // Rotation of the ring
+    float PointerPrevAngle; // Angle between the center point and the mouse pointer
     
-    // Ring Controls
-    LayerMask RingMask;
-    Vector2 RingCenterPoint = Vector3.zero;
-    Vector2 MousePosition;
-    float RingAngle = 0f;      
-    float PointerPrevAngle;
-    
-    bool GameModActive;
-    float GameModTimer; 
-    int GameModVal;
+    bool GameModActive; // Whether or not a gameplay modifier is active
+    float GameModTimer; // Timer for the current gameplay modifier
+    int GameModVal;     // Value of the current gameplay modifier
 
-    public Player _Player;
+    public Player _Player;  // Ref to the player game object
 
-    public UIRoot _UIRoot;
+    public UIRoot _UIRoot;  // Ref to the root UI
 
     [Header("Game Data")]
-    public float LevelTime = 120f;
-    public int Score = 0;    
+    public float LevelTime = 120f;  // Amount of time for the current level
+    public int Score = 0;       // Player score
 
     [Header("Save Data")]
-    public PuzzleSaveData _PuzzleSaveData = null;       
+    public PuzzleSaveData _PuzzleSaveData = null;   // Save data for the current puzzle  
         
 
+    /// <summary>
+    /// Sets all of the basic gameplay info on startup
+    /// </summary>
     private void Awake()    
     {
         GameState = eGameState.PRE_GAME; // Dax.Awake()
@@ -54,20 +61,26 @@ public class Dax : MonoBehaviour
         _UIRoot = FindObjectOfType<UIRoot>();
         _UIRoot.Init();
     }      
-
-    private void Start()
-    {
-        
-    }  
     
+    /// <summary>
+    /// Starts a point modifier
+    /// </summary>
+    /// <param name="time">How long the modifier will last</param>
+    /// <param name="val">Mod val (point multiplier, etc) for the current mod0</param>
     public void BeginPointMod(float time, int val)
     {
         GameModActive = true;
         GameModTimer = time;
         GameModVal = val;
     }
+
+    /// <summary>
+    /// Adds points to the player's current score
+    /// </summary>
+    /// <param name="points"></param>
     public void AddPoints(int points)
     {
+        // Account for the game mod if active
         if(GameModActive == true)
         {
             points *= GameModVal;
@@ -76,10 +89,14 @@ public class Dax : MonoBehaviour
         _UIRoot.ScoreText.SetText(Score.ToString());
     }   
 
+    /// <summary>
+    /// Updates the game every frame and handles user input
+    /// </summary>
     void Update()
     {
-        if (GameState != eGameState.RUNNING) return;      
+        if (GameState != eGameState.RUNNING) return; // Bail if the game isn't in it's running state     
         
+        // Count down the game mod timer if it's on
         if(GameModActive == true)
         {
             GameModTimer -= Time.deltaTime;
@@ -89,52 +106,59 @@ public class Dax : MonoBehaviour
             }
         }
 
+        // Some local variables to calculate the difference between data this frame and the last frame
         float pointerNewAngle = -999999f;
         float ringAngleBefore = -9999999f;
         float angleDiff = -99999f;
         if (Input.GetMouseButtonDown(0))
-        {            
+        {   
+            // User clicked the mouse (or touched the screen) so see if they clicked on a ring         
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);           
             RaycastHit hit;
             if(Physics.Raycast(ray, out hit, Mathf.Infinity, RingMask))
-            {               
+            {   // User clicked on a ring, so gather information based on where they clicked       
                 CurTouchedRing = hit.collider.gameObject.GetComponent<Ring>();                
                 RingCenterPoint = RectTransformUtility.WorldToScreenPoint(Camera.main, CurTouchedRing.transform.position);
                 MousePosition = Input.mousePosition;
                 PointerPrevAngle = Vector2.Angle(Vector2.up, MousePosition - RingCenterPoint);
-                RingAngle = CurTouchedRing.transform.localEulerAngles.y;
+                RingRot = CurTouchedRing.transform.localEulerAngles.y;
             }
         }
         else if (Input.GetMouseButton(0) && CurTouchedRing != null)
-        {            
+        {   // User is holding down mouse (or holding down touch) so check for ring rotation     
             Vector2 pointerPos = Input.mousePosition;
             pointerNewAngle = Vector2.Angle(Vector2.up, pointerPos - RingCenterPoint);
             float delta = (pointerPos - RingCenterPoint).sqrMagnitude;
-            ringAngleBefore = RingAngle;
+            ringAngleBefore = RingRot;
             angleDiff = pointerNewAngle - PointerPrevAngle;
+            // Check to see if the user rotated the ring enough but not too much
             if (delta >= 4f && Mathf.Abs(pointerNewAngle - PointerPrevAngle) < MAX_SPIN_SPEED)
             {
                 if (pointerPos.x > RingCenterPoint.x)
                 {
-                    RingAngle += angleDiff;
+                    RingRot += angleDiff;
                 }
                 else
                 {
-                    RingAngle -= angleDiff;
+                    RingRot -= angleDiff;
                 }
             }
             PointerPrevAngle = pointerNewAngle;
         }
         else if (Input.GetMouseButtonUp(0))
-        {
+        {   // User unclicked mouse (or stopped touching) so reset the currently selected ring to null
             if (CurTouchedRing != null) CurTouchedRing = null;            
         }
     }
 
+    /// <summary>
+    /// Handle the physics here since it's frame rate independent
+    /// </summary>
     private void FixedUpdate()
     {
         if (GameState != eGameState.RUNNING) return;  
                 
+        // Update the player 
         _Player.BoardObjectFixedUpdate(Time.deltaTime);
         
         List<Hazard> hazards = transform.GetComponentsInChildren<Hazard>().ToList(); // moupdate wtf. all BoardObjects should get a fixed update
@@ -154,14 +178,14 @@ public class Dax : MonoBehaviour
     //  Then you just use Quaternion.AngleAxis to create the rotation.
     void RotateRings()
     {   // note: a BumperGroup is null if it's the center ring.  Otherwise it's just toggled
-        if (CurWheel == null) { Debug.LogError("ERROR: No CurWheel."); return; }
-        foreach(Ring ring in CurWheel.Rings)
+        if (Wheel == null) { Debug.LogError("ERROR: No CurWheel."); return; }
+        foreach(Ring ring in Wheel.Rings)
         {
             if (ring == CurTouchedRing)
             {
-                CurTouchedRing.transform.localEulerAngles = new Vector3(0f, RingAngle, 0f);
+                CurTouchedRing.transform.localEulerAngles = new Vector3(0f, RingRot, 0f);
 //                Debug.Log("new rot: " + RingAngle);
-                if (CurTouchedRing.BumperGroup != null) CurTouchedRing.BumperGroup.transform.localEulerAngles = new Vector3(0f, RingAngle, 0f);
+                if (CurTouchedRing.BumperGroup != null) CurTouchedRing.BumperGroup.transform.localEulerAngles = new Vector3(0f, RingRot, 0f);
             }
             else
             {
@@ -212,16 +236,16 @@ public class Dax : MonoBehaviour
         this.PuzzleName = _PuzzleSaveData.PuzzleName;
         //CurTouchedRing RingAngle PointerPrevAngle
         CurTouchedRing = null;
-        RingAngle = 0f;
+        RingRot = 0f;
         PointerPrevAngle = 0f;
         // reset the wheel to starting state
         //mcp.ResetWheel(Wheels[0]);
-        mcp.ResetWheel(CurWheel);
+        mcp.ResetWheel(Wheel);
         // set up # of rings
         //Wheels[0].VictoryCondition = _PuzzleSaveData.VictoryCondition;                
         //Wheels[0].TurnOnRings(_PuzzleSaveData.NumRings);    
-        CurWheel.VictoryCondition = _PuzzleSaveData.VictoryCondition;                
-        CurWheel.TurnOnRings(_PuzzleSaveData.NumRings);        
+        Wheel.VictoryCondition = _PuzzleSaveData.VictoryCondition;                
+        Wheel.TurnOnRings(_PuzzleSaveData.NumRings);        
 
         // first pass through all the rings to create all the board objects
         for(int i=0; i<_PuzzleSaveData.RingSaves.Count; i++)
@@ -230,7 +254,7 @@ public class Dax : MonoBehaviour
             RingSave ringSave = _PuzzleSaveData.RingSaves[i];
             if (numChannels != ringSave.ChannelSaves.Count) { Debug.LogError("numChannels: " + numChannels + ", doesn't match ChannelSaves.Count: " + ringSave.ChannelSaves.Count); return false; }
            // Ring ring = Wheels[0].Rings[i];
-            Ring ring = CurWheel.Rings[i];
+            Ring ring = Wheel.Rings[i];
             
             List<Channel> ringChannels = ring.transform.GetComponentsInChildren<Channel>().ToList();
             ringChannels = ringChannels.OrderBy(x => x.name).ToList();
@@ -276,7 +300,7 @@ public class Dax : MonoBehaviour
             RingSave ringSave = _PuzzleSaveData.RingSaves[i];
             if (numChannels != ringSave.ChannelSaves.Count) { Debug.LogError("numChannels: " + numChannels + ", doesn't match ChannelSaves.Count: " + ringSave.ChannelSaves.Count); return false; }
            // Ring ring = Wheels[0].Rings[i];
-            Ring ring = CurWheel.Rings[i];
+            Ring ring = Wheel.Rings[i];
             List<Channel> ringChannels = ring.transform.GetComponentsInChildren<Channel>().ToList();
             ringChannels = ringChannels.OrderBy(x => x.name).ToList();
 
@@ -293,7 +317,7 @@ public class Dax : MonoBehaviour
         //reset player        
         _Player.ResetForPuzzleRestart(_PuzzleSaveData.PlayerSave);        
         //Wheels[0].InitWheelFacets();       
-        CurWheel.InitWheelFacets();     
+        Wheel.InitWheelFacets();     
         
         // game state       
         GameState = eGameState.RUNNING;
@@ -476,7 +500,7 @@ public class Dax : MonoBehaviour
         public PuzzleSaveData(Dax dax)
         {
             //Wheel wheel = dax.Wheels[0];
-            Wheel wheel = dax.CurWheel;
+            Wheel wheel = dax.Wheel;
             NumRings = wheel.NumActiveRings;
             int numRingsPlusCenter = NumRings + 1;
 

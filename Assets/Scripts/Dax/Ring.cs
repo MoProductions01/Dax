@@ -20,7 +20,7 @@ public class Ring : MonoBehaviour
         //collectFacets.RemoveAll(x => x._Color != Facet.eFacetColors.WHITE);
         foreach(Facet facet in collectFacets)
         {
-            this.DaxRef.CurWheel.CollectPickupFacet(facet);
+            this.DaxRef.Wheel.CollectPickupFacet(facet);
         }        
     }
 
@@ -36,7 +36,7 @@ public class Ring : MonoBehaviour
 
     public bool IsCenterRing()
     {        
-        return DaxRef.CurWheel.Rings[0] == this;
+        return DaxRef.Wheel.Rings[0] == this;
     }   
 
     

@@ -40,7 +40,7 @@ public class UIRoot : MonoBehaviour
     }
 
     public void ChangeFacetCollectIcon(FacetCollect facetCollect)
-    {
+    {        
         DestroyFacetCollectIcon();
         FacetCollectIcon = _MCP.CreateFacetCollectIcon(facetCollect.FacetCollectType);
         FacetCollectIcon.transform.parent = this.transform;

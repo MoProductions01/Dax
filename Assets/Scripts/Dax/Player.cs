@@ -90,7 +90,7 @@ public class Player : BoardObject
                 CurChannel.MyRing.CollectAllPickupFacets();
                 break;
             case FacetCollect.eFacetCollectTypes.WHEEL:                
-                foreach(Ring ring in _Dax.CurWheel.Rings)
+                foreach(Ring ring in _Dax.Wheel.Rings)
                 {
                     ring.CollectAllPickupFacets();
                 }
@@ -103,7 +103,7 @@ public class Player : BoardObject
     {        
        // string s = "pos: " + transform.position + ", localPos: " + transform.localPosition + "\n";
         //s += "forward: " + transform.forward + ", CurChannel: " + CurChannel.name;
-         //RRDManager.SetText(s, RifRafDebug.eDebugTextType.GAME_STATE);   
+         //RRDManager.SetText(s, RadientDebug.eDebugTextType.GAME_STATE);   
         
         if(CarriedColorFacet != null)
         {
@@ -196,7 +196,7 @@ public class Player : BoardObject
     public void SetStartChannel(int channelIndex)
     {
         Debug.Log("Player.SetStartChannel: channelIndex: " + channelIndex);
-        CurChannel = _Dax.CurWheel.Rings[0].transform.GetComponentsInChildren<Channel>().ToList()[channelIndex];
+        CurChannel = _Dax.Wheel.Rings[0].transform.GetComponentsInChildren<Channel>().ToList()[channelIndex];
         this.transform.parent = CurChannel.MyRing.transform;
         SpawningNode = CurChannel.StartNode;
         transform.LookAt(SpawningNode.transform);

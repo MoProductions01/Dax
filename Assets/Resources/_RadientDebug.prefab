@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 1691206898287119038}
   - component: {fileID: 960902095}
   m_Layer: 5
-  m_Name: _RifRafDebug
+  m_Name: _RadientDebug
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

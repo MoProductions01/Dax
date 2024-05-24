@@ -85,11 +85,11 @@ public class DaxEditor : Editor
         }            
     }
 
-    /* This is to make sure the RifRafDebug object is always hidden.  It's hacky but it's editor code so I'm ok with it */
+    /* This is to make sure the RadientDebug object is always hidden.  It's hacky but it's editor code so I'm ok with it */
     void HandleSceneView()
     {
         return; // monote - might not need this
-        /*RifRafDebug rrd = FindObjectOfType<RifRafDebug>();
+        /*RadientDebug rrd = FindObjectOfType<RadientDebug>();
         if (rrd != null)
         {
             SceneVisibilityManager sv = SceneVisibilityManager.instance;
@@ -113,21 +113,21 @@ public class DaxEditor : Editor
             {   // User wants to reduce rings, so sort that out.
                 RingsNumChangePopupActive = false;         
                 // ResetRing destroys all the board objects and restores any removed ChannelPieces      
-                for (int i = _Dax.CurWheel.NumActiveRings; i > NumRingsUserWants; i--) _MCP.ResetRing(_Dax.CurWheel.Rings[i]);                      
+                for (int i = _Dax.Wheel.NumActiveRings; i > NumRingsUserWants; i--) _MCP.ResetRing(_Dax.Wheel.Rings[i]);                      
                 Selection.activeGameObject = null;
                 SelectedRing = 0;
-                _Dax.CurWheel.TurnOnRings(NumRingsUserWants); // This will turn on the correct # of puzzle rings
+                _Dax.Wheel.TurnOnRings(NumRingsUserWants); // This will turn on the correct # of puzzle rings
             }
             else RingsNumChangePopupActive = false; // User chose no so just shut off the popup            
         }
         else
         {   // Number of rings
-            int newNumRings = EditorGUILayout.IntPopup("Number of Rings", _Dax.CurWheel.NumActiveRings, DaxPuzzleSetup.NUM_RINGS_NAMES, DaxPuzzleSetup.NUM_RINGS_TOTALS);
-            if (newNumRings != _Dax.CurWheel.NumActiveRings)
+            int newNumRings = EditorGUILayout.IntPopup("Number of Rings", _Dax.Wheel.NumActiveRings, DaxPuzzleSetup.NUM_RINGS_NAMES, DaxPuzzleSetup.NUM_RINGS_TOTALS);
+            if (newNumRings != _Dax.Wheel.NumActiveRings)
             {
-                if (newNumRings > _Dax.CurWheel.NumActiveRings)
+                if (newNumRings > _Dax.Wheel.NumActiveRings)
                 {   // If we're increasing the number of rings just go ahead and do it because the rings have been cleared already                    
-                    _Dax.CurWheel.TurnOnRings(newNumRings);
+                    _Dax.Wheel.TurnOnRings(newNumRings);
                 }
                 else
                 {   // We're decreasing the number of rings, which will destroy all the stuff on them, so give the user a popup
@@ -146,7 +146,7 @@ public class DaxEditor : Editor
         // You always have at least one Ring other than the Center ring so
         // set up the enum list based on the # of rings after that
         List<string> ringNames = new List<string> { "None", "Center", "Ring 01" };
-        for (int i = 2; i <= _Dax.CurWheel.NumActiveRings; i++) ringNames.Add("Ring " + i.ToString("D2"));        
+        for (int i = 2; i <= _Dax.Wheel.NumActiveRings; i++) ringNames.Add("Ring " + i.ToString("D2"));        
         string[] ringNamesArray = ringNames.ToArray();
         // Set up the enum pulldown
         int newRing = EditorGUILayout.Popup("Select Ring", SelectedRing, ringNamesArray);
@@ -158,7 +158,7 @@ public class DaxEditor : Editor
             }
             else
             {   // You've chosen a ring so make that the activeGameObject
-                Selection.activeGameObject = _Dax.CurWheel.Rings[newRing - 1].gameObject;
+                Selection.activeGameObject = _Dax.Wheel.Rings[newRing - 1].gameObject;
             }
             SelectedRing = newRing;
         }
@@ -191,19 +191,19 @@ public class DaxEditor : Editor
 
         // Victory Condition
         EditorGUILayout.Separator();
-        Dax.eVictoryConditions newVictoryCondition = (Dax.eVictoryConditions)EditorGUILayout.EnumPopup("Victory Conditions", _Dax.CurWheel.VictoryCondition);
-        if (newVictoryCondition != _Dax.CurWheel.VictoryCondition)
+        Dax.eVictoryConditions newVictoryCondition = (Dax.eVictoryConditions)EditorGUILayout.EnumPopup("Victory Conditions", _Dax.Wheel.VictoryCondition);
+        if (newVictoryCondition != _Dax.Wheel.VictoryCondition)
         {
-            _Dax.CurWheel.VictoryCondition = newVictoryCondition;
-            UpdateEnumProperty(new SerializedObject(_Dax.CurWheel), "VictoryCondition", (int)_Dax.CurWheel.VictoryCondition);            
+            _Dax.Wheel.VictoryCondition = newVictoryCondition;
+            UpdateEnumProperty(new SerializedObject(_Dax.Wheel), "VictoryCondition", (int)_Dax.Wheel.VictoryCondition);            
         }
 
         // A list of all the facets that you need to collect on the board
         EditorGUILayout.Separator();
-        for (int i = 0; i < _Dax.CurWheel.NumFacetsOnBoard.Count-1; i++)
+        for (int i = 0; i < _Dax.Wheel.NumFacetsOnBoard.Count-1; i++)
         {
             Facet.eFacetColors curColor = (Facet.eFacetColors)i;
-            EditorGUILayout.LabelField(curColor.ToString() + " To Collect: " + _Dax.CurWheel.NumFacetsOnBoard[(int)curColor]);
+            EditorGUILayout.LabelField(curColor.ToString() + " To Collect: " + _Dax.Wheel.NumFacetsOnBoard[(int)curColor]);
         }         
 
         // Handle the number of rings and Ring selection
@@ -216,15 +216,9 @@ public class DaxEditor : Editor
             // You need to initialize the puzzle in order for a restart without restarting
             // the editor.  It creates in-game save data which will be used to reload the
             // level if you win or die and want to restart.     
-            _Dax.CurWheel.InitWheelFacets();
+            _Dax.Wheel.InitWheelFacets();
             _Dax.CreateSaveData(_Dax);            
-        }
-        // This saves the puzzle in a binary format
-        EditorGUILayout.Separator();
-        if(GUILayout.Button("Save Puzzle"))
-        {
-            _MCP.SavePuzzle();                
-        }   
+        }        
     }
 
     /// <summary>
@@ -436,7 +430,7 @@ public class DaxEditor : Editor
     /// </summary>
     public override void OnInspectorGUI()
     {
-        HandleSceneView(); // make sure the RifRaf Debug object is not visible        
+        HandleSceneView(); // make sure the Radient Debug object is not visible        
                 
         #if false
         MCP _MCP;   // The Master Control Program object from the main game

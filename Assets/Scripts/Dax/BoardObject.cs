@@ -128,10 +128,10 @@ public class BoardObject : MonoBehaviour
                         Facet playerCarriedColorFacet = (Facet)player.CarriedColorFacet;
                         if (playerCarriedColorFacet._Color == bumper.BumperColor)
                         {                                
-                            FindObjectOfType<Dax>().CurWheel.MatchedFacetColor(playerCarriedColorFacet);
+                            FindObjectOfType<Dax>().Wheel.MatchedFacetColor(playerCarriedColorFacet);
                             //curSphereColliders.Remove(playerCarriedColorFacet.GetComponentInChildren<Collider>());
                             DestroyImmediate(playerCarriedColorFacet.gameObject);
-                            if(_Dax.CurWheel.VictoryCondition == Dax.eVictoryConditions.COLOR_MATCH) _Dax.CurWheel.CheckVictoryConditions();
+                            if(_Dax.Wheel.VictoryCondition == Dax.eVictoryConditions.COLOR_MATCH) _Dax.Wheel.CheckVictoryConditions();
                         }
                         break;
                 }
@@ -158,12 +158,12 @@ public class BoardObject : MonoBehaviour
             case eBoardObjectType.FACET:                            
                 Facet facet = boardObjectColliders[0].GetComponentInParent<Facet>();
                 //if(facet._Color == Facet.eFacetColors.WHITE)
-                if(_Dax.CurWheel.VictoryCondition == Dax.eVictoryConditions.COLLECTION)
+                if(_Dax.Wheel.VictoryCondition == Dax.eVictoryConditions.COLLECTION)
                 {
                     //Debug.LogError("Pickup facet collect");
                     facet.SpawningNode.SpawnedBoardObject = null;
                     //curSphereColliders.Remove(facet.GetComponentInChildren<Collider>()); // moupdate - loook in making this a function
-                    this._Dax.CurWheel.CollectPickupFacet(facet);                                
+                    this._Dax.Wheel.CollectPickupFacet(facet);                                
                     //DestroyImmediate(facet.gameObject);
                     //_Dax.CurWheel.CheckVictoryConditions();
                 }
@@ -292,7 +292,7 @@ public class BoardObject : MonoBehaviour
                    //     break;
                     case SpeedMod.eSpeedModType.ENEMY_SPEED:
                    // case SpeedMod.eSpeedModType.ENEMY_DOWN:
-                        List<Hazard> enemies = _Dax.CurWheel.GetComponentsInChildren<Hazard>().ToList();
+                        List<Hazard> enemies = _Dax.Wheel.GetComponentsInChildren<Hazard>().ToList();
                         float speedModVal = (speedMod.SpeedModType == SpeedMod.eSpeedModType.ENEMY_SPEED ? speedMod.SpeedModVal : -speedMod.SpeedModVal); // moupdate optimize all this
                         foreach (Hazard e in enemies) e.Speed += speedModVal; // moupdate - optimize this --- use generic <T> or an overwritten activate.  maybe go back to one class for each and have a generic activate overwriten                                                                                                             
                         break;
