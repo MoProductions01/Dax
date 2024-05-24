@@ -673,7 +673,7 @@ public class DaxEditor : Editor
             if (newTimer != pointMod.PointModTime)
             {   // Update changed mod timer
                 pointMod.PointModTime = newTimer;
-                UpdateFloatProperty(SelectedBoardObjectSO, "GameModTime", pointMod.PointModTime);                   
+                UpdateFloatProperty(SelectedBoardObjectSO, "PointModTime", pointMod.PointModTime);                   
             }
         }
     }
