@@ -648,32 +648,32 @@ public class DaxEditor : Editor
     void HandleGameModSelected()
     {
         EditorGUILayout.Separator();
-        PointMod gameMod = (PointMod)SelectedBoardObject;
+        PointMod pointMod = (PointMod)SelectedBoardObject;
 
-        PointMod.eGameModType newGameModType = (PointMod.eGameModType)EditorGUILayout.EnumPopup("Game Mod Type: ", gameMod.GameModType);
-        if (newGameModType != gameMod.GameModType)
+        PointMod.eGameModType newGameModType = (PointMod.eGameModType)EditorGUILayout.EnumPopup("Point Mod Type: ", pointMod.GameModType);
+        if (newGameModType != pointMod.GameModType)
         {   // User is changing the type of GameMod so destroy the current one and create a new one
             DestroyImmediate(SelectedChannelNode.SpawnedBoardObject.gameObject);                          
-            gameMod = _MCP.CreateBoardObject<PointMod>(SelectedChannelNode, _Dax, 
+            pointMod = _MCP.CreateBoardObject<PointMod>(SelectedChannelNode, _Dax, 
                 (int)BoardObject.eBoardObjectType.POINT_MOD, (int)newGameModType);
         }
-        // the GameModVal is either how many points the user will get or how much of a 
+        // the PointModVal is either how many points the user will get or how much of a 
         // multiplier the user will get.
-        int newGameModVal = EditorGUILayout.IntField("Game Mod Val: ", gameMod.GameModVal);
-        if (newGameModVal <= 0f) newGameModVal = 1; // Make sure it's at least 1
-        if (newGameModVal != gameMod.GameModVal)
-        {   // Update the GameModVal
-            gameMod.GameModVal = newGameModVal;
-            UpdateIntProperty(SelectedBoardObjectSO, "GameModVal", gameMod.GameModVal);                
+        int newPointModVal = EditorGUILayout.IntField("Point Mod Val: ", pointMod.GameModVal);
+        if (newPointModVal <= 0f) newPointModVal = 1; // Make sure it's at least 1
+        if (newPointModVal != pointMod.GameModVal)
+        {   // Update the PointModVal
+            pointMod.GameModVal = newPointModVal;
+            UpdateIntProperty(SelectedBoardObjectSO, "GameModVal", pointMod.GameModVal);     // mofeh           
         }
-        if(gameMod.GameModType == PointMod.eGameModType.POINTS_MULTIPLIER)
+        if(pointMod.GameModType == PointMod.eGameModType.POINTS_MULTIPLIER)
         {   // PointsMultipliers have a timer
-            float newTimer = EditorGUILayout.FloatField("Timer: ", gameMod.GameModTime);
+            float newTimer = EditorGUILayout.FloatField("Timer: ", pointMod.GameModTime);
             if (newTimer < 1.0f) newTimer = 1.0f; // Make sure at least 1 second for the timer
-            if (newTimer != gameMod.GameModTime)
+            if (newTimer != pointMod.GameModTime)
             {   // Update changed mod timer
-                gameMod.GameModTime = newTimer;
-                UpdateFloatProperty(SelectedBoardObjectSO, "GameModTime", gameMod.GameModTime);                   
+                pointMod.GameModTime = newTimer;
+                UpdateFloatProperty(SelectedBoardObjectSO, "GameModTime", pointMod.GameModTime);                   
             }
         }
     }
