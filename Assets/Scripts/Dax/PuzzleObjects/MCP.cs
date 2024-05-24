@@ -577,9 +577,9 @@ public class MCP : MonoBehaviour
                     hazard.transform.LookAt(bo.StartDir == BoardObject.eStartDir.OUTWARD ? hazard.CurChannel.EndNode.transform : hazard.CurChannel.StartNode.transform);
                 }               
                 break;
-            case BoardObject.eBoardObjectType.GAME_MOD:
-                GameMod gameMod = (GameMod)bo;
-                gameMod.GameModType = (GameMod.eGameModType)boSave.IntList[0];
+            case BoardObject.eBoardObjectType.POINT_MOD:
+                PointMod gameMod = (PointMod)bo;
+                gameMod.GameModType = (PointMod.eGameModType)boSave.IntList[0];
                 gameMod.GameModVal = boSave.IntList[1];
                 gameMod.GameModTime = boSave.FloatList[0];
                 break;            
@@ -653,9 +653,9 @@ public class MCP : MonoBehaviour
                 CreateBoardObject<SpeedMod>(channelNode, dax, 
                     (int)BoardObject.eBoardObjectType.SPEED_MOD, boSave.IntList[0]);
                 break;       
-            case BoardObject.eBoardObjectType.GAME_MOD:                
-                CreateBoardObject<GameMod>(channelNode, dax, 
-                    (int)BoardObject.eBoardObjectType.GAME_MOD, boSave.IntList[0]);
+            case BoardObject.eBoardObjectType.POINT_MOD:                
+                CreateBoardObject<PointMod>(channelNode, dax, 
+                    (int)BoardObject.eBoardObjectType.POINT_MOD, boSave.IntList[0]);
                 break;         
         }
     }

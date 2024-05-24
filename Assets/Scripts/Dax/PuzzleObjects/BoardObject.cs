@@ -5,7 +5,7 @@ using System.Linq;
 
 public class BoardObject : MonoBehaviour
 {    
-    public enum eBoardObjectType { PLAYER, FACET, HAZARD, FACET_COLLECT, SHIELD, SPEED_MOD, GAME_MOD }; // monote - change GAME_MOD to POINT_MOD
+    public enum eBoardObjectType { PLAYER, FACET, HAZARD, FACET_COLLECT, SHIELD, SPEED_MOD, POINT_MOD }; 
     public eBoardObjectType BoardObjectType;
 
     public enum eStartDir {OUTWARD, INWARD}; // monewsave
@@ -163,7 +163,7 @@ public class BoardObject : MonoBehaviour
                     //Debug.LogError("Pickup facet collect");
                     facet.SpawningNode.SpawnedBoardObject = null;
                     //curSphereColliders.Remove(facet.GetComponentInChildren<Collider>()); // moupdate - loook in making this a function
-                    this._Dax.Wheel.CollectPickupFacet(facet);                                
+                    this._Dax.Wheel.CollectFacet(facet);                                
                     //DestroyImmediate(facet.gameObject);
                     //_Dax.CurWheel.CheckVictoryConditions();
                 }
@@ -262,14 +262,14 @@ public class BoardObject : MonoBehaviour
                     _Dax.AddPoints(5);
                 }                                                                           
                 break;
-            case eBoardObjectType.GAME_MOD:
-                    GameMod gameMod = boardObjectColliders[0].GetComponentInParent<GameMod>();
+            case eBoardObjectType.POINT_MOD:
+                    PointMod gameMod = boardObjectColliders[0].GetComponentInParent<PointMod>();
                     switch(gameMod.GameModType)
                     {
-                        case GameMod.eGameModType.EXTRA_POINTS:
+                        case PointMod.eGameModType.EXTRA_POINTS:
                             _Dax.AddPoints(gameMod.GameModVal);
                             break;
-                        case GameMod.eGameModType.POINTS_MULTIPLIER:
+                        case PointMod.eGameModType.POINTS_MULTIPLIER:
                             _Dax.BeginPointMod(gameMod.GameModTime, gameMod.GameModVal);
                             break;
                     }

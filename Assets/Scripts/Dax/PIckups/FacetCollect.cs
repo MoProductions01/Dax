@@ -21,7 +21,7 @@ public class FacetCollect : BoardObject
         switch(type) 
         {
             case eFacetCollectTypes.RING:
-                player.CurChannel.MyRing.CollectAllPickupFacets();
+                player.CurChannel.MyRing.CollectAllFacets();
                 break;
         }
     }

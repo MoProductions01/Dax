@@ -87,12 +87,12 @@ public class Player : BoardObject
         switch(facetCollect.FacetCollectType)
         {
             case FacetCollect.eFacetCollectTypes.RING:                
-                CurChannel.MyRing.CollectAllPickupFacets();
+                CurChannel.MyRing.CollectAllFacets();
                 break;
             case FacetCollect.eFacetCollectTypes.WHEEL:                
                 foreach(Ring ring in _Dax.Wheel.Rings)
                 {
-                    ring.CollectAllPickupFacets();
+                    ring.CollectAllFacets();
                 }
                 break;
         }
@@ -195,7 +195,7 @@ public class Player : BoardObject
 
     public void SetStartChannel(int channelIndex)
     {
-        Debug.Log("Player.SetStartChannel: channelIndex: " + channelIndex);
+        //Debug.Log("Player.SetStartChannel: channelIndex: " + channelIndex);
         CurChannel = _Dax.Wheel.Rings[0].transform.GetComponentsInChildren<Channel>().ToList()[channelIndex];
         this.transform.parent = CurChannel.MyRing.transform;
         SpawningNode = CurChannel.StartNode;

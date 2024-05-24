@@ -80,7 +80,7 @@ public class Dax : MonoBehaviour
     /// <param name="points"></param>
     public void AddPoints(int points)
     {
-        // Account for the game mod if active
+        // Account for the point mod if active
         if(GameModActive == true)
         {
             points *= GameModVal;
@@ -96,7 +96,7 @@ public class Dax : MonoBehaviour
     {
         if (GameState != eGameState.RUNNING) return; // Bail if the game isn't in it's running state     
         
-        // Count down the game mod timer if it's on
+        // Count down the point mod timer if it's on
         if(GameModActive == true)
         {
             GameModTimer -= Time.deltaTime;
@@ -309,7 +309,7 @@ public class Dax : MonoBehaviour
         }
          
         _Player.ResetPlayer(_PuzzleSaveData.PlayerSave); //reset player                   
-        Wheel.InitWheelFacets();    // Init all of the facets on the current wheel                
+        Wheel.ResetFacetsCount();    // Init all of the facets on the current wheel                
         GameState = eGameState.RUNNING; // start the game running
 
         return true;
@@ -380,8 +380,8 @@ public class Dax : MonoBehaviour
                     FloatList.Add(hazard.EffectTime);
                     FloatList.Add(hazard.EffectRadius);
                 break;
-                case BoardObject.eBoardObjectType.GAME_MOD:
-                    GameMod gameMod = (GameMod)bo;
+                case BoardObject.eBoardObjectType.POINT_MOD:
+                    PointMod gameMod = (PointMod)bo;
                     IntList = new List<int>();
                     IntList.Add((int)gameMod.GameModType);
                     IntList.Add((int)gameMod.GameModVal);

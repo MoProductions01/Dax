@@ -216,7 +216,7 @@ public class DaxEditor : Editor
             // You need to initialize the puzzle in order for a restart without restarting
             // the editor.  It creates in-game save data which will be used to reload the
             // level if you win or die and want to restart.     
-            _Dax.Wheel.InitWheelFacets();
+            _Dax.Wheel.ResetFacetsCount();
             _Dax.CreateSaveData(_Dax);            
         }        
     }
@@ -507,10 +507,10 @@ public class DaxEditor : Editor
                 (int)BoardObject.eBoardObjectType.SPEED_MOD, (int)SpeedMod.eSpeedModType.PLAYER_SPEED);                        
         }
         EditorGUILayout.Separator();
-        if (GUILayout.Button("Create Game Mod", GUILayout.Width(buttonWidth)))
+        if (GUILayout.Button("Create Point Mod", GUILayout.Width(buttonWidth)))
         {            
-            _MCP.CreateBoardObject<GameMod>(SelectedChannelNode, _Dax, 
-                (int)BoardObject.eBoardObjectType.GAME_MOD, (int)GameMod.eGameModType.EXTRA_POINTS);                   
+            _MCP.CreateBoardObject<PointMod>(SelectedChannelNode, _Dax, 
+                (int)BoardObject.eBoardObjectType.POINT_MOD, (int)PointMod.eGameModType.EXTRA_POINTS);                   
         }                                   
     }
 
@@ -648,14 +648,14 @@ public class DaxEditor : Editor
     void HandleGameModSelected()
     {
         EditorGUILayout.Separator();
-        GameMod gameMod = (GameMod)SelectedBoardObject;
+        PointMod gameMod = (PointMod)SelectedBoardObject;
 
-        GameMod.eGameModType newGameModType = (GameMod.eGameModType)EditorGUILayout.EnumPopup("Game Mod Type: ", gameMod.GameModType);
+        PointMod.eGameModType newGameModType = (PointMod.eGameModType)EditorGUILayout.EnumPopup("Game Mod Type: ", gameMod.GameModType);
         if (newGameModType != gameMod.GameModType)
         {   // User is changing the type of GameMod so destroy the current one and create a new one
             DestroyImmediate(SelectedChannelNode.SpawnedBoardObject.gameObject);                          
-            gameMod = _MCP.CreateBoardObject<GameMod>(SelectedChannelNode, _Dax, 
-                (int)BoardObject.eBoardObjectType.GAME_MOD, (int)newGameModType);
+            gameMod = _MCP.CreateBoardObject<PointMod>(SelectedChannelNode, _Dax, 
+                (int)BoardObject.eBoardObjectType.POINT_MOD, (int)newGameModType);
         }
         // the GameModVal is either how many points the user will get or how much of a 
         // multiplier the user will get.
@@ -666,7 +666,7 @@ public class DaxEditor : Editor
             gameMod.GameModVal = newGameModVal;
             UpdateIntProperty(SelectedBoardObjectSO, "GameModVal", gameMod.GameModVal);                
         }
-        if(gameMod.GameModType == GameMod.eGameModType.POINTS_MULTIPLIER)
+        if(gameMod.GameModType == PointMod.eGameModType.POINTS_MULTIPLIER)
         {   // PointsMultipliers have a timer
             float newTimer = EditorGUILayout.FloatField("Timer: ", gameMod.GameModTime);
             if (newTimer < 1.0f) newTimer = 1.0f; // Make sure at least 1 second for the timer
@@ -722,7 +722,7 @@ public class DaxEditor : Editor
             case BoardObject.eBoardObjectType.SPEED_MOD:
                 HandleSpeedModSelected();
                 break;
-            case BoardObject.eBoardObjectType.GAME_MOD:
+            case BoardObject.eBoardObjectType.POINT_MOD:
                 HandleGameModSelected();
                 break;
         }
