@@ -272,8 +272,7 @@ public class BoardObject : MonoBehaviour
                         case PointMod.ePointModType.POINTS_MULTIPLIER:
                             _Dax.BeginPointMod(pointMod.PointModTime, pointMod.PointModVal);
                             break;
-                    }
-                    //curSphereColliders.Remove(gameMod.GetComponent<Collider>());
+                    }                    
                     DestroyImmediate(pointMod.gameObject);
                     break;
             case eBoardObjectType.SPEED_MOD:
