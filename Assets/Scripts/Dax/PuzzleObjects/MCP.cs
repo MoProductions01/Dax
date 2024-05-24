@@ -580,7 +580,7 @@ public class MCP : MonoBehaviour
             case BoardObject.eBoardObjectType.POINT_MOD:
                 PointMod gameMod = (PointMod)bo;
                 gameMod.GameModType = (PointMod.eGameModType)boSave.IntList[0];
-                gameMod.GameModVal = boSave.IntList[1];
+                gameMod.PointModVal = boSave.IntList[1];
                 gameMod.PointModTime = boSave.FloatList[0];
                 break;            
         }

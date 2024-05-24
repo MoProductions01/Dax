@@ -384,7 +384,7 @@ public class Dax : MonoBehaviour
                     PointMod gameMod = (PointMod)bo;
                     IntList = new List<int>();
                     IntList.Add((int)gameMod.GameModType);
-                    IntList.Add((int)gameMod.GameModVal);
+                    IntList.Add((int)gameMod.PointModVal);
                     FloatList = new List<float>();
                     FloatList.Add(gameMod.PointModTime);
                 break;

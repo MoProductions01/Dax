@@ -656,15 +656,17 @@ public class DaxEditor : Editor
             DestroyImmediate(SelectedChannelNode.SpawnedBoardObject.gameObject);                          
             pointMod = _MCP.CreateBoardObject<PointMod>(SelectedChannelNode, _Dax, 
                 (int)BoardObject.eBoardObjectType.POINT_MOD, (int)newGameModType);
+            SelectedBoardObject = pointMod;
+                return;
         }
         // the PointModVal is either how many points the user will get or how much of a 
         // multiplier the user will get.
-        int newPointModVal = EditorGUILayout.IntField("Point Mod Val: ", pointMod.GameModVal);
+        int newPointModVal = EditorGUILayout.IntField("Point Mod Val: ", pointMod.PointModVal);
         if (newPointModVal <= 0f) newPointModVal = 1; // Make sure it's at least 1
-        if (newPointModVal != pointMod.GameModVal)
+        if (newPointModVal != pointMod.PointModVal)
         {   // Update the PointModVal
-            pointMod.GameModVal = newPointModVal;
-            UpdateIntProperty(SelectedBoardObjectSO, "GameModVal", pointMod.GameModVal);     // mofeh           
+            pointMod.PointModVal = newPointModVal;
+            UpdateIntProperty(SelectedBoardObjectSO, "PointModVal", pointMod.PointModVal);     // mofeh           
         }
         if(pointMod.GameModType == PointMod.eGameModType.POINTS_MULTIPLIER)
         {   // PointsMultipliers have a timer
