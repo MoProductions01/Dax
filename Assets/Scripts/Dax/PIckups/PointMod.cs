@@ -4,17 +4,15 @@ using UnityEngine;
 
 public class PointMod : BoardObject 
 {
-    public enum ePointModType { EXTRA_POINTS, POINTS_MULTIPLIER };
-    //public static List<string> POINT_MOD_STRINGS = new List<string> {"Extra_Points", "Points_Multiplier"};
+    public enum ePointModType { EXTRA_POINTS, POINTS_MULTIPLIER };    
 
-    [Header("GameMod Data")]
+    [Header("Point Mod Data")]
     public ePointModType GameModType;
     public int PointModVal;
     public float PointModTime = 5f;
     public override void InitForChannelNode(ChannelNode spawnNode, Dax dax)
     {
-        name = spawnNode.name + "--GameMod--" + GameModType.ToString();
-        // BoardObjectType = eBoardObjectType.MAGNET;
+        name = spawnNode.name + "--PointMod--" + GameModType.ToString();        
         base.InitForChannelNode(spawnNode, dax);
     }
 

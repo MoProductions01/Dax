@@ -643,19 +643,19 @@ public class DaxEditor : Editor
     }
 
     /// <summary>
-    /// Handle a GameMod BoardObject type selected
+    /// Handle a PointMod BoardObject type selected
     /// </summary>    
-    void HandleGameModSelected()
+    void HandlePointModSelected()
     {
         EditorGUILayout.Separator();
         PointMod pointMod = (PointMod)SelectedBoardObject;
 
-        PointMod.ePointModType newGameModType = (PointMod.ePointModType)EditorGUILayout.EnumPopup("Point Mod Type: ", pointMod.GameModType);
-        if (newGameModType != pointMod.GameModType)
-        {   // User is changing the type of GameMod so destroy the current one and create a new one
+        PointMod.ePointModType newPointModType = (PointMod.ePointModType)EditorGUILayout.EnumPopup("Point Mod Type: ", pointMod.GameModType);
+        if (newPointModType != pointMod.GameModType)
+        {   // User is changing the type of PointMod so destroy the current one and create a new one
             DestroyImmediate(SelectedChannelNode.SpawnedBoardObject.gameObject);                          
             pointMod = _MCP.CreateBoardObject<PointMod>(SelectedChannelNode, _Dax, 
-                (int)BoardObject.eBoardObjectType.POINT_MOD, (int)newGameModType);
+                (int)BoardObject.eBoardObjectType.POINT_MOD, (int)newPointModType);
             SelectedBoardObject = pointMod;
                 return;
         }
@@ -725,7 +725,7 @@ public class DaxEditor : Editor
                 HandleSpeedModSelected();
                 break;
             case BoardObject.eBoardObjectType.POINT_MOD:
-                HandleGameModSelected();
+                HandlePointModSelected();
                 break;
         }
     }              

@@ -263,18 +263,18 @@ public class BoardObject : MonoBehaviour
                 }                                                                           
                 break;
             case eBoardObjectType.POINT_MOD:
-                    PointMod gameMod = boardObjectColliders[0].GetComponentInParent<PointMod>();
-                    switch(gameMod.GameModType)
+                    PointMod pointMod = boardObjectColliders[0].GetComponentInParent<PointMod>();
+                    switch(pointMod.GameModType)
                     {
                         case PointMod.ePointModType.EXTRA_POINTS:
-                            _Dax.AddPoints(gameMod.PointModVal);
+                            _Dax.AddPoints(pointMod.PointModVal);
                             break;
                         case PointMod.ePointModType.POINTS_MULTIPLIER:
-                            _Dax.BeginPointMod(gameMod.PointModTime, gameMod.PointModVal);
+                            _Dax.BeginPointMod(pointMod.PointModTime, pointMod.PointModVal);
                             break;
                     }
                     //curSphereColliders.Remove(gameMod.GetComponent<Collider>());
-                    DestroyImmediate(gameMod.gameObject);
+                    DestroyImmediate(pointMod.gameObject);
                     break;
             case eBoardObjectType.SPEED_MOD:
                 SpeedMod speedMod = boardObjectColliders[0].GetComponentInParent<SpeedMod>();

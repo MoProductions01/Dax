@@ -35,7 +35,7 @@ public class Dax : MonoBehaviour
     float PointerPrevAngle; // Angle between the center point and the mouse pointer
     
     bool PointModActive; // Whether or not a gameplay modifier is active
-    float GameModTimer; // Timer for the current gameplay modifier
+    float PointModTimer; // Timer for the current gameplay modifier
     int PointModVal;     // Value of the current gameplay modifier
 
     public Player _Player;  // Ref to the player game object
@@ -70,7 +70,7 @@ public class Dax : MonoBehaviour
     public void BeginPointMod(float time, int val)
     {
         PointModActive = true;
-        GameModTimer = time;
+        PointModTimer = time;
         PointModVal = val;
     }
 
@@ -99,8 +99,8 @@ public class Dax : MonoBehaviour
         // Count down the point mod timer if it's on
         if(PointModActive == true)
         {
-            GameModTimer -= Time.deltaTime;
-            if(GameModTimer <= 0)
+            PointModTimer -= Time.deltaTime;
+            if(PointModTimer <= 0)
             {
                 PointModActive = false;
             }
