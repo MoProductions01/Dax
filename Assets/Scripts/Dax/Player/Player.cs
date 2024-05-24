@@ -13,16 +13,16 @@ public class Player : BoardObject
     public List<FacetCollect> FacetCollects = new List<FacetCollect>();
     public Hazard TempEnemyIgnore = null; // ignore this enemy after a shield collision until you're not collided
     public BoardObject CarriedColorFacet = null;
-    public float EMPTime; // moupdate
+    public float GlueStickTime; // moupdate
     public Hazard.eHazardType EffectType; // moupdate - this is sloppy, maybe a new enum
     public float SpeedSave; // moupdate
 
     
 
-    public void EMPHit(float effectTime)
+    public void GlueHit(float effectTime)
     {
         EffectType = Hazard.eHazardType.GLUE;
-        EMPTime = effectTime;
+        GlueStickTime = effectTime;
         SpeedSave = Speed;
         Speed = 0f;
     }
@@ -156,8 +156,8 @@ public class Player : BoardObject
            
         if(EffectType == Hazard.eHazardType.GLUE)
         {
-            EMPTime -= Time.deltaTime;
-            if(EMPTime <= 0f)
+            GlueStickTime -= Time.deltaTime;
+            if(GlueStickTime <= 0f)
             {
                 EffectType = Hazard.eHazardType.ENEMY; // moupdate
                 Speed = SpeedSave;

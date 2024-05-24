@@ -378,7 +378,7 @@ public class Dax : MonoBehaviour
                     IntList.Add((int)hazard.HazardType); 
                     FloatList = new List<float>();
                     FloatList.Add(hazard.EffectTime);
-                    FloatList.Add(hazard.EffectRadius);
+                    //FloatList.Add(hazard.EffectRadius);
                 break;
                 case BoardObject.eBoardObjectType.POINT_MOD:
                     PointMod pointMod = (PointMod)bo;

@@ -571,7 +571,7 @@ public class MCP : MonoBehaviour
                 Hazard hazard = (Hazard)bo;
                 hazard.HazardType = (Hazard.eHazardType)boSave.IntList[0];
                 hazard.EffectTime = boSave.FloatList[0];
-                hazard.EffectRadius = boSave.FloatList[1];
+                //hazard.EffectRadius = boSave.FloatList[1];
                 if(hazard.HazardType == Hazard.eHazardType.ENEMY)
                 { 
                     hazard.transform.LookAt(bo.StartDir == BoardObject.eStartDir.OUTWARD ? hazard.CurChannel.EndNode.transform : hazard.CurChannel.StartNode.transform);

@@ -2,14 +2,47 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Facet class.
+/// </summary>
 public class Facet : BoardObject
 {
+    // Which color facet we are
     public enum eFacetColors { RED, GREEN, BLUE, YELLOW, PURPLE, ORANGE };
     public eFacetColors _Color;
+
+    /// <summary>
+    /// Overridden function for initting the Facet object
+    /// </summary>
+    /// <param name="spawnNode">Node we're spawning on</param>
+    /// <param name="dax">Dax root game object</param>
     public override void InitForChannelNode(ChannelNode spawnNode, Dax dax)
     {
         name = spawnNode.name + "--Facet";
         BoardObjectType = eBoardObjectType.FACET;       
         base.InitForChannelNode(spawnNode, dax);
+    }
+
+    /// <summary>
+    /// Handles player colliding with a facet
+    /// </summary>
+    /// <param name="player">Player object</param>
+    /// <param name="facet">Facet object</param>
+    public override void HandleCollisionWithPlayer(Player player, BoardObject boardObject)
+    {
+        Facet facet = (Facet)boardObject; // Get a ref to the facet
+        if(_Dax.Wheel.VictoryCondition == Dax.eVictoryConditions.COLLECTION)
+        {   // COLLECTION victory condition so collect the facet
+            facet.SpawningNode.SpawnedBoardObject = null;                     
+            this._Dax.Wheel.CollectFacet(facet);                                                                                
+        }
+        else
+        {   // COLOR_MATCH condition so start carrying the facet if you 
+            // aren't already carrying one  
+            if(player.CarriedColorFacet == null)
+            {
+                player.CarriedColorFacet = facet;
+            }                                           
+        }
     }
 }

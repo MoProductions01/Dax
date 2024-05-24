@@ -563,7 +563,7 @@ public class DaxEditor : Editor
         if (hazard.HazardType == Hazard.eHazardType.GLUE )
         {   // Handle a GLUE type of HAZARD
             EditorGUILayout.Separator();
-            float newEffectTime = EditorGUILayout.Slider("Effect Time", hazard.EffectTime, .1f, Hazard.MAX_EFFECT_TIME);
+            float newEffectTime = EditorGUILayout.Slider("Effect Time", hazard.EffectTime, Hazard.MIN_EFFECT_TIME, Hazard.MAX_EFFECT_TIME);
             if (newEffectTime != hazard.EffectTime)
             {   // Change of the amount of time the GLUE will keep the player in place
                 hazard.EffectTime = newEffectTime;

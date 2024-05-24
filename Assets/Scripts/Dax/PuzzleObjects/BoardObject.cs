@@ -46,7 +46,7 @@ public class BoardObject : MonoBehaviour
             transform.position = SpawningNode.transform.position;                                              
             transform.LookAt(CurChannel.EndNode.transform);
         }        
-    }   
+    }       
          
     /// <summary>
     /// Checks for the transition from one channel to another for any moving game objects
@@ -161,406 +161,108 @@ public class BoardObject : MonoBehaviour
         }
     }
 
-    private void CheckBoardObjects(List<Collider> boardObjectColliders)
+    /// <summary>
+    /// Overridable function for handling collisions with the player.
+    /// </summary>
+    /// <param name="player">Player object</param>
+    /// <param name="boardObject">Object collided with</param>
+    public virtual void HandleCollisionWithPlayer(Player player, BoardObject boardObject)
+    {
+
+    }        
+    
+    /// <summary>
+    /// Function for the Player checking against other board objects on the game
+    /// </summary>
+    /// <param name="boardObjectColliders">Colliders the player is overlapping with</param>
+    private void CheckBoardObjectsForPlayer(List<Collider> boardObjectColliders)
     {        
         Player player = FindObjectOfType<Player>();
-        boardObjectColliders.RemoveAll(x => x.GetComponentInParent<BoardObject>() == null);                
-        boardObjectColliders.Remove(this.gameObject.GetComponent<Collider>());
-        // monote - might not need this
-        if (player.ActiveShield != null) boardObjectColliders.Remove(player.ActiveShield.GetComponent<Collider>());
+        boardObjectColliders.RemoveAll(x => x.GetComponentInParent<BoardObject>() == null); // Remove anything that's not a board boject             
+        boardObjectColliders.Remove(this.gameObject.GetComponent<Collider>()); // Remove player's collider
+        
+        if (player.ActiveShield != null) boardObjectColliders.Remove(player.ActiveShield.GetComponent<Collider>()); // Remove shield collider if necessary
         if (boardObjectColliders.Count == 0) return; // bail if no collisions
 
-        BoardObject bo = boardObjectColliders[0].GetComponentInParent<BoardObject>(); // monote - maybe loop over this
-        switch(bo.BoardObjectType) 
+        for(int i=0; i<boardObjectColliders.Count; i++)
         {
-            case eBoardObjectType.FACET:                            
-                Facet facet = boardObjectColliders[0].GetComponentInParent<Facet>();
-                //if(facet._Color == Facet.eFacetColors.WHITE)
-                if(_Dax.Wheel.VictoryCondition == Dax.eVictoryConditions.COLLECTION)
-                {
-                    //Debug.LogError("Pickup facet collect");
-                    facet.SpawningNode.SpawnedBoardObject = null;
-                    //curSphereColliders.Remove(facet.GetComponentInChildren<Collider>()); // moupdate - loook in making this a function
-                    this._Dax.Wheel.CollectFacet(facet);                                
-                    //DestroyImmediate(facet.gameObject);
-                    //_Dax.CurWheel.CheckVictoryConditions();
-                }
-                else
-                {
-                    //Debug.LogError("Color facet collect");
-                    if (player.CarriedColorFacet != null) { /*Debug.Log("you already have a facet: " + playerDiode.CarriedFacet.name);*/ }
-                    else player.CarriedColorFacet = bo;
-                }
-                break;  
-            case eBoardObjectType.HAZARD:
-                Hazard hazard = boardObjectColliders[0].GetComponentInParent<Hazard>();
-                if (hazard == player.TempEnemyIgnore) break; // moupdate = make sure this works
-                switch(hazard.HazardType)
-                {
-                    case Hazard.eHazardType.ENEMY:                    
-                    case Hazard.eHazardType.DYNAMITE:                    
-                        void DestroyShield()
-                        {
-                            //curSphereColliders.Remove(player.ActiveShield.GetComponent<Collider>());
-                            DestroyImmediate(player.ActiveShield.gameObject);
-                            player.ActiveShield = null;
-                        }
-                        void DestroyHazard(Hazard enemy)
-                        {
-                            //curSphereColliders.Remove(enemy.GetComponentInChildren<Collider>());
-                            DestroyImmediate(enemy.gameObject);
-                            _Dax.AddPoints(5);
-                        }
-                        if (hazard == player.TempEnemyIgnore) break;
-                        if (player.ActiveShield != null)
-                        {
-                            switch (player.ActiveShield.ShieldType)
-                            {
-                                case Shield.eShieldTypes.HIT:
-                                    DestroyShield();
-                                    player.TempEnemyIgnore = hazard;
-                                    break;
-                                case Shield.eShieldTypes.SINGLE_KILL:
-                                    DestroyShield();
-                                    DestroyHazard(hazard);
-                                    break;                             
-                            }
-                        }
-                        else
-                        {   // no shield so die already
-                            if(hazard.HazardType == Hazard.eHazardType.ENEMY) FindObjectOfType<Dax>().EndGame("Killed By Enemy");                            
-                            else if (hazard.HazardType == Hazard.eHazardType.DYNAMITE) FindObjectOfType<Dax>().EndGame("Killed By Dynamite");                            
-                        }
-                        break;
-                    case Hazard.eHazardType.GLUE:
-                            if (hazard == player.TempEnemyIgnore) break;
-                            if (player.ActiveShield != null)
-                            {
-                                switch (player.ActiveShield.ShieldType)
-                                {
-                                    case Shield.eShieldTypes.HIT:
-                                        DestroyShield();
-                                        player.TempEnemyIgnore = hazard;
-                                        break;
-                                    case Shield.eShieldTypes.SINGLE_KILL:
-                                        DestroyShield();
-                                        DestroyHazard(hazard);
-                                        break;                                    
-                                }
-                            }
-                            else
-                            {   // no shield so stay frozen                               
-                                //FindObjectOfType<Dax>().EndGame("Killed By Enemy");                                        
-                                //moving, enemy that ‘stuns’ the player leaving them frozen in place for x seconds
-                                //Debug.Log("do that emp shit");
-                                player.EMPHit(hazard.EffectTime);
-                                DestroyHazard(hazard);
-                            }
-                            break;                        
-                }                        
-            break;
-            case eBoardObjectType.SHIELD:
-                // if (player.ActiveShield != null) break; // already have a shield                                                        
-                Shield shield = boardObjectColliders[0].GetComponentInParent<Shield>();                
-                if( player.AddShield(shield) == true )
-                {
-                    //shield.SpawningNode.SpawnedBoardObject = null;
-                    // curSphereColliders.Remove(shield.GetComponentInChildren<Collider>());
-                    // DestroyImmediate(shield.gameObject);
-                    _Dax.AddPoints(5);
-                }                                                        
+            BoardObject boardObject = boardObjectColliders[i].GetComponentInParent<BoardObject>();             
+            switch(boardObject.BoardObjectType) 
+            {
+                case eBoardObjectType.FACET:   
+                    boardObject.GetComponentInParent<Facet>().HandleCollisionWithPlayer(player, boardObject);                                                                                     
+                    break;  
+                case eBoardObjectType.HAZARD:
+                    boardObject.GetComponentInParent<Hazard>().HandleCollisionWithPlayer(player, boardObject);                         
                 break;
-            case eBoardObjectType.FACET_COLLECT:
-                FacetCollect facetCollect = boardObjectColliders[0].GetComponentInParent<FacetCollect>();
-                if(player.AddFacetCollect(facetCollect) == true)
-                {
-                   // facetCollect.SpawningNode.SpawnedBoardObject = null;
-                    //curSphereColliders.Remove(facetCollect.GetComponentInChildren<Collider>());
-                   // DestroyImmediate(facetCollect.gameObject);
-                    _Dax.AddPoints(5);
-                }                                                                           
-                break;
-            case eBoardObjectType.POINT_MOD:
-                    PointMod pointMod = boardObjectColliders[0].GetComponentInParent<PointMod>();
-                    switch(pointMod.PointModType)
+                case eBoardObjectType.SHIELD:
+                    // if (player.ActiveShield != null) break; // already have a shield                                                        
+                    Shield shield = boardObjectColliders[0].GetComponentInParent<Shield>();                
+                    if( player.AddShield(shield) == true )
                     {
-                        case PointMod.ePointModType.EXTRA_POINTS:
-                            _Dax.AddPoints(pointMod.PointModVal);
-                            break;
-                        case PointMod.ePointModType.POINTS_MULTIPLIER:
-                            _Dax.BeginPointMod(pointMod.PointModTime, pointMod.PointModVal);
-                            break;
-                    }                    
-                    DestroyImmediate(pointMod.gameObject);
-                    break;
-            case eBoardObjectType.SPEED_MOD:
-                SpeedMod speedMod = boardObjectColliders[0].GetComponentInParent<SpeedMod>();
-                List<GameObject> gameObjectsToMod = new List<GameObject>();
-                // Transform objectsToSpeedModParent;
-                switch(speedMod.SpeedModType)
-                {
-                    case SpeedMod.eSpeedModType.PLAYER_SPEED:
-                        //Debug.Log("Speed before: " + player.Speed);
-                        player.Speed += speedMod.SpeedModVal;
-                        //Debug.Log("Speed after: " + player.Speed);
-                        break;
-                  //  case SpeedMod.eSpeedModType.SPEED_DOWN:
-                    //    player.Speed -= speedMod.SpeedModVal;
-                   //     break;
-                    case SpeedMod.eSpeedModType.ENEMY_SPEED:
-                   // case SpeedMod.eSpeedModType.ENEMY_DOWN:
-                        List<Hazard> enemies = _Dax.Wheel.GetComponentsInChildren<Hazard>().ToList();
-                        float speedModVal = (speedMod.SpeedModType == SpeedMod.eSpeedModType.ENEMY_SPEED ? speedMod.SpeedModVal : -speedMod.SpeedModVal); // moupdate optimize all this
-                        foreach (Hazard e in enemies) e.Speed += speedModVal; // moupdate - optimize this --- use generic <T> or an overwritten activate.  maybe go back to one class for each and have a generic activate overwriten                                                                                                             
-                        break;
-                    case SpeedMod.eSpeedModType.RING_SPEED:
-                  //  case SpeedMod.eSpeedModType.RING_DOWN:
-                        float speedModVal2 = (speedMod.SpeedModType == SpeedMod.eSpeedModType.RING_SPEED ? speedMod.SpeedModVal : -speedMod.SpeedModVal);
-                        player.CurChannel.MyRing.RotateSpeed += speedModVal2;
-                        break;                 
-                }
-                speedMod.SpawningNode.SpawnedBoardObject = null;
-                boardObjectColliders.Remove(speedMod.GetComponentInChildren<Collider>());
-                DestroyImmediate(speedMod.gameObject);
-                _Dax.AddPoints(5);
-            break;    
-        }
-        
-        #if false            
-        // Check Player collisions against BoardObjects
-        if(this.BoardObjectType == eBoardObjectType.PLAYER) 
-        {
-            List<Collider> boardObjectColliders = curSphereColliders.ToList();                
-            boardObjectColliders.RemoveAll(x => x.GetComponentInParent<BoardObject>() == null);                
-            boardObjectColliders.Remove(this.gameObject.GetComponent<Collider>());
-            if (player.ActiveShield != null) boardObjectColliders.Remove(player.ActiveShield.GetComponent<Collider>());
-            if (boardObjectColliders.Count > 0)
-            {                    
-                BoardObject bo = boardObjectColliders[0].GetComponentInParent<BoardObject>();
-                switch(bo.BoardObjectType) 
-                {                                            
-                    case eBoardObjectType.HAZARD:
-                        Hazard hazard = boardObjectColliders[0].GetComponentInParent<Hazard>();
-                        if (hazard == player.TempEnemyIgnore) break; // moupdate = make sure this works
-                        switch(hazard.HazardType)
-                        {
-                            case Hazard.eHazardType.ENEMY:
-                            // case Hazard.eHazardType.BOMB:
-                            case Hazard.eHazardType.DYNAMITE:
-                            // case Hazard.eHazardType.PROXIMITY_MINE:
-                                void DestroyShield()
-                                {
-                                    curSphereColliders.Remove(player.ActiveShield.GetComponent<Collider>());
-                                    DestroyImmediate(player.ActiveShield.gameObject);
-                                    player.ActiveShield = null;
-                                }
-                                void DestroyHazard(Hazard enemy)
-                                {
-                                    curSphereColliders.Remove(enemy.GetComponentInChildren<Collider>());
-                                    DestroyImmediate(enemy.gameObject);
-                                    _Dax.AddPoints(5);
-                                }
-                                if (hazard == player.TempEnemyIgnore) break;
-                                if (player.ActiveShield != null)
-                                {
-                                    switch (player.ActiveShield.ShieldType)
-                                    {
-                                        case Shield.eShieldTypes.HIT:
-                                            DestroyShield();
-                                            player.TempEnemyIgnore = hazard;
-                                            break;
-                                        case Shield.eShieldTypes.SINGLE_KILL:
-                                            DestroyShield();
-                                            DestroyHazard(hazard);
-                                            break;
-                                        case Shield.eShieldTypes.TIMED:                                                
-                                            break;
-                                        case Shield.eShieldTypes.TIMED_KILL:
-                                            DestroyHazard(hazard);
-                                            break;
-                                    }
-                                }
-                                else
-                                {   // no shield so die already
-                                    if(hazard.HazardType == Hazard.eHazardType.ENEMY) FindObjectOfType<Dax>().EndGame("Killed By Enemy");
-                                    // else if(hazard.HazardType == Hazard.eHazardType.BOMB ) FindObjectOfType<Dax>().EndGame("Killed By Bomb");
-                                    else if (hazard.HazardType == Hazard.eHazardType.DYNAMITE) FindObjectOfType<Dax>().EndGame("Killed By Dynamite");
-                                    //else if (hazard.HazardType == Hazard.eHazardType.PROXIMITY_MINE) FindObjectOfType<Dax>().EndGame("Killed By Proximity Mine");
-                                }
-                                break;
-                            //case Hazard.eHazardType.TIMED_MINE:
-                                //  hazard.ActivateTimer();
-                                //  break;
-                            case Hazard.eHazardType.EMP:
-                                if (hazard == player.TempEnemyIgnore) break;
-                                if (player.ActiveShield != null)
-                                {
-                                    switch (player.ActiveShield.ShieldType)
-                                    {
-                                        case Shield.eShieldTypes.HIT:
-                                            DestroyShield();
-                                            player.TempEnemyIgnore = hazard;
-                                            break;
-                                        case Shield.eShieldTypes.SINGLE_KILL:
-                                            DestroyShield();
-                                            DestroyHazard(hazard);
-                                            break;
-                                        case Shield.eShieldTypes.TIMED:
-                                            break;
-                                        case Shield.eShieldTypes.TIMED_KILL:
-                                            DestroyHazard(hazard);
-                                            break;
-                                    }
-                                }
-                                else
-                                {   // no shield so stay frozen                               
-                                    //FindObjectOfType<Dax>().EndGame("Killed By Enemy");                                        
-                                    //moving, enemy that ‘stuns’ the player leaving them frozen in place for x seconds
-                                    //Debug.Log("do that emp shit");
-                                    player.EMPHit(hazard.EffectTime);
-                                    DestroyHazard(hazard);
-                                }
-                                break;
-                        }
-                        break;
-                    case eBoardObjectType.SHIELD:
-                        // if (player.ActiveShield != null) break; // already have a shield                                                        
-                        Shield shield = boardObjectColliders[0].GetComponentInParent<Shield>();
-                        if( player.AddShield(shield) == true )
-                        {
-                            //shield.SpawningNode.SpawnedBoardObject = null;
-                            // curSphereColliders.Remove(shield.GetComponentInChildren<Collider>());
-                            // DestroyImmediate(shield.gameObject);
-                            _Dax.AddPoints(5);
-                        }                                                        
-                        break;
-                    case eBoardObjectType.FACET_COLLECT:
-                        FacetCollect facetCollect = boardObjectColliders[0].GetComponentInParent<FacetCollect>();
-                        if(player.AddFacetCollect(facetCollect.FacetCollectType) == true)
-                        {
-                            facetCollect.SpawningNode.SpawnedBoardObject = null;
-                            curSphereColliders.Remove(facetCollect.GetComponentInChildren<Collider>());
-                            DestroyImmediate(facetCollect.gameObject);
-                            _Dax.AddPoints(5);
-                        }                                                                           
-                        break;
-                    case eBoardObjectType.FACET:                            
-                        Facet facet = boardObjectColliders[0].GetComponentInParent<Facet>();
-                        if(facet._Color == Facet.eFacetColors.WHITE)
-                        {
-                            //Debug.LogError("Pickup facet collect");
-                            facet.SpawningNode.SpawnedBoardObject = null;
-                            curSphereColliders.Remove(facet.GetComponentInChildren<Collider>()); // moupdate - loook in making this a function
-                            this._Dax.CurWheel.CollectPickupFacet(facet);                                
-                            //DestroyImmediate(facet.gameObject);
-                            //_Dax.CurWheel.CheckVictoryConditions();
-                        }
-                        else
-                        {
-                            //Debug.LogError("Color facet collect");
-                            if (player.CarriedColorFacet != null) { /*Debug.Log("you already have a facet: " + playerDiode.CarriedFacet.name);*/ }
-                            else player.CarriedColorFacet = bo;
-                        }
-                        break;                                                
-                    case eBoardObjectType.SPEED_MOD:
-                        SpeedMod speedMod = boardObjectColliders[0].GetComponentInParent<SpeedMod>();
-                        List<GameObject> gameObjectsToMod = new List<GameObject>();
-                        // Transform objectsToSpeedModParent;
-                        switch(speedMod.SpeedModType)
-                        {
-                            case SpeedMod.eSpeedModType.SPEED_UP:
-                                player.Speed += speedMod.SpeedModVal;
-                                break;
-                            case SpeedMod.eSpeedModType.SPEED_DOWN:
-                                player.Speed -= speedMod.SpeedModVal;
-                                break;
-                            case SpeedMod.eSpeedModType.ENEMY_UP:
-                            case SpeedMod.eSpeedModType.ENEMY_DOWN:
-                                List<Hazard> enemies = _Dax.CurWheel.GetComponentsInChildren<Hazard>().ToList();
-                                float speedModVal = (speedMod.SpeedModType == SpeedMod.eSpeedModType.ENEMY_UP ? speedMod.SpeedModVal : -speedMod.SpeedModVal); // moupdate optimize all this
-                                foreach (Hazard e in enemies) e.Speed += speedModVal; // moupdate - optimize this --- use generic <T> or an overwritten activate.  maybe go back to one class for each and have a generic activate overwriten                                                                                                             
-                                break;
-                            case SpeedMod.eSpeedModType.RING_UP:
-                            case SpeedMod.eSpeedModType.RING_DOWN:
-                                float speedModVal2 = (speedMod.SpeedModType == SpeedMod.eSpeedModType.RING_UP ? speedMod.SpeedModVal : -speedMod.SpeedModVal);
-                                player.CurChannel.MyRing.RotateSpeed += speedModVal2;
-                                break;
-                            case SpeedMod.eSpeedModType.WHEEL_UP:
-                            case SpeedMod.eSpeedModType.WHEEL_DOWN:
-                                float speedModVal3 = (speedMod.SpeedModType == SpeedMod.eSpeedModType.WHEEL_UP ? speedMod.SpeedModVal : -speedMod.SpeedModVal);
-                                List<Ring> rings = _Dax.CurWheel.GetComponentsInChildren<Ring>().ToList();
-                                foreach (Ring ring in rings) ring.RotateSpeed += speedModVal3; // moupdate - move this to the actual script so that it's not bloating up all this
-                                break;                                
-                            case SpeedMod.eSpeedModType.RING_STOP:
-                                player.CurChannel.MyRing.RotateSpeed = 0f;
-                                break;
-                            case SpeedMod.eSpeedModType.TIME_STOP: // moupdate - maybe split this up from SpeedMod to EnvMod or something
-                                List<Ring> rings2 = _Dax.CurWheel.GetComponentsInChildren<Ring>().ToList();
-                                List<Hazard> enemies2 = _Dax.CurWheel.GetComponentsInChildren<Hazard>().ToList();
-                                foreach(Ring ring in rings2) ring.RotateSpeed = 0f;
-                                foreach (Hazard e in enemies2) e.Speed = 0f; ;
-                                break;
-                            case SpeedMod.eSpeedModType.RING_REVERSE:
-                                player.CurChannel.MyRing.RotateSpeed = -player.CurChannel.MyRing.RotateSpeed;
-                                break;
-                            case SpeedMod.eSpeedModType.MEGA_RING_REVERSE: // moupdate - maybe rename this
-                                List<Ring> rings3 = _Dax.CurWheel.GetComponentsInChildren<Ring>().ToList();
-                                foreach (Ring ring in rings3) ring.RotateSpeed = -ring.RotateSpeed;
-                                break;
-                        }
-                        speedMod.SpawningNode.SpawnedBoardObject = null;
-                        curSphereColliders.Remove(speedMod.GetComponentInChildren<Collider>());
-                        DestroyImmediate(speedMod.gameObject);
+                        //shield.SpawningNode.SpawnedBoardObject = null;
+                        // curSphereColliders.Remove(shield.GetComponentInChildren<Collider>());
+                        // DestroyImmediate(shield.gameObject);
                         _Dax.AddPoints(5);
-                        break;                                                                                                                                                                             
-                    case eBoardObjectType.INTERACTABLE:
-                        Interactable interactable = boardObjectColliders[0].GetComponent<Interactable>();
-                        switch(interactable.InteractableType)
+                    }                                                        
+                    break;
+                case eBoardObjectType.FACET_COLLECT:
+                    FacetCollect facetCollect = boardObjectColliders[0].GetComponentInParent<FacetCollect>();
+                    if(player.AddFacetCollect(facetCollect) == true)
+                    {
+                    // facetCollect.SpawningNode.SpawnedBoardObject = null;
+                        //curSphereColliders.Remove(facetCollect.GetComponentInChildren<Collider>());
+                    // DestroyImmediate(facetCollect.gameObject);
+                        _Dax.AddPoints(5);
+                    }                                                                           
+                    break;
+                case eBoardObjectType.POINT_MOD:
+                        PointMod pointMod = boardObjectColliders[0].GetComponentInParent<PointMod>();
+                        switch(pointMod.PointModType)
                         {
-                            case Interactable.eInteractableType.TOGGLE:
-                                transform.position += (moveDir * .17f);
-                                interactable.ToggleChannelPieces(player.MoveDir);
-                                //boardObjectColliders[0].GetComponent<Toggle>().ToggleChannelPieces(player.MoveDir);
+                            case PointMod.ePointModType.EXTRA_POINTS:
+                                _Dax.AddPoints(pointMod.PointModVal);
                                 break;
-                            case Interactable.eInteractableType.SWITCH:
-                                interactable.Activate();
-                                //boardObjectColliders[0].GetComponent<Switch>().Activate();
+                            case PointMod.ePointModType.POINTS_MULTIPLIER:
+                                _Dax.BeginPointMod(pointMod.PointModTime, pointMod.PointModVal);
                                 break;
-                            case Interactable.eInteractableType.WARP_GATE:
-                            case Interactable.eInteractableType.WORMHOLE:
-                                if (DestGateJustWarpedTo != null) break;
-                                Interactable warpGate = boardObjectColliders[0].GetComponent<Interactable>();
-                                int index;
-                                Interactable destGate = null;
-                                if (warpGate.DestGates.Count == 0)
-                                {
-                                    //List<WarpGate> warpGatesOnWheel = this._Dax.CurWheel.GetComponentsInChildren<WarpGate>().ToList();
-                                    List<Interactable> warpGatesOnWheel = this._Dax.CurWheel.GetComponentsInChildren<Interactable>().ToList();
-                                    warpGatesOnWheel.RemoveAll(x => x.InteractableType != Interactable.eInteractableType.WARP_GATE);
-                                    // RedFacetsCounted = colorFacets.RemoveAll(x => x._Color == ColorFacet.eFacetColors.RED);
-                                    warpGatesOnWheel.Remove(warpGate);
-                                    if(warpGatesOnWheel.Count == 0) { Debug.LogError("Must have at least 1 dest gate on wheel"); break; }
-                                    index = Random.Range(0, warpGatesOnWheel.Count);
-                                    destGate = warpGatesOnWheel[index];
-                                }
-                                else
-                                {
-                                    index = Random.Range(0, warpGate.DestGates.Count);
-                                    destGate = warpGate.DestGates[index];
-                                }
-                                DestGateJustWarpedTo = destGate;
-                                CurChannel = destGate.SpawningNode.MyChannel;
-                                this.transform.parent = CurChannel.MyRing.transform;
-                                LastPositionObject.transform.parent = CurChannel.MyRing.transform;
-                                this.transform.position = destGate.SpawningNode.transform.position;
-                                LastPositionObject.transform.position = this.transform.position;
-                                break;
-                        }
-                        break;                                                                 
+                        }                    
+                        DestroyImmediate(pointMod.gameObject);
+                        break;
+                case eBoardObjectType.SPEED_MOD:
+                    SpeedMod speedMod = boardObjectColliders[0].GetComponentInParent<SpeedMod>();
+                    List<GameObject> gameObjectsToMod = new List<GameObject>();
+                    // Transform objectsToSpeedModParent;
+                    switch(speedMod.SpeedModType)
+                    {
+                        case SpeedMod.eSpeedModType.PLAYER_SPEED:
+                            //Debug.Log("Speed before: " + player.Speed);
+                            player.Speed += speedMod.SpeedModVal;
+                            //Debug.Log("Speed after: " + player.Speed);
+                            break;
+                    //  case SpeedMod.eSpeedModType.SPEED_DOWN:
+                        //    player.Speed -= speedMod.SpeedModVal;
+                    //     break;
+                        case SpeedMod.eSpeedModType.ENEMY_SPEED:
+                    // case SpeedMod.eSpeedModType.ENEMY_DOWN:
+                            List<Hazard> enemies = _Dax.Wheel.GetComponentsInChildren<Hazard>().ToList();
+                            float speedModVal = (speedMod.SpeedModType == SpeedMod.eSpeedModType.ENEMY_SPEED ? speedMod.SpeedModVal : -speedMod.SpeedModVal); // moupdate optimize all this
+                            foreach (Hazard e in enemies) e.Speed += speedModVal; // moupdate - optimize this --- use generic <T> or an overwritten activate.  maybe go back to one class for each and have a generic activate overwriten                                                                                                             
+                            break;
+                        case SpeedMod.eSpeedModType.RING_SPEED:
+                    //  case SpeedMod.eSpeedModType.RING_DOWN:
+                            float speedModVal2 = (speedMod.SpeedModType == SpeedMod.eSpeedModType.RING_SPEED ? speedMod.SpeedModVal : -speedMod.SpeedModVal);
+                            player.CurChannel.MyRing.RotateSpeed += speedModVal2;
+                            break;                 
                     }
-                }             
-            }                                               
-            #endif
+                    speedMod.SpawningNode.SpawnedBoardObject = null;
+                    boardObjectColliders.Remove(speedMod.GetComponentInChildren<Collider>());
+                    DestroyImmediate(speedMod.gameObject);
+                    _Dax.AddPoints(5);
+                break;    
+            }
+        }
+                        
     }
 
     public void BoardObjectFixedUpdate(float deltaTime)
@@ -580,7 +282,7 @@ public class BoardObject : MonoBehaviour
                 CheckGenericBounce(overlapColliders.ToList());  
                 if(this.BoardObjectType == eBoardObjectType.PLAYER) 
                 {
-                    CheckBoardObjects(overlapColliders.ToList());
+                    CheckBoardObjectsForPlayer(overlapColliders.ToList());
                 }
                 
             }                                                                                    
