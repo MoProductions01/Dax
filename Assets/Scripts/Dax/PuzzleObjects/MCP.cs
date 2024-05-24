@@ -579,7 +579,7 @@ public class MCP : MonoBehaviour
                 break;
             case BoardObject.eBoardObjectType.POINT_MOD:
                 PointMod pointMod = (PointMod)bo;
-                pointMod.GameModType = (PointMod.ePointModType)boSave.IntList[0];
+                pointMod.PointModType = (PointMod.ePointModType)boSave.IntList[0];
                 pointMod.PointModVal = boSave.IntList[1];
                 pointMod.PointModTime = boSave.FloatList[0];
                 break;            
@@ -611,8 +611,7 @@ public class MCP : MonoBehaviour
     /// <returns></returns>
     public T CreateBoardObject<T>(ChannelNode channelNode, Dax dax, 
                                   int boardObjectIndex, int boardObjectTypeIndex) where T : BoardObject
-    {                        
-        //Debug.Log("CreateBoardObject: " + ((BoardObject.eBoardObjectType) boardObjectIndex).ToString());
+    {                          
         string prefabString = CreatePrefabString(boardObjectIndex, boardObjectTypeIndex); // Create the prefab string to load
         T prefab = Resources.Load<T>(prefabString);
         T instantiaedObject = Instantiate<T>(prefab, channelNode.transform);

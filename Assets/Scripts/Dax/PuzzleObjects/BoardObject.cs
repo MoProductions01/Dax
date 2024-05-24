@@ -36,7 +36,7 @@ public class BoardObject : MonoBehaviour
     }   
 
     public static List<string> BOARD_OBJECT_EDITOR_NAMES = new List<string> {"Player", "Facet", "Hazard", "Facet Collect", 
-                                                                                "Shield", "Speed Mod", "Game Mod"};   
+                                                                                "Shield", "Speed Mod", "Point Mod"};   
 
     
     private void CheckForNewChannel(List<Collider> overlapColliders)
@@ -264,7 +264,7 @@ public class BoardObject : MonoBehaviour
                 break;
             case eBoardObjectType.POINT_MOD:
                     PointMod pointMod = boardObjectColliders[0].GetComponentInParent<PointMod>();
-                    switch(pointMod.GameModType)
+                    switch(pointMod.PointModType)
                     {
                         case PointMod.ePointModType.EXTRA_POINTS:
                             _Dax.AddPoints(pointMod.PointModVal);

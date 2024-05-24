@@ -7,12 +7,12 @@ public class PointMod : BoardObject
     public enum ePointModType { EXTRA_POINTS, POINTS_MULTIPLIER };    
 
     [Header("Point Mod Data")]
-    public ePointModType GameModType;
+    public ePointModType PointModType;
     public int PointModVal;
     public float PointModTime = 5f;
     public override void InitForChannelNode(ChannelNode spawnNode, Dax dax)
     {
-        name = spawnNode.name + "--PointMod--" + GameModType.ToString();        
+        name = spawnNode.name + "--PointMod--" + PointModType.ToString();        
         base.InitForChannelNode(spawnNode, dax);
     }
 

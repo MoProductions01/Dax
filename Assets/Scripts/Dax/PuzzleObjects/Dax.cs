@@ -383,7 +383,7 @@ public class Dax : MonoBehaviour
                 case BoardObject.eBoardObjectType.POINT_MOD:
                     PointMod pointMod = (PointMod)bo;
                     IntList = new List<int>();
-                    IntList.Add((int)pointMod.GameModType);
+                    IntList.Add((int)pointMod.PointModType);
                     IntList.Add((int)pointMod.PointModVal);
                     FloatList = new List<float>();
                     FloatList.Add(pointMod.PointModTime);
