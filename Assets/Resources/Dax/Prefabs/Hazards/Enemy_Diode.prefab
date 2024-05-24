@@ -69,15 +69,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BoardObjectType: 2
   StartDir: 0
+  Speed: 1
   _Dax: {fileID: 0}
   CurChannel: {fileID: 0}
-  Speed: 2
   SpawningNode: {fileID: 0}
   HazardType: 0
   EffectTime: 2
-  EffectRadius: 0.05
-  TimerActive: 0
-  EffectTimer: 0
 --- !u!1 &3441357206364930064
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,12 +4,15 @@ using System.Linq;
 using UnityEngine;
 
 /// <summary>
-/// Hazard class.  Can be Enemy, Glue or Dynamite
+/// Hazard class.  
 /// </summary>
 public class Hazard : BoardObject
 {
-    // Type of Hazard we are
-    public enum eHazardType { ENEMY, GLUE,  DYNAMITE,};
+    // Type of Hazard we are.
+    // ENEMY - moves around board and kills you unless you have a shield
+    // DYNAMITE - stays still on board and kills you unless you have shield
+    // GLUE - stays still on board and makes you get stuck unless you have a shield
+    public enum eHazardType { ENEMY, DYNAMITE, GLUE};
     public eHazardType HazardType;
     
     // Some statics for the time the hazard can be active

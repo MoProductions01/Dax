@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Facet class.
+/// Facet class.  These are the things you collect or color match to win the game
 /// </summary>
 public class Facet : BoardObject
 {

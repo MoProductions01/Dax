@@ -163,9 +163,10 @@ public class Dax : MonoBehaviour
         
         // Hazards (such as enemies) are the only non player board objects that move
         List<Hazard> hazards = transform.GetComponentsInChildren<Hazard>().ToList(); 
-        foreach(Hazard ed in hazards) 
+        hazards.RemoveAll(x => x.HazardType != Hazard.eHazardType.ENEMY); // Only enemies move
+        foreach(Hazard hazard in hazards) 
         {
-            ed.BoardObjectFixedUpdate(Time.deltaTime);
+            hazard.BoardObjectFixedUpdate(Time.deltaTime);
         }
         
         RotateRings();  // Rotate the rings based on the data updated in Update

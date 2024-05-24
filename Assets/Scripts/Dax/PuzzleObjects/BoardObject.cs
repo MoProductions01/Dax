@@ -166,10 +166,7 @@ public class BoardObject : MonoBehaviour
     /// </summary>
     /// <param name="player">Player object</param>
     /// <param name="boardObject">Object collided with</param>
-    public virtual void HandleCollisionWithPlayer(Player player, BoardObject boardObject)
-    {
-
-    }        
+    public virtual void HandleCollisionWithPlayer(Player player, BoardObject boardObject) {}        
     
     /// <summary>
     /// Function for the Player checking against other board objects on the game
@@ -186,6 +183,7 @@ public class BoardObject : MonoBehaviour
 
         for(int i=0; i<boardObjectColliders.Count; i++)
         {
+            // Call each BoardObject's HandleCollisionWithPlayer() function
             BoardObject boardObject = boardObjectColliders[i].GetComponentInParent<BoardObject>();             
             switch(boardObject.BoardObjectType) 
             {
@@ -195,81 +193,32 @@ public class BoardObject : MonoBehaviour
                 case eBoardObjectType.HAZARD:
                     boardObject.GetComponentInParent<Hazard>().HandleCollisionWithPlayer(player, boardObject);                         
                 break;
-                case eBoardObjectType.SHIELD:
-                    // if (player.ActiveShield != null) break; // already have a shield                                                        
-                    Shield shield = boardObjectColliders[0].GetComponentInParent<Shield>();                
-                    if( player.AddShield(shield) == true )
-                    {
-                        //shield.SpawningNode.SpawnedBoardObject = null;
-                        // curSphereColliders.Remove(shield.GetComponentInChildren<Collider>());
-                        // DestroyImmediate(shield.gameObject);
-                        _Dax.AddPoints(5);
-                    }                                                        
+                case eBoardObjectType.SHIELD:    
+                    boardObject.GetComponentInParent<Shield>().HandleCollisionWithPlayer(player, boardObject);                                                                                            
                     break;
                 case eBoardObjectType.FACET_COLLECT:
-                    FacetCollect facetCollect = boardObjectColliders[0].GetComponentInParent<FacetCollect>();
-                    if(player.AddFacetCollect(facetCollect) == true)
-                    {
-                    // facetCollect.SpawningNode.SpawnedBoardObject = null;
-                        //curSphereColliders.Remove(facetCollect.GetComponentInChildren<Collider>());
-                    // DestroyImmediate(facetCollect.gameObject);
-                        _Dax.AddPoints(5);
-                    }                                                                           
+                    boardObject.GetComponentInParent<FacetCollect>().HandleCollisionWithPlayer(player, boardObject);                                                                                             
                     break;
                 case eBoardObjectType.POINT_MOD:
-                        PointMod pointMod = boardObjectColliders[0].GetComponentInParent<PointMod>();
-                        switch(pointMod.PointModType)
-                        {
-                            case PointMod.ePointModType.EXTRA_POINTS:
-                                _Dax.AddPoints(pointMod.PointModVal);
-                                break;
-                            case PointMod.ePointModType.POINTS_MULTIPLIER:
-                                _Dax.BeginPointMod(pointMod.PointModTime, pointMod.PointModVal);
-                                break;
-                        }                    
-                        DestroyImmediate(pointMod.gameObject);
-                        break;
+                    boardObject.GetComponentInParent<PointMod>().HandleCollisionWithPlayer(player, boardObject);   
+                    break;
                 case eBoardObjectType.SPEED_MOD:
-                    SpeedMod speedMod = boardObjectColliders[0].GetComponentInParent<SpeedMod>();
-                    List<GameObject> gameObjectsToMod = new List<GameObject>();
-                    // Transform objectsToSpeedModParent;
-                    switch(speedMod.SpeedModType)
-                    {
-                        case SpeedMod.eSpeedModType.PLAYER_SPEED:
-                            //Debug.Log("Speed before: " + player.Speed);
-                            player.Speed += speedMod.SpeedModVal;
-                            //Debug.Log("Speed after: " + player.Speed);
-                            break;
-                    //  case SpeedMod.eSpeedModType.SPEED_DOWN:
-                        //    player.Speed -= speedMod.SpeedModVal;
-                    //     break;
-                        case SpeedMod.eSpeedModType.ENEMY_SPEED:
-                    // case SpeedMod.eSpeedModType.ENEMY_DOWN:
-                            List<Hazard> enemies = _Dax.Wheel.GetComponentsInChildren<Hazard>().ToList();
-                            float speedModVal = (speedMod.SpeedModType == SpeedMod.eSpeedModType.ENEMY_SPEED ? speedMod.SpeedModVal : -speedMod.SpeedModVal); // moupdate optimize all this
-                            foreach (Hazard e in enemies) e.Speed += speedModVal; // moupdate - optimize this --- use generic <T> or an overwritten activate.  maybe go back to one class for each and have a generic activate overwriten                                                                                                             
-                            break;
-                        case SpeedMod.eSpeedModType.RING_SPEED:
-                    //  case SpeedMod.eSpeedModType.RING_DOWN:
-                            float speedModVal2 = (speedMod.SpeedModType == SpeedMod.eSpeedModType.RING_SPEED ? speedMod.SpeedModVal : -speedMod.SpeedModVal);
-                            player.CurChannel.MyRing.RotateSpeed += speedModVal2;
-                            break;                 
-                    }
-                    speedMod.SpawningNode.SpawnedBoardObject = null;
-                    boardObjectColliders.Remove(speedMod.GetComponentInChildren<Collider>());
-                    DestroyImmediate(speedMod.gameObject);
-                    _Dax.AddPoints(5);
+                    boardObject.GetComponentInParent<SpeedMod>().HandleCollisionWithPlayer(player, boardObject);  
                 break;    
             }
         }
                         
     }
 
+    /// <summary>
+    /// Called from the root game class Dax for the Player and each Enemy
+    /// </summary>
+    /// <param name="deltaTime">DeltaTime from Dax</param>
     public void BoardObjectFixedUpdate(float deltaTime)
     {        
         if(CurChannel == null) {Debug.LogError("Why do we have no Channel assigned? " + this.name); return; }
 
-        if (Speed != 0f)
+        if (Speed != 0f) // This check might be unnecessary but better save than sorry
         {                       
             // move along the forward vector
             transform.Translate(Vector3.forward * deltaTime * Speed);            
@@ -277,14 +226,14 @@ public class BoardObject : MonoBehaviour
             List<Collider> overlapColliders = Physics.OverlapSphere(transform.position, GetComponent<SphereCollider>().radius).ToList();
             if(overlapColliders.Count > 0)
             {                
-                CheckForNewChannel(overlapColliders.ToList());             
-                CheckBumpers(overlapColliders.ToList());                
-                CheckGenericBounce(overlapColliders.ToList());  
+                CheckForNewChannel(overlapColliders.ToList()); // Check if we want to jump to another channel         
+                CheckBumpers(overlapColliders.ToList());       // Check if we collided with a bumper
+                CheckGenericBounce(overlapColliders.ToList()); // Check bouncing off non BoardObjects
                 if(this.BoardObjectType == eBoardObjectType.PLAYER) 
                 {
+                    // Player gets a special case
                     CheckBoardObjectsForPlayer(overlapColliders.ToList());
-                }
-                
+                }                
             }                                                                                    
         }                       
     }     

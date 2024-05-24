@@ -175,10 +175,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BoardObjectType: 5
   StartDir: 0
+  Speed: 0
   _Dax: {fileID: 0}
   CurChannel: {fileID: 0}
-  Speed: 0
   SpawningNode: {fileID: 0}
-  DestGateJustWarpedTo: {fileID: 0}
   SpeedModType: 0
-  SpeedModVal: 0
+  SpeedModVal: 0.5
