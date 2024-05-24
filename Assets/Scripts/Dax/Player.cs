@@ -165,7 +165,7 @@ public class Player : BoardObject
         }
     }   
 
-    public void ResetForPuzzleRestart(Dax.BoardObjectSave playerSave = null)
+    public void ResetPlayer(Dax.BoardObjectSave playerSave = null)
     {
         // clear out player inventory
         ClearInventory();

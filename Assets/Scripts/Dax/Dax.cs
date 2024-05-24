@@ -161,105 +161,109 @@ public class Dax : MonoBehaviour
         // Update the player 
         _Player.BoardObjectFixedUpdate(Time.deltaTime);
         
-        List<Hazard> hazards = transform.GetComponentsInChildren<Hazard>().ToList(); // moupdate wtf. all BoardObjects should get a fixed update
-        foreach(Hazard ed in hazards) // moupdate - figure this out
+        // Hazards (such as enemies) are the only non player board objects that move
+        List<Hazard> hazards = transform.GetComponentsInChildren<Hazard>().ToList(); 
+        foreach(Hazard ed in hazards) 
         {
             ed.BoardObjectFixedUpdate(Time.deltaTime);
         }
-        List<Interactable> interactables = transform.GetComponentsInChildren<Interactable>().ToList(); 
-        foreach (Interactable interactable in interactables) 
-        {
-            interactable.BoardObjectFixedUpdate(Time.deltaTime);
-        }
-        RotateRings();        
+        
+        RotateRings();  // Rotate the rings based on the data updated in Update
     }
    
-    //  You can rotate a direction Vector3 with a Quaternion by multiplying the quaternion with the direction(in that order).
-    //  Then you just use Quaternion.AngleAxis to create the rotation.
+    /// <summary>
+    /// Handles rotating the rings based on information gatherd in Update
+    /// </summary>
     void RotateRings()
-    {   // note: a BumperGroup is null if it's the center ring.  Otherwise it's just toggled
+    {  
         if (Wheel == null) { Debug.LogError("ERROR: No CurWheel."); return; }
         foreach(Ring ring in Wheel.Rings)
         {
             if (ring == CurTouchedRing)
-            {
+            {   // Handle the rotation of the ring touched by the player
                 CurTouchedRing.transform.localEulerAngles = new Vector3(0f, RingRot, 0f);
-//                Debug.Log("new rot: " + RingAngle);
                 if (CurTouchedRing.BumperGroup != null) CurTouchedRing.BumperGroup.transform.localEulerAngles = new Vector3(0f, RingRot, 0f);
             }
             else
-            {
+            {   // Rotate the rings that are rotating on their own
                 ring.Rotate();
+                // Rotate the bumper group if necessary
                 if (ring.BumperGroup != null) ring.BumperGroup.transform.localEulerAngles = new Vector3(0f, ring.transform.localEulerAngles.y, 0f);
             }
         }                
     }               
     
+    /// <summary>
+    /// Handles the end of the game
+    /// </summary>
+    /// <param name="reason">Reason for game ending (died, out of time, ect)</param>
     public void EndGame(string reason)
     {
         GameState = eGameState.GAME_OVER;
         _UIRoot.ToggleEndGameItems(reason, true);
     }
 
+    /// <summary>
+    /// Handles the start of the game.  The wheel is already setup before this
+    /// </summary>
     public void StartGame()
     {
         _UIRoot.PreGameButton.SetActive(false);
         GameState = eGameState.RUNNING;
     }
 
-    
+    /// <summary>
+    /// Creates new puzzle save data based on all of the information in the Dax object
+    /// </summary>
+    /// <param name="dax">Dax object that stores all the game data</param>
+    /// <returns></returns>
     public PuzzleSaveData CreateSaveData(Dax dax)
-    {
-        Debug.Log("Dax.SavePuzzle() /*creates save data*/ --MoSave--");
+    {     
         _PuzzleSaveData = null;        
         _PuzzleSaveData = new PuzzleSaveData(dax);
         return _PuzzleSaveData;
     }
-
-    //public Channel InnerChannel, OuterChannel;
-
+    
+    /// <summary>
+    /// Handles the resetting of the puzzle from save data.  Called when loading
+    /// a puzzle or restarting the current level
+    /// </summary>
+    /// <param name="saveData">Save data to reset from</param>
+    /// <returns></returns>
     public bool ResetPuzzleFromSave(PuzzleSaveData saveData = null)
-    {   // note - this assumes the puzzle is created and fresh
+    {   
+        // Check to see if we're going to override the current save data
         if(saveData != null)
         {
             _PuzzleSaveData = null;
             _PuzzleSaveData = saveData;
         }
 
-        MCP mcp = FindObjectOfType<MCP>();
-
-        // right now the default puzzle is loaded and ready to be modified
-        string s = "Dax.ResetPuzzleFromSave(). NumRings: " + _PuzzleSaveData.NumRings + ", ";
-        s += "RingSaves count: " + _PuzzleSaveData.RingSaves.Count;
-       // Debug.Log(s);
-        // puzzle data
-        this.PuzzleName = _PuzzleSaveData.PuzzleName;
-        //CurTouchedRing RingAngle PointerPrevAngle
+        MCP mcp = FindObjectOfType<MCP>();       
+        
+        this.PuzzleName = _PuzzleSaveData.PuzzleName; // update puzzle's name
+        // Reset ring and touch data        
         CurTouchedRing = null;
         RingRot = 0f;
         PointerPrevAngle = 0f;
-        // reset the wheel to starting state
-        //mcp.ResetWheel(Wheels[0]);
-        mcp.ResetWheel(Wheel);
-        // set up # of rings
-        //Wheels[0].VictoryCondition = _PuzzleSaveData.VictoryCondition;                
-        //Wheels[0].TurnOnRings(_PuzzleSaveData.NumRings);    
+
+        mcp.ResetWheel(Wheel); // reset the wheel to starting state                
         Wheel.VictoryCondition = _PuzzleSaveData.VictoryCondition;                
-        Wheel.TurnOnRings(_PuzzleSaveData.NumRings);        
+        Wheel.TurnOnRings(_PuzzleSaveData.NumRings); // turn on # of rings baesd on save data       
 
         // first pass through all the rings to create all the board objects
         for(int i=0; i<_PuzzleSaveData.RingSaves.Count; i++)
         {            
             int numChannels = (i == 0 ? Wheel.NUM_CENTER_RING_CHANNELS : Wheel.NUM_OUTER_RING_CHANNELS);
+            // get the ring save data
             RingSave ringSave = _PuzzleSaveData.RingSaves[i];
-            if (numChannels != ringSave.ChannelSaves.Count) { Debug.LogError("numChannels: " + numChannels + ", doesn't match ChannelSaves.Count: " + ringSave.ChannelSaves.Count); return false; }
-           // Ring ring = Wheels[0].Rings[i];
+            if (numChannels != ringSave.ChannelSaves.Count) { Debug.LogError("numChannels: " + numChannels + ", doesn't match ChannelSaves.Count: " + ringSave.ChannelSaves.Count); return false; }           
             Ring ring = Wheel.Rings[i];
-            
-            List<Channel> ringChannels = ring.transform.GetComponentsInChildren<Channel>().ToList();
-            ringChannels = ringChannels.OrderBy(x => x.name).ToList();
             ring.RotateSpeed = ringSave.RotSpeed;
-
+            
+            // Get an ordered list of the channels on this ring
+            List<Channel> ringChannels = ring.transform.GetComponentsInChildren<Channel>().ToList();
+            ringChannels = ringChannels.OrderBy(x => x.name).ToList();            
             // now create all the board objects
             for(int j=0; j<numChannels; j++)
             {
@@ -267,18 +271,13 @@ public class Dax : MonoBehaviour
                 Channel channel = ringChannels[j];                
                 channel.InnerChannel.SetActive(channelSave.InnerActive);
                 channel.OuterChannel.SetActive(channelSave.OuterActive);                
-                //if (channelSave.StartNodeBO != null) mcp.CreateBoardObjectFromSaveData(channel.StartNode, channelSave.StartNodeBO, this);                
-                // Unity handles serialization by creating MidNodeBO's even if you set them to null, so 
-                // a lot of calls are attempted for empty objects, so check to see if there's a start channel defined.
-                // Not the best solution but sorting this out is a future task
+                // Board objects can only be on the middle nodes, so check for that and the board object itself
                 if (channelSave.MidNodeBO != null && channelSave.MidNodeBO.StartChannel != "") 
                 {
                     mcp.CreateBoardObjectFromSaveData(channel.MidNode, channelSave.MidNodeBO, this);
-                }
-                
-                //if (channelSave.EndNodeBO != null) mcp.CreateBoardObjectFromSaveData(channel.EndNode, channelSave.EndNodeBO, this);                                
+                }                                
             }            
-            // bumpers
+            // Now initialize all of the bumers if we're on the end ring
             if (ring.BumperGroup != null)
             {
                 List<Bumper> bumpers = ring.BumperGroup.Bumpers.ToList();
@@ -290,40 +289,35 @@ public class Dax : MonoBehaviour
                     bumper.BumperColor = ringSave.BumperSaves[j]._Color;
                     bumper.gameObject.GetComponent<MeshRenderer>().material = mcp.GetBumperMaterial(bumper.BumperType, bumper.BumperColor);                                                                                        
                 }
-            }
-           // else Debug.Log("ringSave.BumperSaves is null so must be center ring");
+            }           
         }
-        // now another pass to init anything that requires all the objects on the wheel to be created
+        // Now another pass to init anything that requires all the objects on the wheel to be created
         for (int i = 0; i < _PuzzleSaveData.RingSaves.Count; i++)
-        {
-            int numChannels = (i == 0 ? Wheel.NUM_CENTER_RING_CHANNELS : Wheel.NUM_OUTER_RING_CHANNELS);
+        {   
+            int numChannels = (i == 0 ? Wheel.NUM_CENTER_RING_CHANNELS : Wheel.NUM_OUTER_RING_CHANNELS); // the center ring has a different number of channels than the outer ones
             RingSave ringSave = _PuzzleSaveData.RingSaves[i];
             if (numChannels != ringSave.ChannelSaves.Count) { Debug.LogError("numChannels: " + numChannels + ", doesn't match ChannelSaves.Count: " + ringSave.ChannelSaves.Count); return false; }
-           // Ring ring = Wheels[0].Rings[i];
             Ring ring = Wheel.Rings[i];
             List<Channel> ringChannels = ring.transform.GetComponentsInChildren<Channel>().ToList();
             ringChannels = ringChannels.OrderBy(x => x.name).ToList();
-
             for (int j = 0; j < numChannels; j++)
             {
                 ChannelSave channelSave = ringSave.ChannelSaves[j];
-                Channel channel = ringChannels[j];                
-                //if (channel.StartNode.SpawnedBoardObject != null) mcp.InitBoardObjectFromSave(channel.StartNode.SpawnedBoardObject, channelSave.StartNodeBO);                
-                if (channel.MidNode.SpawnedBoardObject != null) mcp.InitBoardObjectFromSave(channel.MidNode.SpawnedBoardObject, channelSave.MidNodeBO);
-                //if (channel.EndNode.SpawnedBoardObject != null) mcp.InitBoardObjectFromSave(channel.EndNode.SpawnedBoardObject, channelSave.EndNodeBO);                
+                Channel channel = ringChannels[j];                                
+                if (channel.MidNode.SpawnedBoardObject != null) mcp.InitBoardObjectFromSave(channel.MidNode.SpawnedBoardObject, channelSave.MidNodeBO);                
             }
         }
-
-        //reset player        
-        _Player.ResetForPuzzleRestart(_PuzzleSaveData.PlayerSave);        
-        //Wheels[0].InitWheelFacets();       
-        Wheel.InitWheelFacets();     
-        
-        // game state       
-        GameState = eGameState.RUNNING;
+         
+        _Player.ResetPlayer(_PuzzleSaveData.PlayerSave); //reset player                   
+        Wheel.InitWheelFacets();    // Init all of the facets on the current wheel                
+        GameState = eGameState.RUNNING; // start the game running
 
         return true;
     }      
+
+    /// <summary>
+    /// Save data for a bumper
+    /// </summary>
     [System.Serializable]
     public class BumperSave
     {
@@ -337,20 +331,23 @@ public class Dax : MonoBehaviour
         }
     }
  
+    /// <summary>
+    /// Save data for all of the non player board objects
+    /// </summary>
     [System.Serializable]
     public class BoardObjectSave
     {
+        // The various data a board object can have
         public BoardObject.eBoardObjectType Type;
         public string StartChannel;
-        public BoardObject.eStartDir StartDir; // monewsave
+        public BoardObject.eStartDir StartDir; 
         public float Speed;                          
 
-        // generic vars for various specific classes
-        // string lists, for example used in Warp nodes to keep destination list
+        // generic vars for various specific classes        
         public List<string> StringList01; 
         public List<string> StringList02;
 
-        // bools and floats for toggles 'n timers, etc
+        // bools and floats for timers, etc
         public List<bool> BoolList;
         public List<int> IntList;
         public List<float> FloatList;
@@ -360,113 +357,77 @@ public class Dax : MonoBehaviour
             StartChannel = bo.CurChannel.name;        
 
             // movement
-            StartDir = bo.StartDir; // monewsave
+            StartDir = bo.StartDir;
             Speed = bo.Speed;                        
-
-            // connection lists
-            if(Type == BoardObject.eBoardObjectType.HAZARD)
+            // Each kind of board object uses the save data in specific ways, so handle that based on the type
+            switch(Type)
             {
-                Hazard hazard = (Hazard)bo; 
-                IntList = new List<int>();
-                IntList.Add((int)hazard.HazardType); 
-                FloatList = new List<float>();
-                FloatList.Add(hazard.EffectTime);
-                FloatList.Add(hazard.EffectRadius);
-            }
-            if(Type == BoardObject.eBoardObjectType.GAME_MOD)
-            {
-                GameMod gameMod = (GameMod)bo;
-                IntList = new List<int>();
-                IntList.Add((int)gameMod.GameModType);
-                IntList.Add((int)gameMod.GameModVal);
-                FloatList = new List<float>();
-                FloatList.Add(gameMod.GameModTime);
-            }
-            else 
-            if(Type == BoardObject.eBoardObjectType.FACET)
-            {
-                Facet facet = (Facet)bo;
-                IntList = new List<int>();
-                IntList.Add((int)facet._Color);
-            }
-            /*else if(Type == BoardObject.eBoardObjectType.INTERACTABLE)
-            {
-                Interactable interactable = (Interactable)bo;
-                IntList = new List<int>();
-                IntList.Add((int)interactable.InteractableType);
-                if(interactable.InteractableType == Interactable.eInteractableType.SWITCH)
-                {
-                    StringList01 = new List<string>();
-                    StringList02 = new List<string>();
-                    foreach (ChannelPiece channelPiece in interactable.PiecesToTurnOff)
-                    {
-                        // s += ", turn off: " + channelPiece.name;
-                        StringList01.Add(channelPiece.name);
-                    }
-                    foreach (ChannelPiece channelPiece in interactable.PiecesToTurnOn)
-                    {
-                        // s += ", turn on: " + channelPiece.name;
-                        StringList02.Add(channelPiece.name);
-                    }
-                    // Debug.Log(s);
-                }
-                else if(interactable.InteractableType == Interactable.eInteractableType.WARP_GATE)
-                {
-                    StringList01 = new List<string>();
-                    Interactable warpGate = (Interactable)bo;
-                    foreach (Interactable destGate in warpGate.DestGates)
-                    {
-                        StringList01.Add(destGate.name);
-                    }
-                }
-            }           */
-            else if (Type == BoardObject.eBoardObjectType.SHIELD) // moupdate - make sure all these are in the same order
-            {
-                Shield shield = (Shield)bo;
-                IntList = new List<int>();
-                IntList.Add((int)shield.ShieldType);
-                FloatList = new List<float>();
-                //FloatList.Add(shield.Timer);                
-            }
-            else if (Type == BoardObject.eBoardObjectType.SPEED_MOD)
-            {
-                SpeedMod speedMod = (SpeedMod)bo;
-                
-                IntList = new List<int>(); // moupdate - fix the save/load system
-                IntList.Add((int)speedMod.SpeedModType);
-                FloatList = new List<float>();
-                FloatList.Add(speedMod.SpeedModVal);
-            }
-            else if(Type == BoardObject.eBoardObjectType.FACET_COLLECT)
-            {                
-                FacetCollect facetCollect = (FacetCollect)bo;
-                IntList = new List<int>();
-                IntList.Add((int)facetCollect.FacetCollectType);               
-            }
+                case BoardObject.eBoardObjectType.FACET:
+                    Facet facet = (Facet)bo;
+                    IntList = new List<int>();
+                    IntList.Add((int)facet._Color);
+                break;
+                case BoardObject.eBoardObjectType.FACET_COLLECT:
+                    FacetCollect facetCollect = (FacetCollect)bo;
+                    IntList = new List<int>();
+                    IntList.Add((int)facetCollect.FacetCollectType);         
+                break;
+                case BoardObject.eBoardObjectType.HAZARD:
+                    Hazard hazard = (Hazard)bo; 
+                    IntList = new List<int>();
+                    IntList.Add((int)hazard.HazardType); 
+                    FloatList = new List<float>();
+                    FloatList.Add(hazard.EffectTime);
+                    FloatList.Add(hazard.EffectRadius);
+                break;
+                case BoardObject.eBoardObjectType.GAME_MOD:
+                    GameMod gameMod = (GameMod)bo;
+                    IntList = new List<int>();
+                    IntList.Add((int)gameMod.GameModType);
+                    IntList.Add((int)gameMod.GameModVal);
+                    FloatList = new List<float>();
+                    FloatList.Add(gameMod.GameModTime);
+                break;
+                case BoardObject.eBoardObjectType.SPEED_MOD:
+                    SpeedMod speedMod = (SpeedMod)bo;                
+                    IntList = new List<int>(); 
+                    IntList.Add((int)speedMod.SpeedModType);
+                    FloatList = new List<float>();
+                    FloatList.Add(speedMod.SpeedModVal);
+                break;                
+                case BoardObject.eBoardObjectType.SHIELD:
+                    Shield shield = (Shield)bo;
+                    IntList = new List<int>();
+                    IntList.Add((int)shield.ShieldType);
+                    FloatList = new List<float>();                    
+                break;                                
+            }                       
         }
     }
+    /// <summary>
+    /// Save data for a channel
+    /// </summary>
     [System.Serializable]
     public class ChannelSave
     {
-        public bool InnerActive;
-        public bool OuterActive;
-
-        //public BoardObjectSave StartNodeBO = null;
+        // Active data for each of the channel pieces
+        public bool InnerActive; 
+        public bool OuterActive;        
+        // Only middle nodes can have board objects
         public BoardObjectSave MidNodeBO = null;
-        //public BoardObjectSave EndNodeBO = null;
 
         public ChannelSave(Channel channel)
         {            
             InnerActive = channel.InnerChannel.Active;
-            OuterActive = channel.OuterChannel.Active;
-            //BoardObject bo = channel.StartNode.SpawnedBoardObject;            
-            //if (bo != null) StartNodeBO = new BoardObjectSave(bo);
+            OuterActive = channel.OuterChannel.Active;            
             BoardObject bo = channel.MidNode.SpawnedBoardObject;
-            if (bo != null) MidNodeBO = new BoardObjectSave(bo);
-            //bo = channel.EndNode.SpawnedBoardObject;
-            //if (bo != null) EndNodeBO = new BoardObjectSave(bo);
+            if (bo != null) MidNodeBO = new BoardObjectSave(bo);            
         }
     }
+
+    /// <summary>
+    /// Save data for rings
+    /// </summary>
     [System.Serializable]
     public class RingSave
     {
@@ -484,6 +445,10 @@ public class Dax : MonoBehaviour
             ChannelSaves = new List<ChannelSave>(numChannels);
         }
     }
+
+    /// <summary>
+    /// Save data for the puzzle information
+    /// </summary>
     [System.Serializable]
     public class PuzzleSaveData
     {       
@@ -492,14 +457,16 @@ public class Dax : MonoBehaviour
         public eVictoryConditions VictoryCondition;
         
         public List<int> NumFacetsOnBoardSave = new List<int>();
+
         // wheel data
         public int NumRings;
         public List<RingSave> RingSaves = new List<RingSave>();
+
         // Player data
         public BoardObjectSave PlayerSave;
+
         public PuzzleSaveData(Dax dax)
-        {
-            //Wheel wheel = dax.Wheels[0];
+        {            
             Wheel wheel = dax.Wheel;
             NumRings = wheel.NumActiveRings;
             int numRingsPlusCenter = NumRings + 1;
@@ -511,7 +478,6 @@ public class Dax : MonoBehaviour
                 NumFacetsOnBoardSave.Add(wheel.NumFacetsOnBoard[i]);
             }
             
-
             for (int i=0; i< numRingsPlusCenter; i++)
             {                
                 int numChannels = (i == 0 ? Wheel.NUM_CENTER_RING_CHANNELS : Wheel.NUM_OUTER_RING_CHANNELS);

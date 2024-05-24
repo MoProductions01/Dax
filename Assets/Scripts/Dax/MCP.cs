@@ -193,7 +193,7 @@ public class MCP : MonoBehaviour
         mcp._Dax._Player._Dax = mcp._Dax;
         player.SetStartChannel(0);        
         player.InitForChannelNode(null, mcp._Dax);
-        player.ResetForPuzzleRestart();        
+        player.ResetPlayer();        
         
         // We use a debug class that shows up on display 2 so it doesn't interfere with 
         // the in game display          
@@ -699,4 +699,7 @@ public class MCP : MonoBehaviour
             Debug.Log( "transform.localPosition newPosA: " + newPosA + ", newPosB: " + newPosB);
         }
     }*/ 
+
+    //  You can rotate a direction Vector3 with a Quaternion by multiplying the quaternion with the direction(in that order).
+    //  Then you just use Quaternion.AngleAxis to create the rotation.
 }
