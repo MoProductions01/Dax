@@ -7,6 +7,9 @@ using System;
 using UnityEditor;
 #endif
 
+/// <summary>
+/// Various data for setting up the puzzles in the level editor
+/// </summary>
 [ExecuteInEditMode]
 public class DaxPuzzleSetup : MonoBehaviour
 {   // Keep tool specific stuff in here.  Any game data should be in Dax.cs          

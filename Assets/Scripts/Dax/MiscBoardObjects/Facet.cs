@@ -41,7 +41,9 @@ public class Facet : BoardObject
             // aren't already carrying one  
             if(player.CarriedFacet == null)
             {
-                player.CarriedFacet = facet;
+                facet.transform.position = player.transform.position + (player.transform.up * .1f);    
+                facet.transform.parent = player.transform;                
+                player.CarriedFacet = facet;                
             }                                            
         }
     }

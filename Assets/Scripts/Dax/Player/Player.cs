@@ -40,8 +40,7 @@ public class Player : BoardObject
     /// Clears out any Shield or FacetCollec objects we've gathered
     /// </summary>
     public void ClearInventory()
-    {
-       // for(int i=0; i < Shields.Count; i++) DestroyImmediate(Shields[i].gameObject);        
+    {            
         Shields.Clear();
         FacetCollects.Clear();
     }
@@ -81,7 +80,7 @@ public class Player : BoardObject
         Shields.Add(shield); // Add it to our list
         if(Shields.Count == 1) _Dax._UIRoot.ChangeShieldIcon(shield); // Update the UI for clicking on it to activate
         return true; // We added the Shield so let the calling code know
-    }
+    }     
 
     /// <summary>
     /// Activates the oldest Shield on the list
@@ -94,8 +93,8 @@ public class Player : BoardObject
         ActiveShield.gameObject.SetActive(true); // Turn Shield on        
         ActiveShield.transform.GetComponentInChildren<PowerUpAnimation>().enabled = false; // monote - look into this
         ActiveShield.transform.GetChild(0).transform.eulerAngles = new Vector3(-82f, 0f, 0f); 
-       // ActiveShield.transform.parent = this.transform;
-       // ActiveShield.transform.position = this.transform.position;         
+        ActiveShield.transform.position = this.transform.position;
+        ActiveShield.transform.parent = this.transform;               
         Shields.RemoveAt(0); // Remove shield from list
         _Dax._UIRoot.DestroyShieldIcon(); // Destroy UI icon
         if (Shields.Count > 0) _Dax._UIRoot.ChangeShieldIcon(Shields[0]); // If we have more Shields update the UI
@@ -130,40 +129,14 @@ public class Player : BoardObject
         
     }
     
-    private void LateUpdate() // monote
-{        
-   // string s = "pos: " + transform.position + ", localPos: " + transform.localPosition + "\n";
-    //s += "forward: " + transform.forward + ", CurChannel: " + CurChannel.name;
-     //RRDManager.SetText(s, RifRafDebug.eDebugTextType.GAME_STATE);   
-    
-    if(CarriedFacet != null)
-    {
-        CarriedFacet.transform.position = this.transform.position + (this.transform.up * .1f);
-        /*if(MoveDir == eMoveDir.OUTWARD)
-        {
-            CarriedColorFacet.transform.position = this.transform.position - (this.transform.forward * .1f);
-        }            
-        else
-        {
-            CarriedColorFacet.transform.position = this.transform.position + (this.transform.forward * .1f);
-        }*/
-    }
-    if (ActiveShield != null)
-    {
-        ActiveShield.transform.position = this.transform.position;            
-    }
-    
-}
-
+   
+    /// <summary>
+    /// This is used to see if we should stop temporarily ignoring a Hazard
+    /// that we saved ourselves from with a shield.
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnCollisionExit(Collision collision)
-    {
-        //string s = "Player.OnCollisionExit() collision name: " + collision.collider.name + ", collision parent name: " + collision.collider.transform.parent.name + ", Dest Gate: ";
-        //s += (DestGateJustWapredTo == null ? "no dest gate" : DestGateJustWapredTo.name);
-        //Debug.Log(s);        
-      /*  if(DestGateJustWarpedTo != null && collision.collider.name.Equals(DestGateJustWarpedTo.name))
-        {   // this is so we don't warp back 'n forth between gates after a warp            
-            DestGateJustWarpedTo = null;
-        }    */
+    {       
         if (collision.collider.gameObject.GetComponentInParent<Hazard>() != null)
         {            
             if(TempEnemyIgnore == collision.collider.gameObject.GetComponentInParent<Hazard>())
@@ -173,36 +146,34 @@ public class Player : BoardObject
         }
     }
     
+    /// <summary>
+    /// This is used for checking a GLUe effect
+    /// </summary>
     private void Update()
-    {   
-        /*if(ActiveShield != null && (ActiveShield.ShieldType == Shield.eShieldTypes.TIMED || ActiveShield.ShieldType == Shield.eShieldTypes.TIMED_KILL))
-        {
-            ActiveShield.Timer -= Time.deltaTime;
-            if (ActiveShield.Timer <= 0f)
-            {
-                DestroyImmediate(ActiveShield.gameObject);
-                ActiveShield = null;
-            }
-        } */
-           
+    {                      
         if(EffectType == Hazard.eHazardType.GLUE)
-        {
+        {   // If we're being held by Glue, reduce the time and see if we can move again
             GlueStickTime -= Time.deltaTime;
             if(GlueStickTime <= 0f)
-            {
-                EffectType = Hazard.eHazardType.ENEMY; // moupdate
+            {   // Glue time is over so turn off the Glue and get moving
+                EffectType = Hazard.eHazardType.ENEMY;
                 Speed = SpeedSave;
             }
         }
     }   
 
+    /// <summary>
+    /// Resets the Player back to it's starting state
+    /// </summary>
+    /// <param name="playerSave">Player save data</param>
     public void ResetPlayer(Dax.BoardObjectSave playerSave = null)
     {
         // clear out player inventory
         ClearInventory();
+        // Reset the UI
         if (_Dax._UIRoot == null)
         {
-            Debug.LogWarning("Update UIRoot on new scene");
+            Debug.LogWarning("Update UIRoot on new scene"); // monote - UI stuff
         }
         else
         {
@@ -210,37 +181,41 @@ public class Player : BoardObject
             _Dax._UIRoot.DestroyShieldIcon();
         }
         
-        transform.position = Vector3.zero;
+        transform.position = Vector3.zero; // Put player back at the center of the wheel
         if(playerSave != null)
-        {            
+        {   // If we have save data, then update the Player with that
             this.Speed = playerSave.Speed;
             CurChannel = GameObject.Find(playerSave.StartChannel).GetComponent<Channel>();
             this.transform.parent = CurChannel.MyRing.transform;
-            this.transform.LookAt(CurChannel.StartNode.transform);
-            //this.MoveDir = playerSave.MoveDir; monewsave
+            this.transform.LookAt(CurChannel.StartNode.transform);            
         }
+        // Null out any GameObject references
         ActiveShield = null;
         TempEnemyIgnore = null;
         CarriedFacet = null;               
     }
 
+    /// <summary>
+    /// Sets the starting channel for the Player
+    /// </summary>
+    /// <param name="channelIndex">Which channel is the start channel</param>
     public void SetStartChannel(int channelIndex)
-    {
-        //Debug.Log("Player.SetStartChannel: channelIndex: " + channelIndex);
+    {        
         CurChannel = _Dax.Wheel.Rings[0].transform.GetComponentsInChildren<Channel>().ToList()[channelIndex];
         this.transform.parent = CurChannel.MyRing.transform;
         SpawningNode = CurChannel.StartNode;
         transform.LookAt(SpawningNode.transform);
     }
 
+    /// <summary>
+    /// Returs the ChannelNode that the player will start moving towards when the game starts
+    /// </summary>
+    /// <returns></returns>
     public ChannelNode GetStartChannelNode()
     {
         return SpawningNode;
     }
 
-
-
-#if true
     DaxPuzzleSetup DS = null;
     private void OnDrawGizmos()
     {
@@ -258,5 +233,4 @@ public class Player : BoardObject
             }       
         }        
     }
-#endif
 }

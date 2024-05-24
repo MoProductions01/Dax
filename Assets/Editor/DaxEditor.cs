@@ -430,6 +430,8 @@ public class DaxEditor : Editor
     /// </summary>
     public override void OnInspectorGUI()
     {
+        if(Application.isPlaying) return;
+        
         HandleSceneView(); // make sure the Radient Debug object is not visible        
                 
         #if false
