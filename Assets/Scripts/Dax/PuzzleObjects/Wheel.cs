@@ -60,7 +60,7 @@ public class Wheel : MonoBehaviour
     {        
         NumFacetsCollected[(int)colorFacetCarried._Color]++;
         DaxRef.AddPoints(5);
-        DaxRef._Player.CarriedColorFacet = null;
+        DaxRef._Player.CarriedFacet = null;
         DaxRef._UIRoot.SetFacetColorText(colorFacetCarried._Color, NumFacetsCollected[(int)colorFacetCarried._Color]);       
     }
 

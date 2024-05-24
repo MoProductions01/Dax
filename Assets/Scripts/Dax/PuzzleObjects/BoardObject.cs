@@ -145,8 +145,8 @@ public class BoardObject : MonoBehaviour
                         break;
                     case Bumper.eBumperType.COLOR_MATCH:
                         // Color match collider so check it against any facets the player is carrying
-                        if (player.CarriedColorFacet == null) break; // No facet being carried so bail
-                        Facet playerCarriedColorFacet = (Facet)player.CarriedColorFacet;
+                        if (player.CarriedFacet == null) break; // No facet being carried so bail
+                        Facet playerCarriedColorFacet = (Facet)player.CarriedFacet;
                         if (playerCarriedColorFacet._Color == bumper.BumperColor)
                         {   // Player is carrying a facet that's the same color as the bumper so update game state                           
                             FindObjectOfType<Dax>().Wheel.MatchedFacetColor(playerCarriedColorFacet);                            

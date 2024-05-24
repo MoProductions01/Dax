@@ -39,10 +39,10 @@ public class Facet : BoardObject
         else
         {   // COLOR_MATCH condition so start carrying the facet if you 
             // aren't already carrying one  
-            if(player.CarriedColorFacet == null)
+            if(player.CarriedFacet == null)
             {
-                player.CarriedColorFacet = facet;
-            }                                           
+                player.CarriedFacet = facet;
+            }                                            
         }
     }
 }
