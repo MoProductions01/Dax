@@ -510,7 +510,7 @@ public class DaxEditor : Editor
         if (GUILayout.Button("Create Point Mod", GUILayout.Width(buttonWidth)))
         {            
             _MCP.CreateBoardObject<PointMod>(SelectedChannelNode, _Dax, 
-                (int)BoardObject.eBoardObjectType.POINT_MOD, (int)PointMod.eGameModType.EXTRA_POINTS);                   
+                (int)BoardObject.eBoardObjectType.POINT_MOD, (int)PointMod.ePointModType.EXTRA_POINTS);                   
         }                                   
     }
 
@@ -650,7 +650,7 @@ public class DaxEditor : Editor
         EditorGUILayout.Separator();
         PointMod pointMod = (PointMod)SelectedBoardObject;
 
-        PointMod.eGameModType newGameModType = (PointMod.eGameModType)EditorGUILayout.EnumPopup("Point Mod Type: ", pointMod.GameModType);
+        PointMod.ePointModType newGameModType = (PointMod.ePointModType)EditorGUILayout.EnumPopup("Point Mod Type: ", pointMod.GameModType);
         if (newGameModType != pointMod.GameModType)
         {   // User is changing the type of GameMod so destroy the current one and create a new one
             DestroyImmediate(SelectedChannelNode.SpawnedBoardObject.gameObject);                          
@@ -668,7 +668,7 @@ public class DaxEditor : Editor
             pointMod.PointModVal = newPointModVal;
             UpdateIntProperty(SelectedBoardObjectSO, "PointModVal", pointMod.PointModVal);     // mofeh           
         }
-        if(pointMod.GameModType == PointMod.eGameModType.POINTS_MULTIPLIER)
+        if(pointMod.GameModType == PointMod.ePointModType.POINTS_MULTIPLIER)
         {   // PointsMultipliers have a timer
             float newTimer = EditorGUILayout.FloatField("Timer: ", pointMod.PointModTime);
             if (newTimer < 1.0f) newTimer = 1.0f; // Make sure at least 1 second for the timer

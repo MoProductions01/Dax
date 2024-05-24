@@ -34,9 +34,9 @@ public class Dax : MonoBehaviour
     float RingRot = 0f;      // Rotation of the ring
     float PointerPrevAngle; // Angle between the center point and the mouse pointer
     
-    bool GameModActive; // Whether or not a gameplay modifier is active
+    bool PointModActive; // Whether or not a gameplay modifier is active
     float GameModTimer; // Timer for the current gameplay modifier
-    int GameModVal;     // Value of the current gameplay modifier
+    int PointModVal;     // Value of the current gameplay modifier
 
     public Player _Player;  // Ref to the player game object
 
@@ -69,9 +69,9 @@ public class Dax : MonoBehaviour
     /// <param name="val">Mod val (point multiplier, etc) for the current mod0</param>
     public void BeginPointMod(float time, int val)
     {
-        GameModActive = true;
+        PointModActive = true;
         GameModTimer = time;
-        GameModVal = val;
+        PointModVal = val;
     }
 
     /// <summary>
@@ -81,9 +81,9 @@ public class Dax : MonoBehaviour
     public void AddPoints(int points)
     {
         // Account for the point mod if active
-        if(GameModActive == true)
+        if(PointModActive == true)
         {
-            points *= GameModVal;
+            points *= PointModVal;
         }
         Score += points;
         _UIRoot.ScoreText.SetText(Score.ToString());
@@ -97,12 +97,12 @@ public class Dax : MonoBehaviour
         if (GameState != eGameState.RUNNING) return; // Bail if the game isn't in it's running state     
         
         // Count down the point mod timer if it's on
-        if(GameModActive == true)
+        if(PointModActive == true)
         {
             GameModTimer -= Time.deltaTime;
             if(GameModTimer <= 0)
             {
-                GameModActive = false;
+                PointModActive = false;
             }
         }
 
@@ -381,12 +381,12 @@ public class Dax : MonoBehaviour
                     FloatList.Add(hazard.EffectRadius);
                 break;
                 case BoardObject.eBoardObjectType.POINT_MOD:
-                    PointMod gameMod = (PointMod)bo;
+                    PointMod pointMod = (PointMod)bo;
                     IntList = new List<int>();
-                    IntList.Add((int)gameMod.GameModType);
-                    IntList.Add((int)gameMod.PointModVal);
+                    IntList.Add((int)pointMod.GameModType);
+                    IntList.Add((int)pointMod.PointModVal);
                     FloatList = new List<float>();
-                    FloatList.Add(gameMod.PointModTime);
+                    FloatList.Add(pointMod.PointModTime);
                 break;
                 case BoardObject.eBoardObjectType.SPEED_MOD:
                     SpeedMod speedMod = (SpeedMod)bo;                

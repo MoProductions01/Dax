@@ -266,10 +266,10 @@ public class BoardObject : MonoBehaviour
                     PointMod gameMod = boardObjectColliders[0].GetComponentInParent<PointMod>();
                     switch(gameMod.GameModType)
                     {
-                        case PointMod.eGameModType.EXTRA_POINTS:
+                        case PointMod.ePointModType.EXTRA_POINTS:
                             _Dax.AddPoints(gameMod.PointModVal);
                             break;
-                        case PointMod.eGameModType.POINTS_MULTIPLIER:
+                        case PointMod.ePointModType.POINTS_MULTIPLIER:
                             _Dax.BeginPointMod(gameMod.PointModTime, gameMod.PointModVal);
                             break;
                     }
