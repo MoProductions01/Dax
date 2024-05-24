@@ -668,12 +668,12 @@ public class DaxEditor : Editor
         }
         if(pointMod.GameModType == PointMod.eGameModType.POINTS_MULTIPLIER)
         {   // PointsMultipliers have a timer
-            float newTimer = EditorGUILayout.FloatField("Timer: ", pointMod.GameModTime);
+            float newTimer = EditorGUILayout.FloatField("Timer: ", pointMod.PointModTime);
             if (newTimer < 1.0f) newTimer = 1.0f; // Make sure at least 1 second for the timer
-            if (newTimer != pointMod.GameModTime)
+            if (newTimer != pointMod.PointModTime)
             {   // Update changed mod timer
-                pointMod.GameModTime = newTimer;
-                UpdateFloatProperty(SelectedBoardObjectSO, "GameModTime", pointMod.GameModTime);                   
+                pointMod.PointModTime = newTimer;
+                UpdateFloatProperty(SelectedBoardObjectSO, "GameModTime", pointMod.PointModTime);                   
             }
         }
     }

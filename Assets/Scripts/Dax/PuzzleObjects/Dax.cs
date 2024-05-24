@@ -386,7 +386,7 @@ public class Dax : MonoBehaviour
                     IntList.Add((int)gameMod.GameModType);
                     IntList.Add((int)gameMod.GameModVal);
                     FloatList = new List<float>();
-                    FloatList.Add(gameMod.GameModTime);
+                    FloatList.Add(gameMod.PointModTime);
                 break;
                 case BoardObject.eBoardObjectType.SPEED_MOD:
                     SpeedMod speedMod = (SpeedMod)bo;                

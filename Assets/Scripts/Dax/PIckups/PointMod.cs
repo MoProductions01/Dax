@@ -10,7 +10,7 @@ public class PointMod : BoardObject
     [Header("GameMod Data")]
     public eGameModType GameModType;
     public int GameModVal;
-    public float GameModTime = 5f;
+    public float PointModTime = 5f;
     public override void InitForChannelNode(ChannelNode spawnNode, Dax dax)
     {
         name = spawnNode.name + "--GameMod--" + GameModType.ToString();

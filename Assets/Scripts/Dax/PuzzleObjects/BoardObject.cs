@@ -270,7 +270,7 @@ public class BoardObject : MonoBehaviour
                             _Dax.AddPoints(gameMod.GameModVal);
                             break;
                         case PointMod.eGameModType.POINTS_MULTIPLIER:
-                            _Dax.BeginPointMod(gameMod.GameModTime, gameMod.GameModVal);
+                            _Dax.BeginPointMod(gameMod.PointModTime, gameMod.GameModVal);
                             break;
                     }
                     //curSphereColliders.Remove(gameMod.GetComponent<Collider>());
