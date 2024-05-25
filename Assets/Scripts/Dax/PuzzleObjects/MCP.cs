@@ -190,7 +190,7 @@ public class MCP : MonoBehaviour
         Player player = UnityEngine.Object.Instantiate<Player>(playerPrefab, mcp._Dax.transform);        
         player.name = "Player Diode";        
         mcp._Dax._Player = player;
-        mcp._Dax._Player._Dax = mcp._Dax;
+        mcp._Dax._Player.Dax = mcp._Dax;
         player.SetStartChannel(0);        
         player.InitForChannelNode(null, mcp._Dax);
         player.ResetPlayer();        

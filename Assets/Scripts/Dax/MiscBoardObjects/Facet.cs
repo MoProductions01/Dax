@@ -31,10 +31,10 @@ public class Facet : BoardObject
     public override void HandleCollisionWithPlayer(Player player, BoardObject boardObject)
     {
         Facet facet = (Facet)boardObject; // Get a ref to the facet
-        if(_Dax.Wheel.VictoryCondition == Dax.eVictoryConditions.COLLECTION)
+        if(Dax.Wheel.VictoryCondition == Dax.eVictoryConditions.COLLECTION)
         {   // COLLECTION victory condition so collect the facet
             facet.SpawningNode.SpawnedBoardObject = null;                     
-            this._Dax.Wheel.CollectFacet(facet);                                                                                
+            this.Dax.Wheel.CollectFacet(facet);                                                                                
         }
         else
         {   // COLOR_MATCH condition so start carrying the facet if you 

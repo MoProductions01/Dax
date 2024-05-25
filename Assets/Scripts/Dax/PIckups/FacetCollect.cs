@@ -35,7 +35,7 @@ public class FacetCollect : BoardObject
         // Add the FacetCollect to the player if you're not full
         if(player.AddFacetCollect(facetCollect) == true)
         {        
-            _Dax.AddPoints(5); // Give player some points
+            Dax.AddPoints(5); // Give player some points
         }     
     }    
 }

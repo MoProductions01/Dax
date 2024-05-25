@@ -12,7 +12,7 @@ public class SpeedMod : BoardObject
     // ENEMY_SPEED - modifies Enemy speed
     // RING_SPEED - modifies Ring rotatin speed
     public enum eSpeedModType { PLAYER_SPEED, ENEMY_SPEED, RING_SPEED};
-    public eSpeedModType SpeedModType;    
+    public eSpeedModType SpeedModType;       
 
     // The value that the SpeedMod has
     public static float DEFAULT_MOD_VAL = 2f;            
@@ -45,7 +45,7 @@ public class SpeedMod : BoardObject
                 break;        
             case SpeedMod.eSpeedModType.ENEMY_SPEED:
                 // Get a list of all the ENEMIES on the board        
-                List<Hazard> enemies = _Dax.Wheel.GetComponentsInChildren<Hazard>().ToList();
+                List<Hazard> enemies = Dax.Wheel.GetComponentsInChildren<Hazard>().ToList();
                 enemies.RemoveAll(c => c.HazardType != Hazard.eHazardType.ENEMY); // Remove anything that's not an ENEMY since they're the only Hazards that move                
                 // Update each enemy's speed
                 foreach (Hazard e in enemies) 
@@ -60,6 +60,6 @@ public class SpeedMod : BoardObject
         }        
         // Destroy SpeedMod and give points
         DestroyImmediate(speedMod.gameObject);
-        _Dax.AddPoints(5);
+        Dax.AddPoints(5);
     }
 }

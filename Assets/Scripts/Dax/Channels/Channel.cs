@@ -18,5 +18,5 @@ public class Channel : MonoBehaviour
     // The Start and End nodes are for jumping between channels
     public ChannelNode StartNode;
     public ChannelNode MidNode;
-    public ChannelNode EndNode;        
+    public ChannelNode EndNode;    
 }

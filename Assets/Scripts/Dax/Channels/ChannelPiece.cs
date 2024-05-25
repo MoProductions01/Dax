@@ -30,16 +30,6 @@ public class ChannelPiece : MonoBehaviour
     }
 
     /// <summary>
-    /// Called from the DaxEditor code to toggle the piece on or off
-    /// </summary>
-    public void Toggle()
-    {        
-        Active = !Active;        
-        GetComponent<MeshRenderer>().enabled = Active;        
-        GetComponent<Collider>().enabled = Active;
-    }
-
-    /// <summary>
     /// Tells it specifically if it's on or off
     /// </summary>
     /// <param name="isActive"></param>
@@ -49,7 +39,17 @@ public class ChannelPiece : MonoBehaviour
         GetComponent<MeshRenderer>().enabled = isActive;
         GetComponent<Collider>().enabled = isActive;
     }
-    
+
+    /// <summary>
+    /// Called from the DaxEditor code to toggle the piece on or off
+    /// </summary>
+    public void Toggle()
+    {        
+        Active = !Active;        
+        GetComponent<MeshRenderer>().enabled = Active;        
+        GetComponent<Collider>().enabled = Active;
+    }
+        
     DaxPuzzleSetup DS = null; // This is so we can use DrawGizmos when setting up the puzzle
     private void OnDrawGizmos()
     {       

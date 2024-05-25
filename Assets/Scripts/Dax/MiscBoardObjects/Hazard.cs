@@ -53,7 +53,7 @@ public class Hazard : BoardObject
         void DestroyHazard(Hazard enemy)
         {                    
             DestroyImmediate(enemy.gameObject);
-            _Dax.AddPoints(5);
+            Dax.AddPoints(5);
         }
 
         if (player.ActiveShield != null)

@@ -8,26 +8,25 @@ using UnityEngine;
 /// </summary>
 public class Dax : MonoBehaviour
 {   
+    public static float MAX_SPIN_SPEED = 20f; // Maximum speed the player can spin a ring
+    public static float MAX_SPEED = 1f; // Maximum speed a board object or the player can go
+    public static int MAX_NUM_RINGS = 4; // Maximum number of rings the game can have
+     
     // The victory conditions (or game type).
     // COLLECTION: Player needs to run over the facets to collect them.  When they have them all you win.
     // COLOR_MATCH: Player must run over the facet to start carrying it. Then
     //              run into a bumper at the edge of the ring of the corresponding color
     public enum eVictoryConditions { COLLECTION, COLOR_MATCH };
 
-    public enum eGameState { PRE_GAME, RUNNING, GAME_OVER }; // Various states the game can me in
-    public eGameState GameState;    
-    
-    public static float MAX_SPIN_SPEED = 20f; // Maximum speed the player can spin a ring
-    public static float MAX_SPEED = 1f; // Maximum speed a board object or the player can go
+    public Player _Player;  // Ref to the player game object
 
-    public static int MAX_NUM_RINGS = 4; // Maximum number of rings the game can have
-
-    public string PuzzleName = "Default Puzzle"; //Name of the puzzle    
-           
+     // Various states the game can be in
+    public enum eGameState { PRE_GAME, RUNNING, GAME_OVER };
+    public eGameState GameState;  
+                   
     public Wheel Wheel; // Ref to the wheel in the game
-    public Ring CurTouchedRing = null; // The ring the user is currently touching
-        
-    // Ring Controls // monote - add headers
+    
+    public Ring CurTouchedRing = null; // The ring the user is currently touching            
     LayerMask RingMask; // Layer mask for rings
     Vector2 RingCenterPoint = Vector3.zero; // Center for the currently selected ring
     Vector2 MousePosition;  // Position of the mouse
@@ -37,18 +36,14 @@ public class Dax : MonoBehaviour
     bool PointModActive; // Whether or not a gameplay modifier is active
     float PointModTimer; // Timer for the current gameplay modifier
     int PointModVal;     // Value of the current gameplay modifier
-
-    public Player _Player;  // Ref to the player game object
-
-    public UIRoot _UIRoot;  // Ref to the root UI
-
-    [Header("Game Data")]
+            
     public float LevelTime = 120f;  // Amount of time for the current level
     public int Score = 0;       // Player score
-
-    [Header("Save Data")]
+    
     public PuzzleSaveData _PuzzleSaveData = null;   // Save data for the current puzzle  
         
+    public UIRoot _UIRoot;  // Ref to the root UI
+    public string PuzzleName {get; set;} = "Default Puzzle"; //Name of the puzzle    
 
     /// <summary>
     /// Sets all of the basic gameplay info on startup

@@ -8,25 +8,22 @@ using System.Linq;
 /// </summary>
 public class BoardObject : MonoBehaviour
 {    
+    // Strings used in the DaxEditor to show in the Inspector window
+    public static List<string> BOARD_OBJECT_EDITOR_NAMES {get; set;} = 
+                                new List<string> {"Player", "Facet", "Hazard", "Facet Collect", 
+                                                    "Shield", "Speed Mod", "Point Mod"};  
+
     // All the types of BoardObjects that we can have
     public enum eBoardObjectType { PLAYER, FACET, HAZARD, FACET_COLLECT, SHIELD, SPEED_MOD, POINT_MOD }; 
     public eBoardObjectType BoardObjectType;
-
-    // Strings used in the DaxEditor to show in the Inspector window
-    public static List<string> BOARD_OBJECT_EDITOR_NAMES = new List<string> {"Player", "Facet", "Hazard", "Facet Collect", 
-                                                                                "Shield", "Speed Mod", "Point Mod"};  
-
+    
     // Movement info.  
     public enum eStartDir {OUTWARD, INWARD}; 
     public eStartDir StartDir = eStartDir.OUTWARD;
     public float Speed = 0f;    
 
-    // Shared      
-    [HideInInspector]
-    public Dax _Dax;   // Root Dax game object ref               
-    public Channel CurChannel = null;   // Current channel that the board object is in
-           
-    [Header("Starting State Stuff")]
+    public Dax Dax;   // Root Dax game object ref               
+    public Channel CurChannel = null;   // Current channel that the board object is in               
     public ChannelNode SpawningNode = null;    // The node you spawn on 
 
     /// <summary>
@@ -36,7 +33,7 @@ public class BoardObject : MonoBehaviour
     /// <param name="dax">Root game reference</param>
     public virtual void InitForChannelNode(ChannelNode spawnNode, Dax dax)
     {                
-        _Dax = dax;              
+        Dax = dax;              
         if (spawnNode != null)
         {
             SpawningNode = spawnNode;
@@ -47,6 +44,13 @@ public class BoardObject : MonoBehaviour
             transform.LookAt(CurChannel.EndNode.transform);
         }        
     }       
+
+    /// <summary>
+    /// Overridable function for handling collisions with the player.
+    /// </summary>
+    /// <param name="player">Player object</param>
+    /// <param name="boardObject">Object collided with</param>
+    public virtual void HandleCollisionWithPlayer(Player player, BoardObject boardObject) {}   
          
     /// <summary>
     /// Checks for the transition from one channel to another for any moving game objects
@@ -119,16 +123,7 @@ public class BoardObject : MonoBehaviour
     /// </summary>
     /// <param name="bumperColliders">Bumper colliders we're overlapping with</param>
     private void CheckBumpers(List<Collider> bumperColliders)
-    {        
-        // Quick error checking
-        for(int i=0; i<bumperColliders.Count; i++)
-        {
-            if(bumperColliders[i] == null)
-            {
-                Debug.LogError("Null bumper collider");
-                return;
-            }
-        }
+    {                
         // Remove all colliders that aren't bumpers
         bumperColliders.RemoveAll(x => x.GetComponent<Bumper>() == null);
         if (bumperColliders.Count > 0)
@@ -151,7 +146,7 @@ public class BoardObject : MonoBehaviour
                         {   // Player is carrying a facet that's the same color as the bumper so update game state                           
                             FindObjectOfType<Dax>().Wheel.MatchedFacetColor(playerCarriedColorFacet);                            
                             DestroyImmediate(playerCarriedColorFacet.gameObject);
-                            if(_Dax.Wheel.VictoryCondition == Dax.eVictoryConditions.COLOR_MATCH) _Dax.Wheel.CheckVictoryConditions();
+                            if(Dax.Wheel.VictoryCondition == Dax.eVictoryConditions.COLOR_MATCH) Dax.Wheel.CheckVictoryConditions();
                         }
                         break;
                 }
@@ -159,14 +154,7 @@ public class BoardObject : MonoBehaviour
             // Every object bounces back to the other direction
             transform.forward = -transform.forward;             
         }
-    }
-
-    /// <summary>
-    /// Overridable function for handling collisions with the player.
-    /// </summary>
-    /// <param name="player">Player object</param>
-    /// <param name="boardObject">Object collided with</param>
-    public virtual void HandleCollisionWithPlayer(Player player, BoardObject boardObject) {}        
+    }         
     
     /// <summary>
     /// Function for the Player checking against other board objects on the game

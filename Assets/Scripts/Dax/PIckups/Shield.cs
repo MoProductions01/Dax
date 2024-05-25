@@ -11,7 +11,7 @@ public class Shield : BoardObject
     // HIT - allows you to survive a hazard collision but goes away afterwards
     // SINGLE_KILL - kills the hazard you collide with but goes away afterwards
     public enum eShieldTypes { HIT, SINGLE_KILL};         
-    public eShieldTypes ShieldType;    
+    public eShieldTypes ShieldType;       
 
     /// <summary>
     /// Overridden function for initting the Shield object
@@ -35,7 +35,7 @@ public class Shield : BoardObject
         // Add the shield to the player's shield collection if you're not full           
         if( player.AddShield(shield) == true )
         {                        
-            _Dax.AddPoints(5); // Give player some points
+            Dax.AddPoints(5); // Give player some points
         }
     }
 }

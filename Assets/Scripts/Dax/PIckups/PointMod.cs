@@ -39,11 +39,11 @@ public class PointMod : BoardObject
         {
             case PointMod.ePointModType.EXTRA_POINTS:
                 // Give player specified points
-                _Dax.AddPoints(pointMod.PointModVal);
+                Dax.AddPoints(pointMod.PointModVal);
                 break;
             case PointMod.ePointModType.POINTS_MULTIPLIER:
                 // Start a point multiplier for the specified time
-                _Dax.BeginPointMod(pointMod.PointModTime, pointMod.PointModVal);
+                Dax.BeginPointMod(pointMod.PointModTime, pointMod.PointModVal);
                 break;
         }                    
         // Destroy game object right away

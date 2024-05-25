@@ -24,8 +24,7 @@ public class DaxPuzzleSetup : MonoBehaviour
     public List<Color> DiodeGizmoColors = new List<Color>(new Color[] { Color.red, Color.blue, Color.green, Color.yellow, Color.magenta, Color.cyan, Color.black, Color.white,
                                                                         Color.red, Color.blue, Color.green, Color.yellow, Color.magenta, Color.cyan, Color.black, Color.white});
     void Reset()
-    {        
-        Debug.Log("DaxSetup.Reset()");
+    {                
         for (int i = 0; i < DiodesToShow.Length; i++) DiodesToShow[i] = true;
     }
 

@@ -14,5 +14,5 @@ public class Bumper : MonoBehaviour
     public enum eBumperType { REGULAR, COLOR_MATCH, DEATH };
     public eBumperType BumperType = eBumperType.REGULAR;
     
-    public Facet.eFacetColors BumperColor; // Color of the bumper
+    public Facet.eFacetColors BumperColor;// Color of the bumper
 }
