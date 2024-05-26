@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 
@@ -15,7 +15,7 @@ using UnityEngine.TextCore.Text;
 public class MCP : MonoBehaviour
 {
     public Dax _Dax;    
-    public UIRoot _UIRoot;
+    public UIRoot _UIRoot; 
 
     /// <summary>
     /// List of the root strings for board object prefabs.  Combined with the
@@ -56,13 +56,15 @@ public class MCP : MonoBehaviour
     /// Serializes the puzzle data and saves it to a binary file
     /// </summary>
     public void SavePuzzle() 
-    {
+    {                
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file;
-        string fileName = Application.dataPath + "/Resources/Puzzles/" + _Dax.PuzzleName;
+        string fileName = Application.dataPath + "/Resources/Puzzles/" + _Dax.PuzzleName + ".Dax";
         if (File.Exists(fileName))
         {
-            Debug.LogWarning("WARNING: replacing puzzle without warning for now: " + _Dax.PuzzleName);
+            bool saveResponse = EditorUtility.DisplayDialog("Warning", 
+                                "This will overrite an existing save file. OK?", "Yes", "No");            
+            if(saveResponse == false) return;            
             file = File.Open(fileName, FileMode.Open);
         }
         else
@@ -166,6 +168,7 @@ public class MCP : MonoBehaviour
         GameObject decGO = new GameObject("Dax Puzzle Setup");
         ResetTransform(decGO.transform);                
         DaxPuzzleSetup daxSetup = decGO.AddComponent<DaxPuzzleSetup>();
+        
 
         // Dax is the main overall gameplay class.  Pretty much manages everything
         mcp._Dax = new GameObject("Dax").AddComponent<Dax>();        
