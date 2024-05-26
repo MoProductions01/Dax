@@ -78,7 +78,8 @@ public class BoardObject : MonoBehaviour
                 CurChannel = channelNode.MyChannel;                
                 this.transform.parent = CurChannel.MyRing.transform;                
                 this.transform.position = channelNode.transform.position;
-                transform.LookAt(channelNode.IsStartNode() ? channelNode.MyChannel.EndNode.transform : channelNode.MyChannel.StartNode.transform);      
+                //transform.LookAt(channelNode.IsStartNode() ? channelNode.MyChannel.EndNode.transform : channelNode.MyChannel.StartNode.transform);   // modelete node   
+                transform.LookAt(channelNode.MyChannel.StartNode ? channelNode.MyChannel.EndNode.transform : channelNode.MyChannel.StartNode.transform);      
             } 
             else
             {

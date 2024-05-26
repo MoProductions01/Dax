@@ -10,8 +10,8 @@ using System.Linq;
 /// </summary>
 public class ChannelNode : MonoBehaviour
 {        
-    public Channel MyChannel = null; // The Channel that this node lives on
-    public BoardObject SpawnedBoardObject = null; // The BoardObject that is spawned on this node (only applies to Middle)
+    [field: SerializeField] public Channel MyChannel {get; set;} // The Channel that this node lives on
+    [field: SerializeField] public BoardObject SpawnedBoardObject {get; set;} // The BoardObject that is spawned on this node (only applies to Middle)
     
     /// <summary>
     /// Called from the Wheel creation code to assign it's Channel
@@ -20,25 +20,7 @@ public class ChannelNode : MonoBehaviour
     public void InitFromCreation(Channel myChannel)
     {
         MyChannel = myChannel;        
-    }   
-    
-    /// <summary>
-    /// Helper function to find out if it's the StartNode or not
-    /// </summary>
-    /// <returns></returns>
-    public bool IsStartNode()
-    {
-        return MyChannel.StartNode == this;
-    }
-
-    /// <summary>
-    /// Helper function to find out if this node is the MiddleNode (BoardObjects can only be on MiddleNode)
-    /// </summary>
-    /// <returns></returns>
-    public bool IsMidNode()
-    {
-        return MyChannel.MidNode == this;
-    }
+    }           
         
     /// <summary>
     /// Figures out whether and Enemy or the Player can be on this path
@@ -46,8 +28,10 @@ public class ChannelNode : MonoBehaviour
     /// <returns></returns>
     public bool CanBeOnPath()
     {
-        bool innerChannelOn = MyChannel.InnerChannel.IsActive();
-        bool outerChannelOn = MyChannel.OuterChannel.IsActive();
+        // bool innerChannelOn = MyChannel.InnerChannel.IsActive();
+        // bool outerChannelOn = MyChannel.OuterChannel.IsActive(); modelete get
+        bool innerChannelOn = MyChannel.InnerChannel.Active;
+        bool outerChannelOn = MyChannel.OuterChannel.Active;
         if (MyChannel.StartNode == this && innerChannelOn == false)
         {   // We're the StartNode and the inner channel is off so it's free
             return true;
@@ -84,3 +68,22 @@ public class ChannelNode : MonoBehaviour
         }
     }
 }
+
+/// <summary>
+    /// Helper function to find out if it's the StartNode or not
+    /// </summary>
+    /// <returns></returns>
+    /*public bool IsStartNode() modelete node
+    {
+        Debug.Log("IsStartNode()");
+        return MyChannel.StartNode == this;
+    }*/
+
+    /// <summary>
+    /// Helper function to find out if this node is the MiddleNode (BoardObjects can only be on MiddleNode)
+    /// </summary>
+    /// <returns></returns>
+    /*public bool IsMidNode() modelete node
+    {
+        return MyChannel.MidNode == this;
+    }*/

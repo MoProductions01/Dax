@@ -82,12 +82,17 @@ public class DaxEditor : Editor
     {
         if (Selection.activeGameObject == null) return;
         // Since adding/removing Channel Pieces is so common we hooked it up to the 'B' key.
-        if (Selection.activeGameObject.GetComponent<ChannelPiece>() != null)
+        ChannelPiece selectedChannelPiece = Selection.activeGameObject.GetComponent<ChannelPiece>();
+        // if (Selection.activeGameObject.GetComponent<ChannelPiece>() != null) modelete toggle
+        if(selectedChannelPiece != null)
         {           
             Event e = Event.current;
             if(e.type == EventType.KeyDown && e.keyCode == KeyCode.B)
             {
-                Selection.activeGameObject.GetComponent<ChannelPiece>().Toggle();
+                selectedChannelPiece.Active = !selectedChannelPiece.Active;
+                //ChannelPiece channelPiece = Selection.activeGameObject.GetComponent<ChannelPiece>();
+                //channelPiece.Active = !channelPiece.Active;
+                //Selection.activeGameObject.GetComponent<ChannelPiece>().Toggle(); modelete toggle              
                 e.Use();
             }
         }            
@@ -330,10 +335,14 @@ public class DaxEditor : Editor
         StartNewSelection(SelectedGameObject.name, "Channel Piece");                
         ChannelPiece selChannelPiece = SelectedGameObject.GetComponent<ChannelPiece>();               
         // Set up the button text
-        string s = selChannelPiece.IsActive() == true ? "Turn Off" : "Turn On";
+        // string s = selChannelPiece.IsActive() == true ? "Turn Off" : "Turn On"; modelete get
+        string s = selChannelPiece.Active == true ? "Turn Off" : "Turn On";
         if (GUILayout.Button(s, GUILayout.Width(150f)))
         {   // User clicked the button so toggle the ChannelPiece
-            SelectedGameObject.GetComponent<ChannelPiece>().Toggle();
+            selChannelPiece.Active = !selChannelPiece.Active;
+            //ChannelPiece channelPiece = SelectedGameObject.GetComponent<ChannelPiece>();
+            //channelPiece.Active = !channelPiece.Active;
+            // SelectedGameObject.GetComponent<ChannelPiece>().Toggle(); modelete toggle
         }
         EditorGUILayout.EndVertical();
     }
@@ -349,7 +358,8 @@ public class DaxEditor : Editor
         
         // For creating BoardObjects make sure it's a middle node since those are the
         // only ones that can have anything spawned on it.
-        if (SelectedChannelNode.IsMidNode() == true)
+        //if (SelectedChannelNode.IsMidNode() == true) modelete node
+        if (SelectedChannelNode.MyChannel.MidNode == true)
         {
             // Nodes can only have one BoardObject on them
             if(SelectedChannelNode.SpawnedBoardObject == null)

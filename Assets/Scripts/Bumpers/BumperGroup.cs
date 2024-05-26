@@ -7,5 +7,6 @@ using UnityEngine;
 /// </summary>
 public class BumperGroup : MonoBehaviour
 {
-    public List<Bumper> Bumpers = new List<Bumper>();
+    // The Bumpers in this group
+    [field: SerializeField] public List<Bumper> Bumpers {get; set;} = new List<Bumper>();
 }

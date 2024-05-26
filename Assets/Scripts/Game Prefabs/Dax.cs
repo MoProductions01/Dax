@@ -265,8 +265,10 @@ public class Dax : MonoBehaviour
             {
                 ChannelSave channelSave = ringSave.ChannelSaves[j];
                 Channel channel = ringChannels[j];                
-                channel.InnerChannel.SetActive(channelSave.InnerActive);
-                channel.OuterChannel.SetActive(channelSave.OuterActive);                
+                // channel.InnerChannel.SetActive(channelSave.InnerActive); modelete set
+                // channel.OuterChannel.SetActive(channelSave.OuterActive);         
+                channel.InnerChannel.Active = channelSave.InnerActive; 
+                channel.OuterChannel.Active = channelSave.OuterActive;       
                 // Board objects can only be on the middle nodes, so check for that and the board object itself
                 if (channelSave.MidNodeBO != null && channelSave.MidNodeBO.StartChannel != "") 
                 {

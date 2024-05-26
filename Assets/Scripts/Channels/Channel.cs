@@ -8,15 +8,15 @@ using UnityEngine;
 /// </summary>
 public class Channel : MonoBehaviour
 {
-    public Ring MyRing; // The Ring this Channel is on
+    [field: SerializeField] public Ring MyRing {get; set;} // The Ring this Channel is on
 
     // Each Channel has two pieces that can be turned on or off creating paths
-    public ChannelPiece InnerChannel;
-    public ChannelPiece OuterChannel;
+    [field: SerializeField] public ChannelPiece InnerChannel {get; set;}
+    [field: SerializeField] public ChannelPiece OuterChannel;
 
     // Each Channel has 3 nodes.  BoardObjects can only be on the center node.
     // The Start and End nodes are for jumping between channels
-    public ChannelNode StartNode;
-    public ChannelNode MidNode;
-    public ChannelNode EndNode;    
+    [field: SerializeField] public ChannelNode StartNode {get; set;}
+    [field: SerializeField] public ChannelNode MidNode;
+    [field: SerializeField] public ChannelNode EndNode;    
 }

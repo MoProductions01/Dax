@@ -97,11 +97,12 @@ public class MCP : MonoBehaviour
     /// </summary>
     /// <param name="ring">The ring to reset all the channel pieces for</param>
     void ResetRingChannels(Ring ring)
-    {        
+    {                
         List<ChannelPiece> channelPieces = ring.GetComponentsInChildren<ChannelPiece>().ToList();
         foreach (ChannelPiece channelPiece in channelPieces)
         {
-            channelPiece.SetActive(true);
+            //channelPiece.SetActive(true); modelete set
+            channelPiece.Active = true;
         }
     }
 
