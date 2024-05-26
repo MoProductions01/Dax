@@ -93,17 +93,18 @@ public class DaxEditor : Editor
         }            
     }
 
-    /* This is to make sure the RadientDebug object is always hidden.  It's hacky but it's editor code so I'm ok with it */
-    void HandleSceneView()
-    {
-        return; // monote - might not need this
-        /*RadientDebug rrd = FindObjectOfType<RadientDebug>();
+    /// <summary>
+    /// This is to make sure the RadientDebug object is always hidden.  It's a bit hacky but it's the only thing that works
+    /// </summary>
+    /*void HandleSceneView()
+    {        
+        RadientDebug rrd = FindObjectOfType<RadientDebug>();
         if (rrd != null)
         {
             SceneVisibilityManager sv = SceneVisibilityManager.instance;
             if (sv.IsHidden(rrd.gameObject) == false) sv.Hide(rrd.gameObject, true);
-        }*/
-    }        
+        }
+    } */       
 
     /// <summary>
     /// Handles the number of rings and ring selection
@@ -438,17 +439,8 @@ public class DaxEditor : Editor
     /// </summary>
     public override void OnInspectorGUI()
     {
-        if(Application.isPlaying) return;
-        
-        HandleSceneView(); // make sure the Radient Debug object is not visible        
-                
-        #if false
-        MCP _MCP;   // The Master Control Program object from the main game
-        DaxPuzzleSetup _DaxPuzzleSetup; // The MonoBehavior that this editor script extends
-        SerializedObject DaxSetupSO;    // The SerializedObject for the DaxPuzzleSetup object
-        Dax _Dax;   // The Dax object from the main game
-        SerializedObject DaxSO; // The SerializedObject for the _Dax object
-        #endif                
+        if(Application.isPlaying) return;        
+        //HandleSceneView(); // make sure the Radient Debug object is not visible NOTE: only needed if we're using the RadientDebug stuff         
     
         // Gather the main GameObjects and SerializedObjects used for everything
         _MCP = GameObject.FindObjectOfType<MCP>();

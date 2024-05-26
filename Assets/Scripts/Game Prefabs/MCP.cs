@@ -229,7 +229,7 @@ public class MCP : MonoBehaviour
         GameObject ringGameObject = null;
         GameObject bumperGroup = null;
         GameObject nodesContainer = null;
-        GameObject locatorsPrefab = Resources.Load<GameObject>("Dax/Board_Parts/DAX_Locators"); // monote - this is in the Nodes prefab
+        GameObject locatorsPrefab = Resources.Load<GameObject>("Dax/Board_Parts/DAX_Locators");
         GameObject locators = GameObject.Instantiate<GameObject>(locatorsPrefab);
         GameObject nodesPrefab = Resources.Load<GameObject>("Dax/Board_Parts/Nodes");
         GameObject nodes = GameObject.Instantiate<GameObject>(nodesPrefab);
@@ -629,8 +629,7 @@ public class MCP : MonoBehaviour
     /// <param name="boSave">Save info for the board object</param>
     /// <param name="dax">Root gameplay object</param>
     public void CreateBoardObjectFromSaveData(ChannelNode channelNode, Dax.BoardObjectSave boSave, Dax dax)
-    {
-        //Debug.Log("Dax.CreateBoardObjectForNode(): " + channelNode.name + ", of type: " + boSave.Type); // moupdate *!!! this is being called 100 times for the player        
+    {              
         // Create the board object based on the type in the save data
         switch (boSave.Type)
         {                        

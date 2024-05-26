@@ -18,7 +18,7 @@ public class Wheel : MonoBehaviour
     public int NumActiveRings = 4;
     public bool CenterRingLock = false;    
 
-    public Dax DaxRef; // monote - figure out the naming conventions
+    public Dax DaxRef;
 
     [Header("Wheel Conditions/State")]
     public Dax.eVictoryConditions VictoryCondition = Dax.eVictoryConditions.COLLECTION;    
