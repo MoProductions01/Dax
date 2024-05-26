@@ -33,21 +33,29 @@ public class DaxEditor : Editor
     /* These are helper functions to take care of the multiple serialized property updates */
     void UpdateStringProperty(SerializedObject so, string propName, string stringValue)
     {
+        if(so.FindProperty(propName) == null) return;
+
         so.FindProperty(propName).stringValue = stringValue;
         so.ApplyModifiedProperties();        
     }
     void UpdateFloatProperty(SerializedObject so, string propName, float floatValue)
     {
+        if(so.FindProperty(propName) == null) return;
+
         so.FindProperty(propName).floatValue = floatValue;
         so.ApplyModifiedProperties();
     }
     void UpdateIntProperty(SerializedObject so, string propName, int intValue)
     {
+        if(so.FindProperty(propName) == null) return;
+
         so.FindProperty(propName).intValue = intValue;
         so.ApplyModifiedProperties();
     }
     void UpdateEnumProperty(SerializedObject so, string propName, int enumValue)
-    {        
+    {   
+        if(so.FindProperty(propName) == null) return;
+             
         so.FindProperty(propName).enumValueIndex = enumValue;
         so.ApplyModifiedProperties();        
     }

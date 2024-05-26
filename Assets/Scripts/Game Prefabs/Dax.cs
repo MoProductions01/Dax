@@ -10,7 +10,7 @@ public class Dax : MonoBehaviour
 {   
     public static float MAX_SPIN_SPEED = 20f; // Maximum speed the player can spin a ring
     public static float MAX_SPEED = 1f; // Maximum speed a board object or the player can go
-    public static int MAX_NUM_RINGS = 4; // Maximum number of rings the game can have
+    public static int MAX_NUM_RINGS = 1; // Maximum number of rings the game can have // monote - change back to 4
      
     // The victory conditions (or game type).
     // COLLECTION: Player needs to run over the facets to collect them.  When they have them all you win.
@@ -43,7 +43,7 @@ public class Dax : MonoBehaviour
     public PuzzleSaveData _PuzzleSaveData = null;   // Save data for the current puzzle  
         
     public UIRoot _UIRoot;  // Ref to the root UI
-    public string PuzzleName {get; set;} = "Default Puzzle"; //Name of the puzzle    
+    [field: SerializeField] public string PuzzleName {get; set;} = "Default Puzzle"; //Name of the puzzle    
 
     /// <summary>
     /// Sets all of the basic gameplay info on startup

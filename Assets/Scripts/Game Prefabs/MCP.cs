@@ -177,7 +177,7 @@ public class MCP : MonoBehaviour
 
         // Set up the camera propertly
         Camera mainCamera = Camera.main;
-        mainCamera.transform.position = new Vector3(0f, DaxPuzzleSetup.CAMERA_Y_VALUES[3], 0f);
+        mainCamera.transform.position = new Vector3(0f, DaxPuzzleSetup.CAMERA_Y_VALUES[Dax.MAX_NUM_RINGS-1], 0f);
         mainCamera.transform.eulerAngles = new Vector3(90f, 0f, 0f);        
         mainCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("UI"));
 

@@ -12,7 +12,7 @@ public class Bumper : MonoBehaviour
     // COLOR_MATCH - for the COLOR_MATCH victory condition.  If it matches the facet color the player is carrying it get consumed
     // DEATH - kills player
     public enum eBumperType { REGULAR, COLOR_MATCH, DEATH };
-    public eBumperType BumperType = eBumperType.REGULAR;
+    [field: SerializeField] public eBumperType BumperType {get; set;} // Type of this bumper
     
-    public Facet.eFacetColors BumperColor;// Color of the bumper
+    [field: SerializeField] public Facet.eFacetColors BumperColor;// Color of the bumper
 }

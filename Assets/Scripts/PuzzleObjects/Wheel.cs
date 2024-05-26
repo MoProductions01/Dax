@@ -102,7 +102,7 @@ public class Wheel : MonoBehaviour
         if (numRings < 1 || numRings > 4) { Debug.LogError("ERROR: invalid number of rings: " + numRings); return; }
 
         NumActiveRings = numRings;
-        for (int i = 1; i <= 4; i++)
+        for (int i = 1; i <= Dax.MAX_NUM_RINGS; i++)
         {   // Toggle the ring on/off based on whether it's below the number of rings on the wheel
             Rings[i].Toggle(i <= numRings ? true : false, i == numRings);
         }

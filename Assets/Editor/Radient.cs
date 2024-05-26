@@ -34,7 +34,7 @@ public class Radient
         // Opens up the window for the user to select a puzzle
         string folder = Application.dataPath + "/Resources/Puzzles/";
         string puzzlePath = EditorUtility.OpenFilePanel("Load Dax Puzzle", folder, "");
-        if (File.Exists(puzzlePath) == false) { Debug.LogError("Trying to load current profile: " + puzzlePath + " but it doesn't exist."); return; }
+        if (File.Exists(puzzlePath) == false) { Debug.LogError("Trying to load current puzzle: " + puzzlePath + " but it doesn't exist."); return; }
 
         MCP.CreateNewPuzzle(); // Trash the old puzzle and re-creates a new one
         GameObject.FindObjectOfType<MCP>().LoadPuzzle(puzzlePath);                  

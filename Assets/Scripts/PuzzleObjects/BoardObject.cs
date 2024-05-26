@@ -9,7 +9,7 @@ using System.Linq;
 public class BoardObject : MonoBehaviour
 {    
     // Strings used in the DaxEditor to show in the Inspector window
-    public static List<string> BOARD_OBJECT_EDITOR_NAMES {get; set;} = 
+    public static List<string> BOARD_OBJECT_EDITOR_NAMES = 
                                 new List<string> {"Player", "Facet", "Hazard", "Facet Collect", 
                                                     "Shield", "Speed Mod", "Point Mod"};  
 

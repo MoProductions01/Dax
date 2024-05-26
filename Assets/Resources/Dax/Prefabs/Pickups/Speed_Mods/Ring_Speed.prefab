@@ -69,12 +69,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BoardObjectType: 5
   StartDir: 0
-  _Dax: {fileID: 0}
-  CurChannel: {fileID: 0}
   Speed: 0
+  Dax: {fileID: 0}
+  CurChannel: {fileID: 0}
   SpawningNode: {fileID: 0}
   SpeedModType: 2
-  SpeedModVal: 0
+  SpeedModVal: 0.5
 --- !u!1 &8891069932850023349
 GameObject:
   m_ObjectHideFlags: 0
