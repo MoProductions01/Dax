@@ -21,6 +21,9 @@ public class Wheel : MonoBehaviour
     public Dax DaxRef;
 
     [Header("Wheel Conditions/State")]
+    // For a while we had multiple wheels each with their own victory conditions.  Now
+    // we're just using one wheel but too much code was written to move things around
+    // so I'm keeping it for now since it ain't broke
     public Dax.eVictoryConditions VictoryCondition = Dax.eVictoryConditions.COLLECTION;    
     public bool VictoryConditionsMet = false;
     public List<int> NumFacetsOnBoard = new List<int>();
@@ -60,7 +63,7 @@ public class Wheel : MonoBehaviour
     {        
         NumFacetsCollected[(int)colorFacetCarried._Color]++;
         DaxRef.AddPoints(5);
-        DaxRef._Player.CarriedFacet = null;
+        DaxRef.Player.CarriedFacet = null;
         DaxRef._UIRoot.SetFacetColorText(colorFacetCarried._Color, NumFacetsCollected[(int)colorFacetCarried._Color]);       
     }
 

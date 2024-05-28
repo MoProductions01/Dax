@@ -12,11 +12,11 @@ public class Channel : MonoBehaviour
 
     // Each Channel has two pieces that can be turned on or off creating paths
     [field: SerializeField] public ChannelPiece InnerChannel {get; set;}
-    [field: SerializeField] public ChannelPiece OuterChannel;
+    [field: SerializeField] public ChannelPiece OuterChannel {get; set;}
 
     // Each Channel has 3 nodes.  BoardObjects can only be on the center node.
     // The Start and End nodes are for jumping between channels
     [field: SerializeField] public ChannelNode StartNode {get; set;}
-    [field: SerializeField] public ChannelNode MidNode;
-    [field: SerializeField] public ChannelNode EndNode;    
+    [field: SerializeField] public ChannelNode MidNode {get; set;}
+    [field: SerializeField] public ChannelNode EndNode {get; set;}    
 }

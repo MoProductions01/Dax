@@ -15,32 +15,36 @@ public class Dax : MonoBehaviour
     // The victory conditions (or game type).
     // COLLECTION: Player needs to run over the facets to collect them.  When they have them all you win.
     // COLOR_MATCH: Player must run over the facet to start carrying it. Then
-    //              run into a bumper at the edge of the ring of the corresponding color
+    //              run into a bumper at the edge of the ring of the corresponding color to collect it.
     public enum eVictoryConditions { COLLECTION, COLOR_MATCH };
-
-    public Player _Player;  // Ref to the player game object
+    // NOTE: The game originally was multi wheel and each wheel had it's own victory condition, so the
+    // eVictoryCondition is part of the wheel.  It's single wheel for now for demo purposes but for future
+    // proofing I'm keeping the victory conditions on the wheel in case I ever go back to multi-wheel
+    //[field: SerializeField] public eVictoryConditions VictoryCondition {get; set;} see comment above
+    
+    [field: SerializeField] public Player Player {get; set;} // Ref to the player game object
 
      // Various states the game can be in
     public enum eGameState { PRE_GAME, RUNNING, GAME_OVER };
-    public eGameState GameState;  
+    public eGameState GameState {get; set;} // Current game state
                    
-    public Wheel Wheel; // Ref to the wheel in the game
+    [field: SerializeField] public Wheel Wheel {get; set;} // Ref to the wheel in the game
     
-    public Ring CurTouchedRing = null; // The ring the user is currently touching            
-    LayerMask RingMask; // Layer mask for rings
-    Vector2 RingCenterPoint = Vector3.zero; // Center for the currently selected ring
-    Vector2 MousePosition;  // Position of the mouse
-    float RingRot = 0f;      // Rotation of the ring
-    float PointerPrevAngle; // Angle between the center point and the mouse pointer
+    private Ring CurTouchedRing;  // The ring the user is currently touching            
+    private LayerMask RingMask; // Layer mask for rings
+    private Vector2 RingCenterPoint = Vector3.zero; // Center for the currently selected ring
+    private Vector2 MousePosition;  // Position of the mouse
+    private float RingRot = 0f;      // Rotation of the ring
+    private float PointerPrevAngle; // Angle between the center point and the mouse pointer
     
-    bool PointModActive; // Whether or not a gameplay modifier is active
-    float PointModTimer; // Timer for the current gameplay modifier
-    int PointModVal;     // Value of the current gameplay modifier
+    private bool PointModActive; // Whether or not a gameplay modifier is active
+    private float PointModTimer; // Timer for the current gameplay modifier // moui
+    private int PointModVal;     // Value of the current gameplay modifier
             
-    public float LevelTime = 120f;  // Amount of time for the current level
-    public int Score = 0;       // Player score
+    public float LevelTime {get; set;} = 120f;  // Amount of time for the current level
+    public int Score {get; set;} = 0;       // Player score // moui
     
-    public PuzzleSaveData _PuzzleSaveData = null;   // Save data for the current puzzle  
+    public PuzzleSaveData _PuzzleSaveData;   // Save data for the current puzzle  
         
     public UIRoot _UIRoot;  // Ref to the root UI
     [field: SerializeField] public string PuzzleName {get; set;} = "Default Puzzle"; //Name of the puzzle    
@@ -154,7 +158,7 @@ public class Dax : MonoBehaviour
         if (GameState != eGameState.RUNNING) return;  
                 
         // Update the player 
-        _Player.BoardObjectFixedUpdate(Time.deltaTime);
+        Player.BoardObjectFixedUpdate(Time.deltaTime);
         
         // Hazards (such as enemies) are the only non player board objects that move
         List<Hazard> hazards = transform.GetComponentsInChildren<Hazard>().ToList(); 
@@ -306,7 +310,7 @@ public class Dax : MonoBehaviour
             }
         }
          
-        _Player.ResetPlayer(_PuzzleSaveData.PlayerSave); //reset player                   
+        Player.ResetPlayer(_PuzzleSaveData.PlayerSave); //reset player                   
         Wheel.ResetFacetsCount();    // Init all of the facets on the current wheel                
         GameState = eGameState.RUNNING; // start the game running
 

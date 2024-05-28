@@ -86,7 +86,7 @@ public class MCP : MonoBehaviour
         for (int i = 0; i < boardObjects.Length; i++)
         {            
             BoardObject boardObject = boardObjects[i];
-            if (boardObject == _Dax._Player) continue;
+            if (boardObject == _Dax.Player) continue;
             boardObject.SpawningNode.SpawnedBoardObject = null;
             DestroyImmediate(boardObject.gameObject);
         }
@@ -193,8 +193,8 @@ public class MCP : MonoBehaviour
         Player playerPrefab = Resources.Load<Player>("Dax/Prefabs/Player_Diode");
         Player player = UnityEngine.Object.Instantiate<Player>(playerPrefab, mcp._Dax.transform);        
         player.name = "Player Diode";        
-        mcp._Dax._Player = player;
-        mcp._Dax._Player.Dax = mcp._Dax;
+        mcp._Dax.Player = player;
+        mcp._Dax.Player.Dax = mcp._Dax;
         player.SetStartChannel(0);        
         player.InitForChannelNode(null, mcp._Dax);
         player.ResetPlayer();        
