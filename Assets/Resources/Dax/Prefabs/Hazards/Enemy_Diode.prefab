@@ -69,12 +69,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <BoardObjectType>k__BackingField: 2
   StartDir: 0
-  <Speed>k__BackingField: 0
+  <Speed>k__BackingField: 1
   <Dax>k__BackingField: {fileID: 0}
   <CurChannel>k__BackingField: {fileID: 0}
   <SpawningNode>k__BackingField: {fileID: 0}
-  HazardType: 0
   EffectTime: 2
+  <HazardType>k__BackingField: 0
 --- !u!1 &3441357206364930064
 GameObject:
   m_ObjectHideFlags: 0

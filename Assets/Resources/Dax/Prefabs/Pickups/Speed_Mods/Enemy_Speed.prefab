@@ -179,5 +179,5 @@ MonoBehaviour:
   <Dax>k__BackingField: {fileID: 0}
   <CurChannel>k__BackingField: {fileID: 0}
   <SpawningNode>k__BackingField: {fileID: 0}
-  SpeedModType: 1
   SpeedModVal: 0.5
+  <SpeedModType>k__BackingField: 1

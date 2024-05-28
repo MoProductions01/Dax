@@ -14,20 +14,17 @@ public class Wheel : MonoBehaviour
     public static int NUM_CENTER_RING_CHANNELS = 12;
         
     // Ring data
-    public List<Ring> Rings = new List<Ring>();
-    public int NumActiveRings = Dax.MAX_NUM_RINGS;
-    public bool CenterRingLock = false;    
+    [field: SerializeField] public List<Ring> Rings {get; set;} = new List<Ring>();
+    [field: SerializeField] public int NumActiveRings {get; set;} = Dax.MAX_NUM_RINGS;       
 
-    public Dax DaxRef;
-
-    [Header("Wheel Conditions/State")]
+    [field: SerializeField] public Dax Dax {get; set;} // Referernce to the root game object
+    
     // For a while we had multiple wheels each with their own victory conditions.  Now
     // we're just using one wheel but too much code was written to move things around
     // so I'm keeping it for now since it ain't broke
-    public Dax.eVictoryConditions VictoryCondition = Dax.eVictoryConditions.COLLECTION;    
-    public bool VictoryConditionsMet = false;
-    public List<int> NumFacetsOnBoard = new List<int>();
-    public List<int> NumFacetsCollected = new List<int>();
+    [field: SerializeField] public Dax.eVictoryConditions VictoryCondition {get; set;} = Dax.eVictoryConditions.COLLECTION;        
+    [field: SerializeField] public List<int> NumFacetsOnBoard {get; set;} = new List<int>();
+    [field: SerializeField] public List<int> NumFacetsCollected {get; set;} = new List<int>();
     
 
     /// <summary>
@@ -49,8 +46,8 @@ public class Wheel : MonoBehaviour
     public void CollectFacet(Facet facet)
     {        
         NumFacetsCollected[(int)facet._Color]++; // update number collected for this color
-        DaxRef._UIRoot.SetFacetColorText(facet._Color, NumFacetsCollected[(int)facet._Color]); // update UI
-        DaxRef.AddPoints(5);
+        Dax._UIRoot.SetFacetColorText(facet._Color, NumFacetsCollected[(int)facet._Color]); // update UI
+        Dax.AddPoints(5);
         DestroyImmediate(facet.gameObject);
         CheckVictoryConditions(); // Check the victory conditions each time you collect a facet
     }   
@@ -62,9 +59,9 @@ public class Wheel : MonoBehaviour
     public void MatchedFacetColor(Facet colorFacetCarried) 
     {        
         NumFacetsCollected[(int)colorFacetCarried._Color]++;
-        DaxRef.AddPoints(5);
-        DaxRef.Player.CarriedFacet = null;
-        DaxRef._UIRoot.SetFacetColorText(colorFacetCarried._Color, NumFacetsCollected[(int)colorFacetCarried._Color]);       
+        Dax.AddPoints(5);
+        Dax.Player.CarriedFacet = null;
+        Dax._UIRoot.SetFacetColorText(colorFacetCarried._Color, NumFacetsCollected[(int)colorFacetCarried._Color]);       
     }
 
     /// <summary>
@@ -90,7 +87,7 @@ public class Wheel : MonoBehaviour
         // Let the game know if you won
         if(gameWon == true)
         {
-            DaxRef.EndGame("You won!!!");                
+            Dax.EndGame("You won!!!");                
         }       
         
         return gameWon;               

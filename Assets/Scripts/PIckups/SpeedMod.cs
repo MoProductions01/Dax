@@ -7,16 +7,16 @@ using System.Linq;
 /// </summary>
 public class SpeedMod : BoardObject
 {
-    // SpeedMod types
-    // PLAYER_SPEED - modified Player speed
-    // ENEMY_SPEED - modifies Enemy speed
-    // RING_SPEED - modifies Ring rotatin speed
-    public enum eSpeedModType { PLAYER_SPEED, ENEMY_SPEED, RING_SPEED};
-    public eSpeedModType SpeedModType;       
-
     // The value that the SpeedMod has
     public static float DEFAULT_MOD_VAL = 2f;            
     public float SpeedModVal = DEFAULT_MOD_VAL;
+    
+    // SpeedMod types
+    // PLAYER_SPEED - modified Player speed
+    // ENEMY_SPEED - modifies Enemy speed
+    // RING_SPEED - modifies Ring rotation speed
+    public enum eSpeedModType { PLAYER_SPEED, ENEMY_SPEED, RING_SPEED};
+    [field: SerializeField] public eSpeedModType SpeedModType {get; set;}           
 
     /// <summary>
     /// Overridden function for initting the SpeedMod object

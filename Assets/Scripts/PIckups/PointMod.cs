@@ -11,10 +11,10 @@ public class PointMod : BoardObject
     // EXTRA_POINTS - gives player a specified amount of points
     // POINTS_MULTIPLLIER - multiplies any points the player gets by this amount
     public enum ePointModType { EXTRA_POINTS, POINTS_MULTIPLIER };    
-    public ePointModType PointModType;    
+    [field: SerializeField] public ePointModType PointModType {get; set;}    
     
-    public int PointModVal; // Num of points to give or the multiplier
-    public float PointModTime = 5f; // Time the point mod is active if multiplier
+    [field: SerializeField] public int PointModVal {get; set;} // Num of points to give or the multiplier
+    [field: SerializeField] public float PointModTime {get; set;} = 5f; // Time the point mod is active if multiplier
 
     /// <summary>
     /// Overridden function for initting the PointMod object

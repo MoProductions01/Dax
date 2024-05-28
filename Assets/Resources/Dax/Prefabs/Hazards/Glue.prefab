@@ -73,8 +73,8 @@ MonoBehaviour:
   <Dax>k__BackingField: {fileID: 0}
   <CurChannel>k__BackingField: {fileID: 0}
   <SpawningNode>k__BackingField: {fileID: 0}
-  HazardType: 2
   EffectTime: 2
+  <HazardType>k__BackingField: 2
 --- !u!1 &8900197598049938210
 GameObject:
   m_ObjectHideFlags: 0

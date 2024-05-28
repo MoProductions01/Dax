@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Linq;
 
 /// <summary>
-/// BoardObject is the base class for all the objects on the board
+/// BoardObject is the base class for all the game objects on the board
 /// </summary>
 public class BoardObject : MonoBehaviour
 {    
@@ -15,16 +15,16 @@ public class BoardObject : MonoBehaviour
 
     // All the types of BoardObjects that we can have
     public enum eBoardObjectType { PLAYER, FACET, HAZARD, FACET_COLLECT, SHIELD, SPEED_MOD, POINT_MOD }; 
-    public eBoardObjectType BoardObjectType;
+    [field: SerializeField] public eBoardObjectType BoardObjectType {get; set;}
     
     // Movement info.  
     public enum eStartDir {OUTWARD, INWARD}; 
-    public eStartDir StartDir = eStartDir.OUTWARD;
-    public float Speed = 0f;    
+    [field: SerializeField] public eStartDir StartDir = eStartDir.OUTWARD;
+    [field: SerializeField] public float Speed {get; set;} = 0f;        
 
-    public Dax Dax;   // Root Dax game object ref               
-    public Channel CurChannel = null;   // Current channel that the board object is in               
-    public ChannelNode SpawningNode = null;    // The node you spawn on 
+    [field: SerializeField] public Dax Dax {get; set;}   // Root Dax game object ref               
+    [field: SerializeField] public Channel CurChannel {get; set;}   // Current channel that the board object is in               
+    [field: SerializeField] public ChannelNode SpawningNode {get; set;}    // The node you spawn on 
 
     /// <summary>
     /// Handles generic/universal initialization for BoardObjects

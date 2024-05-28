@@ -8,18 +8,18 @@ using UnityEngine;
 /// </summary>
 public class Hazard : BoardObject
 {
-    // Type of Hazard we are.
-    // ENEMY - moves around board and kills you unless you have a shield
-    // DYNAMITE - stays still on board and kills you unless you have shield
-    // GLUE - stays still on board and makes you get stuck unless you have a shield
-    public enum eHazardType { ENEMY, DYNAMITE, GLUE};
-    public eHazardType HazardType;
-    
     // Some statics for the time the hazard can be active
     public static float DEFAULT_EFFECT_TIME = 2f; 
     public static float MAX_EFFECT_TIME = 10f;
     public static float MIN_EFFECT_TIME = .1f;
     public float EffectTime = DEFAULT_EFFECT_TIME;           
+
+    // Type of Hazard we are.
+    // ENEMY - moves around board and kills you unless you have a shield
+    // DYNAMITE - stays still on board and kills you unless you have shield
+    // GLUE - stays still on board and makes you get stuck unless you have a shield
+    public enum eHazardType { ENEMY, DYNAMITE, GLUE};
+    [field: SerializeField] public eHazardType HazardType {get; set;}      
 
     /// <summary>
     /// Overridden function for initting the Hazard object

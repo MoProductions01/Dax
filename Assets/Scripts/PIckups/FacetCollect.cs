@@ -11,7 +11,7 @@ public class FacetCollect : BoardObject
     // RING - collects all facets on current Ring
     // WHEEL - collects all facets on wheel.  Wins game
     public enum eFacetCollectTypes { RING, WHEEL };
-    public eFacetCollectTypes FacetCollectType;    
+    [field: SerializeField] public eFacetCollectTypes FacetCollectType {get; set;}    
     
     /// <summary>
     /// Overridden function for initting the FacetCollect object

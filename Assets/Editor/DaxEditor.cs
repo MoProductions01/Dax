@@ -661,8 +661,9 @@ public class DaxEditor : Editor
     void HandlePointModSelected()
     {
         EditorGUILayout.Separator();
-        PointMod pointMod = (PointMod)SelectedBoardObject;
 
+        PointMod pointMod = (PointMod)SelectedBoardObject;
+                
         PointMod.ePointModType newPointModType = (PointMod.ePointModType)EditorGUILayout.EnumPopup("Point Mod Type: ", pointMod.PointModType);
         if (newPointModType != pointMod.PointModType)
         {   // User is changing the type of PointMod so destroy the current one and create a new one

@@ -4998,5 +4998,5 @@ MonoBehaviour:
   <Dax>k__BackingField: {fileID: 0}
   <CurChannel>k__BackingField: {fileID: 0}
   <SpawningNode>k__BackingField: {fileID: 0}
-  HazardType: 1
   EffectTime: 2
+  <HazardType>k__BackingField: 1

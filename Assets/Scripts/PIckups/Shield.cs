@@ -11,7 +11,7 @@ public class Shield : BoardObject
     // HIT - allows you to survive a hazard collision but goes away afterwards
     // SINGLE_KILL - kills the hazard you collide with but goes away afterwards
     public enum eShieldTypes { HIT, SINGLE_KILL};         
-    public eShieldTypes ShieldType;       
+    [field: SerializeField] public eShieldTypes ShieldType {get; set;}
 
     /// <summary>
     /// Overridden function for initting the Shield object

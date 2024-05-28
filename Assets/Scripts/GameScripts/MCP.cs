@@ -31,7 +31,7 @@ public class MCP : MonoBehaviour
     {
         new List<string> { "Player_Diode" }, // Player
         new List<string> { "Facet" },   // Facet
-        new List<string> {"Enemy_Diode", "Glue", "Dynamite" }, // Hazard
+        new List<string> {"Enemy_Diode", "Dynamite", "Glue" }, // Hazard
         new List<string> {"Facet_Collect_Ring", "Facet_Collect_Wheel"}, // Facet Collect
         new List<string> {"Hit_Shield", "Single_Kill_Shield"}, // Sheild
         new List<string> {"Player_Speed", "Enemy_Speed", "Ring_Speed"}, // Speed Mod
@@ -211,7 +211,7 @@ public class MCP : MonoBehaviour
         MCP.ResetTransform(go.transform);
         go.transform.parent = mcp.Dax.gameObject.transform;
         Wheel wheel = go.AddComponent<Wheel>();
-        wheel.DaxRef = mcp.Dax;
+        wheel.Dax = mcp.Dax;
 
         // Create a list for the facets on board and collected based on the enum
         wheel.NumFacetsOnBoard = new List<int>(new int[((int)Facet.eFacetColors.ORANGE) + 1]);

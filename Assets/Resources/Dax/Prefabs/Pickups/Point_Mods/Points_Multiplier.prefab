@@ -4980,6 +4980,6 @@ MonoBehaviour:
   <Dax>k__BackingField: {fileID: 0}
   <CurChannel>k__BackingField: {fileID: 0}
   <SpawningNode>k__BackingField: {fileID: 0}
-  PointModType: 1
-  PointModVal: 0
-  PointModTime: 5
+  <PointModType>k__BackingField: 1
+  <PointModVal>k__BackingField: 0
+  <PointModTime>k__BackingField: 5

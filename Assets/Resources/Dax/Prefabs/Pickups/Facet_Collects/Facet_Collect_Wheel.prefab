@@ -180,7 +180,7 @@ MonoBehaviour:
   <Dax>k__BackingField: {fileID: 0}
   <CurChannel>k__BackingField: {fileID: 0}
   <SpawningNode>k__BackingField: {fileID: 0}
-  FacetCollectType: 1
+  <FacetCollectType>k__BackingField: 1
 --- !u!1 &5989211606963421687
 GameObject:
   m_ObjectHideFlags: 0

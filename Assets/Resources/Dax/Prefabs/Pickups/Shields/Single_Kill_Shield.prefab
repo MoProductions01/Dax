@@ -179,4 +179,4 @@ MonoBehaviour:
   <Dax>k__BackingField: {fileID: 0}
   <CurChannel>k__BackingField: {fileID: 0}
   <SpawningNode>k__BackingField: {fileID: 0}
-  ShieldType: 1
+  <ShieldType>k__BackingField: 1
