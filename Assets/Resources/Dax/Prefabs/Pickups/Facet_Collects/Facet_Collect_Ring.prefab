@@ -4894,12 +4894,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a55e1f1ec76339245969c7b58ef828a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BoardObjectType: 3
+  <BoardObjectType>k__BackingField: 3
   StartDir: 0
-  _Dax: {fileID: 0}
-  CurChannel: {fileID: 0}
-  Speed: 0
-  SpawningNode: {fileID: 0}
+  <Speed>k__BackingField: 0
+  <Dax>k__BackingField: {fileID: 0}
+  <CurChannel>k__BackingField: {fileID: 0}
+  <SpawningNode>k__BackingField: {fileID: 0}
   FacetCollectType: 0
 --- !u!1 &8244049813417856046
 GameObject:

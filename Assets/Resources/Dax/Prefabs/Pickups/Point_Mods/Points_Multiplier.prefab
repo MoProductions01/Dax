@@ -4933,7 +4933,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7596208584593580849}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
+  m_LocalRotation: {x: 0.00000002185569, y: 0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
@@ -4974,12 +4974,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31b7e286319f83d4fae33d83013e20e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BoardObjectType: 6
+  <BoardObjectType>k__BackingField: 6
   StartDir: 0
-  _Dax: {fileID: 0}
-  CurChannel: {fileID: 0}
-  Speed: 0
-  SpawningNode: {fileID: 0}
+  <Speed>k__BackingField: 0
+  <Dax>k__BackingField: {fileID: 0}
+  <CurChannel>k__BackingField: {fileID: 0}
+  <SpawningNode>k__BackingField: {fileID: 0}
   PointModType: 1
   PointModVal: 0
   PointModTime: 5

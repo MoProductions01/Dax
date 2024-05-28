@@ -174,15 +174,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31b7e286319f83d4fae33d83013e20e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BoardObjectType: 6
+  <BoardObjectType>k__BackingField: 6
   StartDir: 0
-  _Dax: {fileID: 0}
-  CurChannel: {fileID: 0}
-  Speed: 0
-  SpawningNode: {fileID: 0}
-  GameModType: 0
-  GameModVal: 1
-  GameModTime: 5
+  <Speed>k__BackingField: 0
+  <Dax>k__BackingField: {fileID: 0}
+  <CurChannel>k__BackingField: {fileID: 0}
+  <SpawningNode>k__BackingField: {fileID: 0}
+  PointModType: 0
+  PointModVal: 0
+  PointModTime: 5
 --- !u!1 &5829565246846027510
 GameObject:
   m_ObjectHideFlags: 0

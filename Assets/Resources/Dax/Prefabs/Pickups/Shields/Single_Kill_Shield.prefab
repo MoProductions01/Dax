@@ -173,11 +173,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b0e031a47475bf4097ee88c9c60d4c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BoardObjectType: 4
+  <BoardObjectType>k__BackingField: 4
   StartDir: 0
-  _Dax: {fileID: 0}
-  CurChannel: {fileID: 0}
-  Speed: 0
-  SpawningNode: {fileID: 0}
-  DestGateJustWarpedTo: {fileID: 0}
+  <Speed>k__BackingField: 0
+  <Dax>k__BackingField: {fileID: 0}
+  <CurChannel>k__BackingField: {fileID: 0}
+  <SpawningNode>k__BackingField: {fileID: 0}
   ShieldType: 1

@@ -173,11 +173,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c8555207bc00df4fa61d2503a56a292, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BoardObjectType: 5
+  <BoardObjectType>k__BackingField: 5
   StartDir: 0
-  Speed: 0
-  _Dax: {fileID: 0}
-  CurChannel: {fileID: 0}
-  SpawningNode: {fileID: 0}
+  <Speed>k__BackingField: 0
+  <Dax>k__BackingField: {fileID: 0}
+  <CurChannel>k__BackingField: {fileID: 0}
+  <SpawningNode>k__BackingField: {fileID: 0}
   SpeedModType: 0
   SpeedModVal: 0.5
