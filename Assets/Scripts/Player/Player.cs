@@ -12,17 +12,17 @@ public class Player : BoardObject
 {    
     public static int MAX_FACETCOLLECT_OR_SHIELD = 12; // Can only have 12 FacetCollect or Shields and once
 
-    public Shield ActiveShield = null; // The shield that's currently active (if any)
-    public List<Shield> Shields = new List<Shield>(); // List of the collected Shields
+    public Shield ActiveShield {get; set;} // The shield that's currently active (if any)
+    public List<Shield> Shields {get; set;} = new List<Shield>(); // List of the collected Shields
     
-    public Hazard TempEnemyIgnore = null; // ignore this enemy after a shield collision until you're not collided
+    public Hazard TempEnemyIgnore {get; set;} // ignore this enemy after a shield collision until you're not collided
 
-    public List<FacetCollect> FacetCollects = new List<FacetCollect>(); // List of the FacetCollect objects we have    
-    public BoardObject CarriedFacet = null; // The Facet that we're currently carrying
+    public List<FacetCollect> FacetCollects {get; set;} = new List<FacetCollect>(); // List of the FacetCollect objects we have    
+    public BoardObject CarriedFacet {get; set;} = null; // The Facet that we're currently carrying
 
-    public Hazard.eHazardType EffectType; // Holds the current effect type    
-    public float GlueStickTime; // The time a Glue hazard holds you in place    
-    public float SpeedSave; // Holds the speed the Player will return to after the Glu is done
+    public Hazard.eHazardType EffectType {get; set;} // Holds the current effect type    
+    public float GlueStickTime {get; set;} // The time a Glue hazard holds you in place    
+    public float SpeedSave {get; set;} // Holds the speed the Player will return to after the Glu is done
     
     /// <summary>
     /// Resets the Player back to it's starting state
