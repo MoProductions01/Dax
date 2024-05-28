@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+/// <summary>
+/// This class holds all of the classes for the game's various save data
+/// </summary>
 public class DaxSaveData
-{
-   
+{   
     /// <summary>
     /// Save data for a bumper
     /// </summary>
@@ -68,8 +70,7 @@ public class DaxSaveData
                     IntList = new List<int>();
                     IntList.Add((int)hazard.HazardType); 
                     FloatList = new List<float>();
-                    FloatList.Add(hazard.EffectTime);
-                    //FloatList.Add(hazard.EffectRadius);
+                    FloatList.Add(hazard.EffectTime);                    
                 break;
                 case BoardObject.eBoardObjectType.POINT_MOD:
                     PointMod pointMod = (PointMod)bo;

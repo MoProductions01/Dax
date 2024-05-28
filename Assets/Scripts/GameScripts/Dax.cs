@@ -44,9 +44,9 @@ public class Dax : MonoBehaviour
     public float LevelTime {get; set;} = 120f;  // Amount of time for the current level
     public int Score {get; set;} = 0;       // Player score // moui
     
-    public DaxSaveData.PuzzleSaveData _PuzzleSaveData;   // Save data for the current puzzle  
+    [field: SerializeField] public DaxSaveData.PuzzleSaveData PuzzleSaveData {get; set;}   // Save data for the current puzzle  
         
-    public UIRoot _UIRoot;  // Ref to the root UI
+    public UIRoot _UIRoot;  // Ref to the root UI moui
     [field: SerializeField] public string PuzzleName {get; set;} = "Default Puzzle"; //Name of the puzzle    
 
     /// <summary>
@@ -219,9 +219,9 @@ public class Dax : MonoBehaviour
     /// <returns></returns>
     public DaxSaveData.PuzzleSaveData CreateSaveData(Dax dax)
     {     
-        _PuzzleSaveData = null;        
-        _PuzzleSaveData = new DaxSaveData.PuzzleSaveData(dax);
-        return _PuzzleSaveData;
+        PuzzleSaveData = null;        
+        PuzzleSaveData = new DaxSaveData.PuzzleSaveData(dax);
+        return PuzzleSaveData;
     }
     
     /// <summary>
@@ -235,28 +235,28 @@ public class Dax : MonoBehaviour
         // Check to see if we're going to override the current save data
         if(saveData != null)
         {
-            _PuzzleSaveData = null;
-            _PuzzleSaveData = saveData;
+            PuzzleSaveData = null;
+            PuzzleSaveData = saveData;
         }
 
         MCP mcp = FindObjectOfType<MCP>();       
         
-        this.PuzzleName = _PuzzleSaveData.PuzzleName; // update puzzle's name
+        this.PuzzleName = PuzzleSaveData.PuzzleName; // update puzzle's name
         // Reset ring and touch data        
         CurTouchedRing = null;
         RingRot = 0f;
         PointerPrevAngle = 0f;
 
         mcp.ResetWheel(Wheel); // reset the wheel to starting state                
-        Wheel.VictoryCondition = _PuzzleSaveData.VictoryCondition;                
-        Wheel.TurnOnRings(_PuzzleSaveData.NumRings); // turn on # of rings baesd on save data       
+        Wheel.VictoryCondition = PuzzleSaveData.VictoryCondition;                
+        Wheel.TurnOnRings(PuzzleSaveData.NumRings); // turn on # of rings baesd on save data       
 
         // first pass through all the rings to create all the board objects
-        for(int i=0; i<_PuzzleSaveData.RingSaves.Count; i++)
+        for(int i=0; i<PuzzleSaveData.RingSaves.Count; i++)
         {            
             int numChannels = (i == 0 ? Wheel.NUM_CENTER_RING_CHANNELS : Wheel.NUM_OUTER_RING_CHANNELS);
             // get the ring save data
-            DaxSaveData.RingSave ringSave = _PuzzleSaveData.RingSaves[i];
+            DaxSaveData.RingSave ringSave = PuzzleSaveData.RingSaves[i];
             if (numChannels != ringSave.ChannelSaves.Count) { Debug.LogError("numChannels: " + numChannels + ", doesn't match ChannelSaves.Count: " + ringSave.ChannelSaves.Count); return false; }           
             Ring ring = Wheel.Rings[i];
             ring.RotateSpeed = ringSave.RotSpeed;
@@ -294,10 +294,10 @@ public class Dax : MonoBehaviour
             }           
         }
         // Now another pass to init anything that requires all the objects on the wheel to be created
-        for (int i = 0; i < _PuzzleSaveData.RingSaves.Count; i++)
+        for (int i = 0; i < PuzzleSaveData.RingSaves.Count; i++)
         {   
             int numChannels = (i == 0 ? Wheel.NUM_CENTER_RING_CHANNELS : Wheel.NUM_OUTER_RING_CHANNELS); // the center ring has a different number of channels than the outer ones
-            DaxSaveData.RingSave ringSave = _PuzzleSaveData.RingSaves[i];
+            DaxSaveData.RingSave ringSave = PuzzleSaveData.RingSaves[i];
             if (numChannels != ringSave.ChannelSaves.Count) { Debug.LogError("numChannels: " + numChannels + ", doesn't match ChannelSaves.Count: " + ringSave.ChannelSaves.Count); return false; }
             Ring ring = Wheel.Rings[i];
             List<Channel> ringChannels = ring.transform.GetComponentsInChildren<Channel>().ToList();
@@ -310,7 +310,7 @@ public class Dax : MonoBehaviour
             }
         }
          
-        Player.ResetPlayer(_PuzzleSaveData.PlayerSave); //reset player                   
+        Player.ResetPlayer(PuzzleSaveData.PlayerSave); //reset player                   
         Wheel.ResetFacetsCount();    // Init all of the facets on the current wheel                
         GameState = eGameState.RUNNING; // start the game running
 
