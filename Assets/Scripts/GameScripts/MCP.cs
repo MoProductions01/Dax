@@ -14,8 +14,8 @@ using UnityEngine.TextCore.Text;
 /// </summary>
 public class MCP : MonoBehaviour
 {
-    public Dax _Dax;    
-    public UIRoot _UIRoot; 
+    [field: SerializeField] public Dax Dax {get; set;}    
+    public UIRoot UIRoot; // moui
 
     /// <summary>
     /// List of the root strings for board object prefabs.  Combined with the
@@ -49,7 +49,7 @@ public class MCP : MonoBehaviour
         FileStream file = File.Open(puzzlePath, FileMode.Open);
         DaxSaveData.PuzzleSaveData saveData = (DaxSaveData.PuzzleSaveData)bf.Deserialize(file);
         file.Close();
-        _Dax.ResetPuzzleFromSave(saveData);        
+        Dax.ResetPuzzleFromSave(saveData);        
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ public class MCP : MonoBehaviour
     {                
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file;
-        string fileName = Application.dataPath + "/Resources/Puzzles/" + _Dax.PuzzleName + ".Dax";
+        string fileName = Application.dataPath + "/Resources/Puzzles/" + Dax.PuzzleName + ".Dax";
         if (File.Exists(fileName))
         {
             bool saveResponse = EditorUtility.DisplayDialog("Warning", 
@@ -71,7 +71,7 @@ public class MCP : MonoBehaviour
         {
             file = File.Create(fileName);
         }
-        DaxSaveData.PuzzleSaveData puzzleSave = _Dax.CreateSaveData(_Dax);
+        DaxSaveData.PuzzleSaveData puzzleSave = Dax.CreateSaveData(Dax);
         bf.Serialize(file, puzzleSave);
         file.Close();
     }   
@@ -86,7 +86,7 @@ public class MCP : MonoBehaviour
         for (int i = 0; i < boardObjects.Length; i++)
         {            
             BoardObject boardObject = boardObjects[i];
-            if (boardObject == _Dax.Player) continue;
+            if (boardObject == Dax.Player) continue;
             boardObject.SpawningNode.SpawnedBoardObject = null;
             DestroyImmediate(boardObject.gameObject);
         }
@@ -172,11 +172,11 @@ public class MCP : MonoBehaviour
         
 
         // Dax is the main overall gameplay class.  Pretty much manages everything
-        mcp._Dax = new GameObject("Dax").AddComponent<Dax>();               
+        mcp.Dax = new GameObject("Dax").AddComponent<Dax>();               
 
         // Wheel is the container class for the gameboard (Rings, etc)
         Wheel wheel = CreateWheel(mcp/*, mcp._Dax.gameObject, mcp._Dax, 0*/);
-        mcp._Dax.Wheel = wheel;
+        mcp.Dax.Wheel = wheel;
 
         // Set up the camera propertly
         Camera mainCamera = Camera.main;
@@ -186,16 +186,16 @@ public class MCP : MonoBehaviour
 
         // UI container
         UIRoot uiRootPrefab = Resources.Load<UIRoot>("Dax/Prefabs/UI/UI Root");
-        mcp._UIRoot = UnityEngine.Object.Instantiate<UIRoot>(uiRootPrefab);
+        mcp.UIRoot = UnityEngine.Object.Instantiate<UIRoot>(uiRootPrefab);
 
         // Create the Player and set it up
         Player playerPrefab = Resources.Load<Player>("Dax/Prefabs/Player_Diode");
-        Player player = UnityEngine.Object.Instantiate<Player>(playerPrefab, mcp._Dax.transform);        
+        Player player = UnityEngine.Object.Instantiate<Player>(playerPrefab, mcp.Dax.transform);        
         player.name = "Player Diode";        
-        mcp._Dax.Player = player;
-        mcp._Dax.Player.Dax = mcp._Dax;
+        mcp.Dax.Player = player;
+        mcp.Dax.Player.Dax = mcp.Dax;
         player.SetStartChannel(0);        
-        player.InitForChannelNode(null, mcp._Dax);
+        player.InitForChannelNode(null, mcp.Dax);
         player.ResetPlayer();                        
     }    
 
@@ -209,9 +209,9 @@ public class MCP : MonoBehaviour
         // Create the Wheel GameObject/Class and make it a child of Dax
         GameObject go = new GameObject("Wheel");
         MCP.ResetTransform(go.transform);
-        go.transform.parent = mcp._Dax.gameObject.transform;
+        go.transform.parent = mcp.Dax.gameObject.transform;
         Wheel wheel = go.AddComponent<Wheel>();
-        wheel.DaxRef = mcp._Dax;
+        wheel.DaxRef = mcp.Dax;
 
         // Create a list for the facets on board and collected based on the enum
         wheel.NumFacetsOnBoard = new List<int>(new int[((int)Facet.eFacetColors.ORANGE) + 1]);
@@ -392,7 +392,7 @@ public class MCP : MonoBehaviour
         for (int ringIndex = 0; ringIndex <= Dax.MAX_NUM_RINGS; ringIndex++)
         {
             Ring ring = wheel.Rings[ringIndex];
-            ring.DaxRef = mcp._Dax;
+            ring.DaxRef = mcp.Dax;
             ring.RotateSpeed = 0f;
 
             // Add bumpers if we're not the center ring
@@ -457,7 +457,7 @@ public class MCP : MonoBehaviour
                 facetCollectIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/Facet_Collect_Wheel_HUD");
                 break;
         }
-        GameObject facetCollectIcon = Instantiate<GameObject>(facetCollectIconPrefab, _Dax._UIRoot.transform);
+        GameObject facetCollectIcon = Instantiate<GameObject>(facetCollectIconPrefab, Dax._UIRoot.transform);
         return facetCollectIcon;
     }
 
@@ -478,7 +478,7 @@ public class MCP : MonoBehaviour
                 shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/Single_Kill_Shield_HUD");
                 break;           
         }
-        GameObject shieldIcon = Instantiate<GameObject>(shieldIconPrefab, _Dax._UIRoot.transform);
+        GameObject shieldIcon = Instantiate<GameObject>(shieldIconPrefab, Dax._UIRoot.transform);
         return shieldIcon;       
     }    
    

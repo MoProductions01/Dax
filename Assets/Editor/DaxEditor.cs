@@ -19,8 +19,8 @@ public class DaxEditor : Editor
     BoardObject SelectedBoardObject; // BoardObject specific class for the BoardObject the user has selected on the board
     SerializedObject SelectedBoardObjectSO; // SerializedObject for the currently selected BoardObject        
 
-    MCP _MCP;   // The Master Control Program object from the main game
-    Dax _Dax;   // The Dax object from the main game
+    MCP MCP;   // The Master Control Program object from the main game
+    Dax Dax;   // The Dax object from the main game
     DaxPuzzleSetup _DaxPuzzleSetup; // The MonoBehavior that this editor script extends
     SerializedObject DaxSetupSO;    // The SerializedObject for the DaxPuzzleSetup object    
     SerializedObject DaxSO; // The SerializedObject for the _Dax object
@@ -127,21 +127,21 @@ public class DaxEditor : Editor
             {   // User wants to reduce rings, so sort that out.
                 RingsNumChangePopupActive = false;         
                 // ResetRing destroys all the board objects and restores any removed ChannelPieces      
-                for (int i = _Dax.Wheel.NumActiveRings; i > NumRingsUserWants; i--) _MCP.ResetRing(_Dax.Wheel.Rings[i]);                      
+                for (int i = Dax.Wheel.NumActiveRings; i > NumRingsUserWants; i--) MCP.ResetRing(Dax.Wheel.Rings[i]);                      
                 Selection.activeGameObject = null;
                 SelectedRing = 0;
-                _Dax.Wheel.TurnOnRings(NumRingsUserWants); // This will turn on the correct # of puzzle rings
+                Dax.Wheel.TurnOnRings(NumRingsUserWants); // This will turn on the correct # of puzzle rings
             }
             else RingsNumChangePopupActive = false; // User chose no so just shut off the popup            
         }
         else
         {   // Number of rings
-            int newNumRings = EditorGUILayout.IntPopup("Number of Rings", _Dax.Wheel.NumActiveRings, DaxPuzzleSetup.NUM_RINGS_NAMES, DaxPuzzleSetup.NUM_RINGS_TOTALS);
-            if (newNumRings != _Dax.Wheel.NumActiveRings)
+            int newNumRings = EditorGUILayout.IntPopup("Number of Rings", Dax.Wheel.NumActiveRings, DaxPuzzleSetup.NUM_RINGS_NAMES, DaxPuzzleSetup.NUM_RINGS_TOTALS);
+            if (newNumRings != Dax.Wheel.NumActiveRings)
             {
-                if (newNumRings > _Dax.Wheel.NumActiveRings)
+                if (newNumRings > Dax.Wheel.NumActiveRings)
                 {   // If we're increasing the number of rings just go ahead and do it because the rings have been cleared already                    
-                    _Dax.Wheel.TurnOnRings(newNumRings);
+                    Dax.Wheel.TurnOnRings(newNumRings);
                 }
                 else
                 {   // We're decreasing the number of rings, which will destroy all the stuff on them, so give the user a popup
@@ -160,7 +160,7 @@ public class DaxEditor : Editor
         // You always have at least one Ring other than the Center ring so
         // set up the enum list based on the # of rings after that
         List<string> ringNames = new List<string> { "None", "Center", "Ring 01" };
-        for (int i = 2; i <= _Dax.Wheel.NumActiveRings; i++) ringNames.Add("Ring " + i.ToString("D2"));        
+        for (int i = 2; i <= Dax.Wheel.NumActiveRings; i++) ringNames.Add("Ring " + i.ToString("D2"));        
         string[] ringNamesArray = ringNames.ToArray();
         // Set up the enum pulldown
         int newRing = EditorGUILayout.Popup("Select Ring", SelectedRing, ringNamesArray);
@@ -172,7 +172,7 @@ public class DaxEditor : Editor
             }
             else
             {   // You've chosen a ring so make that the activeGameObject
-                Selection.activeGameObject = _Dax.Wheel.Rings[newRing - 1].gameObject;
+                Selection.activeGameObject = Dax.Wheel.Rings[newRing - 1].gameObject;
             }
             SelectedRing = newRing;
         }
@@ -186,38 +186,38 @@ public class DaxEditor : Editor
     {
         // Puzzle Name
         EditorGUILayout.Separator();
-        string newName = EditorGUILayout.TextField(_Dax.PuzzleName);
-        if(newName != _Dax.PuzzleName)
+        string newName = EditorGUILayout.TextField(Dax.PuzzleName);
+        if(newName != Dax.PuzzleName)
         {
-            _Dax.PuzzleName = newName;
-            UpdateStringProperty(DaxSO, "PuzzleName", _Dax.PuzzleName);            
+            Dax.PuzzleName = newName;
+            UpdateStringProperty(DaxSO, "PuzzleName", Dax.PuzzleName);            
         }                
 
         // Level Time
         EditorGUILayout.Separator();
-        float newLevelTime = EditorGUILayout.FloatField("Level Time ", _Dax.LevelTime);
+        float newLevelTime = EditorGUILayout.FloatField("Level Time ", Dax.LevelTime);
         if (newLevelTime <= 10f) newLevelTime = 10f;
-        if(newLevelTime != _Dax.LevelTime)
+        if(newLevelTime != Dax.LevelTime)
         {
-            _Dax.LevelTime = newLevelTime;
-            UpdateFloatProperty(DaxSO, "LevelTime", _Dax.LevelTime);           
+            Dax.LevelTime = newLevelTime;
+            UpdateFloatProperty(DaxSO, "LevelTime", Dax.LevelTime);           
         }
 
         // Victory Condition
         EditorGUILayout.Separator();
-        Dax.eVictoryConditions newVictoryCondition = (Dax.eVictoryConditions)EditorGUILayout.EnumPopup("Victory Conditions", _Dax.Wheel.VictoryCondition);
-        if (newVictoryCondition != _Dax.Wheel.VictoryCondition)
+        Dax.eVictoryConditions newVictoryCondition = (Dax.eVictoryConditions)EditorGUILayout.EnumPopup("Victory Conditions", Dax.Wheel.VictoryCondition);
+        if (newVictoryCondition != Dax.Wheel.VictoryCondition)
         {
-            _Dax.Wheel.VictoryCondition = newVictoryCondition;
-            UpdateEnumProperty(new SerializedObject(_Dax.Wheel), "VictoryCondition", (int)_Dax.Wheel.VictoryCondition);            
+            Dax.Wheel.VictoryCondition = newVictoryCondition;
+            UpdateEnumProperty(new SerializedObject(Dax.Wheel), "VictoryCondition", (int)Dax.Wheel.VictoryCondition);            
         }
 
         // A list of all the facets that you need to collect on the board
         EditorGUILayout.Separator();
-        for (int i = 0; i < _Dax.Wheel.NumFacetsOnBoard.Count-1; i++)
+        for (int i = 0; i < Dax.Wheel.NumFacetsOnBoard.Count-1; i++)
         {
             Facet.eFacetColors curColor = (Facet.eFacetColors)i;
-            EditorGUILayout.LabelField(curColor.ToString() + " To Collect: " + _Dax.Wheel.NumFacetsOnBoard[(int)curColor]);
+            EditorGUILayout.LabelField(curColor.ToString() + " To Collect: " + Dax.Wheel.NumFacetsOnBoard[(int)curColor]);
         }         
 
         // Handle the number of rings and Ring selection
@@ -230,8 +230,8 @@ public class DaxEditor : Editor
             // You need to initialize the puzzle in order for a restart without restarting
             // the editor.  It creates in-game save data which will be used to reload the
             // level if you win or die and want to restart.     
-            _Dax.Wheel.ResetFacetsCount();
-            _Dax.CreateSaveData(_Dax);            
+            Dax.Wheel.ResetFacetsCount();
+            Dax.CreateSaveData(Dax);            
         }        
     }
 
@@ -249,7 +249,7 @@ public class DaxEditor : Editor
                                                                 "This will remove all BoardObjects and reset Channel Pieces", "Yes", "No");
             if(ringResetResponse == true)
             {   // User chose to reset, so reset the Ring
-                _MCP.ResetRing(selRing);
+                MCP.ResetRing(selRing);
             }
             RingsResetPopupActive = false;
         }
@@ -309,7 +309,7 @@ public class DaxEditor : Editor
         if (newBumperType != selBumper.BumperType)
         {   // Bumper type has changed so update that and the material
             selBumper.BumperType = newBumperType;                        
-            selBumper.gameObject.GetComponent<MeshRenderer>().material = _MCP.GetBumperMaterial(newBumperType, selBumper.BumperColor);                    
+            selBumper.gameObject.GetComponent<MeshRenderer>().material = MCP.GetBumperMaterial(newBumperType, selBumper.BumperColor);                    
             UpdateEnumProperty(selBumperSO, "BumperType", (int)selBumper.BumperType);            
         }
         EditorGUILayout.Separator();
@@ -320,7 +320,7 @@ public class DaxEditor : Editor
             {
                 // Color changed so update the data and material
                 selBumper.BumperColor = newBumperColor;
-                selBumper.gameObject.GetComponent<MeshRenderer>().material = _MCP.GetBumperMaterial(selBumper.BumperType, newBumperColor);
+                selBumper.gameObject.GetComponent<MeshRenderer>().material = MCP.GetBumperMaterial(selBumper.BumperType, newBumperColor);
                 UpdateEnumProperty(selBumperSO, "BumperColor", (int)selBumper.BumperColor);
             }
         }
@@ -454,12 +454,12 @@ public class DaxEditor : Editor
         //HandleSceneView(); // make sure the Radient Debug object is not visible NOTE: only needed if we're using the RadientDebug stuff         
     
         // Gather the main GameObjects and SerializedObjects used for everything
-        _MCP = GameObject.FindObjectOfType<MCP>();
+        MCP = GameObject.FindObjectOfType<MCP>();
         _DaxPuzzleSetup = (DaxPuzzleSetup)target;        
         DaxSetupSO = new SerializedObject(_DaxPuzzleSetup);
         DaxSetupSO.Update();
-        _Dax = _MCP._Dax.GetComponent<Dax>();
-        DaxSO = new SerializedObject(_Dax);
+        Dax = MCP.Dax.GetComponent<Dax>();
+        DaxSO = new SerializedObject(Dax);
         DaxSO.Update();        
 
         // This is for the overall puzzle data, not individual objects on the puzzle
@@ -491,38 +491,38 @@ public class DaxEditor : Editor
         float buttonWidth = 200f;
         if (GUILayout.Button("Create Facet", GUILayout.Width(buttonWidth)))
         {                        
-            Facet facet = _MCP.CreateBoardObject<Facet>(SelectedChannelNode, _Dax, 
+            Facet facet = MCP.CreateBoardObject<Facet>(SelectedChannelNode, Dax, 
                (int)BoardObject.eBoardObjectType.FACET, 0);
-            _MCP.ChangeFacetColor(facet, Facet.eFacetColors.RED);                 
+            MCP.ChangeFacetColor(facet, Facet.eFacetColors.RED);                 
         }        
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Hazard", GUILayout.Width(buttonWidth)))
         {                          
-            _MCP.CreateBoardObject<Hazard>(SelectedChannelNode, _Dax, 
+            MCP.CreateBoardObject<Hazard>(SelectedChannelNode, Dax, 
                (int)BoardObject.eBoardObjectType.HAZARD, (int)Hazard.eHazardType.ENEMY);                                  
         }             
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Facet Collect", GUILayout.Width(buttonWidth)))
         {            
-            _MCP.CreateBoardObject<FacetCollect>(SelectedChannelNode, _Dax, 
+            MCP.CreateBoardObject<FacetCollect>(SelectedChannelNode, Dax, 
                 (int)BoardObject.eBoardObjectType.FACET_COLLECT, (int)FacetCollect.eFacetCollectTypes.RING);                            
         } 
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Shield", GUILayout.Width(buttonWidth)))
         {            
-            _MCP.CreateBoardObject<Shield>(SelectedChannelNode, _Dax, 
+            MCP.CreateBoardObject<Shield>(SelectedChannelNode, Dax, 
                 (int)BoardObject.eBoardObjectType.SHIELD, (int)Shield.eShieldTypes.HIT);                  
         }
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Speed Mod", GUILayout.Width(buttonWidth)))
         {            
-            _MCP.CreateBoardObject<SpeedMod>(SelectedChannelNode, _Dax, 
+            MCP.CreateBoardObject<SpeedMod>(SelectedChannelNode, Dax, 
                 (int)BoardObject.eBoardObjectType.SPEED_MOD, (int)SpeedMod.eSpeedModType.PLAYER_SPEED);                        
         }
         EditorGUILayout.Separator();
         if (GUILayout.Button("Create Point Mod", GUILayout.Width(buttonWidth)))
         {            
-            _MCP.CreateBoardObject<PointMod>(SelectedChannelNode, _Dax, 
+            MCP.CreateBoardObject<PointMod>(SelectedChannelNode, Dax, 
                 (int)BoardObject.eBoardObjectType.POINT_MOD, (int)PointMod.ePointModType.EXTRA_POINTS);                   
         }                                   
     }
@@ -537,7 +537,7 @@ public class DaxEditor : Editor
         if (newFacetColor != facet._Color)
         {   // User wants to change color of the facet so handle that
             facet._Color = newFacetColor;
-            _MCP.ChangeFacetColor(facet, facet._Color);
+            MCP.ChangeFacetColor(facet, facet._Color);
             UpdateEnumProperty(SelectedBoardObjectSO, "_Color", (int)facet._Color);                    
         }
     }
@@ -552,7 +552,7 @@ public class DaxEditor : Editor
         if (newHazardType != hazard.HazardType)
         {   // User wants to change the type of HAZARD, so trash the current one and create the new one
             DestroyImmediate(SelectedChannelNode.SpawnedBoardObject.gameObject);                                        
-            hazard = _MCP.CreateBoardObject<Hazard>(SelectedChannelNode, _Dax, 
+            hazard = MCP.CreateBoardObject<Hazard>(SelectedChannelNode, Dax, 
                 (int)BoardObject.eBoardObjectType.HAZARD, (int)newHazardType); 
         }
         if (hazard.HazardType == Hazard.eHazardType.ENEMY )
@@ -597,7 +597,7 @@ public class DaxEditor : Editor
         if (newFacetCollectType != facetCollect.FacetCollectType)
         {   // User changed the type of FacetCollect so trash old one and create a new one
             DestroyImmediate(SelectedChannelNode.SpawnedBoardObject.gameObject);                                
-            facetCollect = _MCP.CreateBoardObject<FacetCollect>(SelectedChannelNode, _Dax, 
+            facetCollect = MCP.CreateBoardObject<FacetCollect>(SelectedChannelNode, Dax, 
                 (int)BoardObject.eBoardObjectType.FACET_COLLECT, (int)newFacetCollectType);
         } 
     }
@@ -614,7 +614,7 @@ public class DaxEditor : Editor
         if(newShieldType != shield.ShieldType)
         {   // User changed Shield type so trash old one and create new one
             DestroyImmediate(SelectedChannelNode.SpawnedBoardObject.gameObject);                
-            shield = _MCP.CreateBoardObject<Shield>(SelectedChannelNode, _Dax, 
+            shield = MCP.CreateBoardObject<Shield>(SelectedChannelNode, Dax, 
                 (int)BoardObject.eBoardObjectType.SHIELD, (int)newShieldType);     
         }   
     }
@@ -631,7 +631,7 @@ public class DaxEditor : Editor
         if (newSpeedModType != speedMod.SpeedModType)
         {   // User changed SpeedMod type so trash old one and create a new one
             DestroyImmediate(SelectedChannelNode.SpawnedBoardObject.gameObject);                                
-            speedMod = _MCP.CreateBoardObject<SpeedMod>(SelectedChannelNode, _Dax, 
+            speedMod = MCP.CreateBoardObject<SpeedMod>(SelectedChannelNode, Dax, 
                 (int)BoardObject.eBoardObjectType.SPEED_MOD, (int)newSpeedModType);
 
         }        
@@ -667,7 +667,7 @@ public class DaxEditor : Editor
         if (newPointModType != pointMod.PointModType)
         {   // User is changing the type of PointMod so destroy the current one and create a new one
             DestroyImmediate(SelectedChannelNode.SpawnedBoardObject.gameObject);                          
-            pointMod = _MCP.CreateBoardObject<PointMod>(SelectedChannelNode, _Dax, 
+            pointMod = MCP.CreateBoardObject<PointMod>(SelectedChannelNode, Dax, 
                 (int)BoardObject.eBoardObjectType.POINT_MOD, (int)newPointModType);
             SelectedBoardObject = pointMod;
                 return;
