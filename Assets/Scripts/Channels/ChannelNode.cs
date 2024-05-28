@@ -69,6 +69,8 @@ public class ChannelNode : MonoBehaviour
     }
 
 
+    public List<Color> DiodeGizmoColors = new List<Color>(new Color[] { Color.red, Color.blue, Color.green, Color.yellow, Color.magenta, Color.cyan, Color.black, Color.white,
+                                                                        Color.red, Color.blue, Color.green, Color.yellow, Color.magenta, Color.cyan, Color.black, Color.white});
     DaxPuzzleSetup DS = null; // This is so we can use DrawGizmos when setting up the puzzle
     private void OnDrawGizmos()
     {
@@ -81,7 +83,7 @@ public class ChannelNode : MonoBehaviour
 
         if(SpawnedBoardObject != null)
         {                        
-            Gizmos.color = DS.DiodeGizmoColors[(int)(SpawnedBoardObject.BoardObjectType)];
+            Gizmos.color = DiodeGizmoColors[(int)(SpawnedBoardObject.BoardObjectType)];
             Gizmos.color = new Color(Gizmos.color.r, Gizmos.color.g, Gizmos.color.b, .5f);
             Gizmos.DrawWireSphere(transform.position, .02f);
         }

@@ -172,8 +172,7 @@ public class MCP : MonoBehaviour
         
 
         // Dax is the main overall gameplay class.  Pretty much manages everything
-        mcp._Dax = new GameObject("Dax").AddComponent<Dax>();        
-        daxSetup._Dax = mcp._Dax;
+        mcp._Dax = new GameObject("Dax").AddComponent<Dax>();               
 
         // Wheel is the container class for the gameboard (Rings, etc)
         Wheel wheel = CreateWheel(mcp/*, mcp._Dax.gameObject, mcp._Dax, 0*/);
@@ -197,14 +196,7 @@ public class MCP : MonoBehaviour
         mcp._Dax.Player.Dax = mcp._Dax;
         player.SetStartChannel(0);        
         player.InitForChannelNode(null, mcp._Dax);
-        player.ResetPlayer();        
-        
-        // We use a debug class that shows up on display 2 so it doesn't interfere with 
-        // the in game display          
-        RadientDebug rifRafDebugPrefab = Resources.Load<RadientDebug>("_RadientDebug");
-        RadientDebug rifRafDebug = UnityEngine.Object.Instantiate<RadientDebug>(rifRafDebugPrefab, mcp._Dax.gameObject.transform);
-        RRDManager.Init(rifRafDebug);        
-        daxSetup.RadientDebugRef = rifRafDebug;
+        player.ResetPlayer();                        
     }    
 
     /// <summary>
