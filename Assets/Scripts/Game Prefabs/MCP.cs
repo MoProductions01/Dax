@@ -47,7 +47,7 @@ public class MCP : MonoBehaviour
         // This assumes that the current puzzle has been trashed and re-created by the RadientGames.LoadPuzzle() stuff
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Open(puzzlePath, FileMode.Open);
-        Dax.PuzzleSaveData saveData = (Dax.PuzzleSaveData)bf.Deserialize(file);
+        DaxSaveData.PuzzleSaveData saveData = (DaxSaveData.PuzzleSaveData)bf.Deserialize(file);
         file.Close();
         _Dax.ResetPuzzleFromSave(saveData);        
     }
@@ -71,7 +71,7 @@ public class MCP : MonoBehaviour
         {
             file = File.Create(fileName);
         }
-        Dax.PuzzleSaveData puzzleSave = _Dax.CreateSaveData(_Dax);
+        DaxSaveData.PuzzleSaveData puzzleSave = _Dax.CreateSaveData(_Dax);
         bf.Serialize(file, puzzleSave);
         file.Close();
     }   
@@ -551,7 +551,7 @@ public class MCP : MonoBehaviour
     /// </summary>
     /// <param name="bo">The board object to initialize</param>
     /// <param name="boSave">Save data for the board object</param>
-    public void InitBoardObjectFromSave(BoardObject bo, Dax.BoardObjectSave boSave)
+    public void InitBoardObjectFromSave(BoardObject bo, DaxSaveData.BoardObjectSave boSave)
     {
         // get the starting channel
         bo.CurChannel = GameObject.Find(boSave.StartChannel).GetComponent<Channel>();
@@ -629,7 +629,7 @@ public class MCP : MonoBehaviour
     /// <param name="channelNode">Channel node this object will spawn on</param>
     /// <param name="boSave">Save info for the board object</param>
     /// <param name="dax">Root gameplay object</param>
-    public void CreateBoardObjectFromSaveData(ChannelNode channelNode, Dax.BoardObjectSave boSave, Dax dax)
+    public void CreateBoardObjectFromSaveData(ChannelNode channelNode, DaxSaveData.BoardObjectSave boSave, Dax dax)
     {              
         // Create the board object based on the type in the save data
         switch (boSave.Type)

@@ -28,7 +28,7 @@ public class Player : BoardObject
     /// Resets the Player back to it's starting state
     /// </summary>
     /// <param name="playerSave">Player save data</param>
-    public void ResetPlayer(Dax.BoardObjectSave playerSave = null)
+    public void ResetPlayer(DaxSaveData.BoardObjectSave playerSave = null)
     {
         // clear out player inventory
         ClearInventory();
