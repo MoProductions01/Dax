@@ -12,6 +12,7 @@ public class Player : BoardObject
 {    
     public static int MAX_FACETCOLLECT_OR_SHIELD = 12; // Can only have 12 FacetCollect or Shields and once
 
+    // None of the data for the Player is saved so there's no need for [field: SerializeField]
     public Shield ActiveShield {get; set;} // The shield that's currently active (if any)
     public List<Shield> Shields {get; set;} = new List<Shield>(); // List of the collected Shields
     
@@ -215,9 +216,7 @@ public class Player : BoardObject
         
     DaxPuzzleSetup DS = null;
     private void OnDrawGizmos()
-    {
-        //Gizmos.color = Color.green;
-        //Gizmos.DrawSphere(transform.position + transform.forward * .1f, .04f);
+    {        
         if (DS == null) DS = FindObjectOfType<DaxPuzzleSetup>();        
         if (DS != null && DS.ShowGizmos == true)            
         {           

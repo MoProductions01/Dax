@@ -8,9 +8,11 @@ using System.Linq;
 /// </summary>
 public class Ring : MonoBehaviour
 {
-    public Dax DaxRef = null; // Reference to the root gameplay Dax object
-    public float RotateSpeed = 10f; // How fast it's rotating    
-    public BumperGroup BumperGroup = null; // Rings can have a bumper group only if it's the outer ring
+    public static float DEFAULT_ROTATE_SPEED = 10f; // Default rotate speed for rings
+
+    [field: SerializeField] public Dax Dax {get; set;} // Reference to the root gameplay Dax object
+    [field: SerializeField] public float RotateSpeed {get; set;} // How fast the Ring rotating    
+    [field: SerializeField] public BumperGroup BumperGroup {get; set;} // Rings can have a bumper group only if it's the outer ring
 
     /// <summary>
     /// Rotates the ring
@@ -29,7 +31,7 @@ public class Ring : MonoBehaviour
         List<Facet> collectFacets = this.GetComponentsInChildren<Facet>().ToList();        
         foreach(Facet facet in collectFacets)
         {
-            this.DaxRef.Wheel.CollectFacet(facet);
+            this.Dax.Wheel.CollectFacet(facet);
         }        
     }
 
@@ -56,6 +58,6 @@ public class Ring : MonoBehaviour
     public bool IsCenterRing()
     {        
         // Rings[0] is the center ring
-        return DaxRef.Wheel.Rings[0] == this;
+        return Dax.Wheel.Rings[0] == this;
     }       
 }

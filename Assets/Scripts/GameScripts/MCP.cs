@@ -392,8 +392,8 @@ public class MCP : MonoBehaviour
         for (int ringIndex = 0; ringIndex <= Dax.MAX_NUM_RINGS; ringIndex++)
         {
             Ring ring = wheel.Rings[ringIndex];
-            ring.DaxRef = mcp.Dax;
-            ring.RotateSpeed = 0f;
+            ring.Dax = mcp.Dax;
+            ring.RotateSpeed = ringIndex % 2 == 0 ? Ring.DEFAULT_ROTATE_SPEED : -Ring.DEFAULT_ROTATE_SPEED;
 
             // Add bumpers if we're not the center ring
             if (ringIndex != 0)

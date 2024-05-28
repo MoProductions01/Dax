@@ -15,7 +15,7 @@ public class Wheel : MonoBehaviour
         
     // Ring data
     public List<Ring> Rings = new List<Ring>();
-    public int NumActiveRings = 4;
+    public int NumActiveRings = Dax.MAX_NUM_RINGS;
     public bool CenterRingLock = false;    
 
     public Dax DaxRef;
@@ -102,7 +102,7 @@ public class Wheel : MonoBehaviour
     /// <param name="numRings"></param>
     public void TurnOnRings(int numRings)
     {       
-        if (numRings < 1 || numRings > 4) { Debug.LogError("ERROR: invalid number of rings: " + numRings); return; }
+        if (numRings < 1 || numRings > Dax.MAX_NUM_RINGS) { Debug.LogError("ERROR: invalid number of rings: " + numRings); return; }
 
         NumActiveRings = numRings;
         for (int i = 1; i <= Dax.MAX_NUM_RINGS; i++)

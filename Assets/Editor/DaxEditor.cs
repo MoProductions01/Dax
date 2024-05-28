@@ -26,7 +26,7 @@ public class DaxEditor : Editor
     SerializedObject DaxSO; // The SerializedObject for the _Dax object
 
     int SelectedRing = 0; // Index of our currently selected ring          
-    int NumRingsUserWants = 4; // How many rings the user wants to change to
+    int NumRingsUserWants = Dax.MAX_NUM_RINGS; // How many rings the user wants to change to
     bool RingsNumChangePopupActive = false; // For confirmation if the user does in fact want to reduce the number of rings since that also destroys objects
     bool RingsResetPopupActive = false; // For confirmation if the user wants to reset the Ring since it clears all BoardObjects and resets ChannelPieces
 
