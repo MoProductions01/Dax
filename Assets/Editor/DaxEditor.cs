@@ -358,8 +358,9 @@ public class DaxEditor : Editor
         
         // For creating BoardObjects make sure it's a middle node since those are the
         // only ones that can have anything spawned on it.
-        //if (SelectedChannelNode.IsMidNode() == true) modelete node
-        if (SelectedChannelNode.MyChannel.MidNode == true)
+        
+        if (SelectedChannelNode.IsMidNode() == true) 
+        //if (SelectedChannelNode.MyChannel.MidNode == true) modelete node
         {
             // Nodes can only have one BoardObject on them
             if(SelectedChannelNode.SpawnedBoardObject == null)

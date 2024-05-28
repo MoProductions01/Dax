@@ -21,6 +21,25 @@ public class ChannelNode : MonoBehaviour
     {
         MyChannel = myChannel;        
     }           
+
+    
+    /// <summary>
+    /// Helper function to find out if it's the StartNode or not
+    /// </summary>
+    /// <returns></returns>
+    public bool IsStartNode()
+    {        
+        return MyChannel.StartNode == this;
+    }
+
+    /// <summary>
+    /// Helper function to find out if this node is the MiddleNode (BoardObjects can only be on MiddleNode)
+    /// </summary>
+    /// <returns></returns>
+    public bool IsMidNode() 
+    {
+        return MyChannel.MidNode == this;
+    }
         
     /// <summary>
     /// Figures out whether and Enemy or the Player can be on this path
@@ -68,22 +87,3 @@ public class ChannelNode : MonoBehaviour
         }
     }
 }
-
-/// <summary>
-    /// Helper function to find out if it's the StartNode or not
-    /// </summary>
-    /// <returns></returns>
-    /*public bool IsStartNode() modelete node
-    {
-        Debug.Log("IsStartNode()");
-        return MyChannel.StartNode == this;
-    }*/
-
-    /// <summary>
-    /// Helper function to find out if this node is the MiddleNode (BoardObjects can only be on MiddleNode)
-    /// </summary>
-    /// <returns></returns>
-    /*public bool IsMidNode() modelete node
-    {
-        return MyChannel.MidNode == this;
-    }*/
