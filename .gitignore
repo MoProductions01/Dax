@@ -12,6 +12,7 @@
 
 # Mo Stuff
 /[Aa]ssets/zIgnoreMe
+/[Aa]ssets/zIgnoreMe.meta
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
