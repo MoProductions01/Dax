@@ -34,14 +34,14 @@ public class Player : BoardObject
         // clear out player inventory
         ClearInventory();
         // Reset the UI
-        if (Dax._UIRoot == null)
+        if (Dax.UIRoot == null)
         {
             Debug.LogWarning("Update UIRoot on new scene"); // monote - UI stuff
         }
         else
         {
-            Dax._UIRoot.DestroyFacetCollectIcon();
-            Dax._UIRoot.DestroyShieldIcon();
+            Dax.UIRoot.DestroyFacetCollectIcon();
+            Dax.UIRoot.DestroyShieldIcon();
         }
         
         transform.position = Vector3.zero; // Put player back at the center of the wheel
@@ -102,7 +102,7 @@ public class Player : BoardObject
         facetCollect.transform.parent = this.transform; // Player is now the parent
         facetCollect.gameObject.SetActive(false); // Turn it off for now
         FacetCollects.Add(facetCollect); // Add the FacetCollect to the list
-        if (FacetCollects.Count == 1) Dax._UIRoot.ChangeFacetCollectIcon(facetCollect); // Update the UI for clicking on it to activate
+        if (FacetCollects.Count == 1) Dax.UIRoot.ChangeFacetCollectIcon(facetCollect); // Update the UI for clicking on it to activate
         return true; // We added the FacetCollect so let the calling code know
     }
 
@@ -115,8 +115,8 @@ public class Player : BoardObject
 
         FacetCollect facetCollect = FacetCollects[0]; // Grab oldest FacetCollect
         FacetCollects.RemoveAt(0); // Remove from list
-        Dax._UIRoot.DestroyFacetCollectIcon(); // Destroy UI icon
-        if (FacetCollects.Count > 0) Dax._UIRoot.ChangeFacetCollectIcon(FacetCollects[0]); // Update UI if we have more available
+        Dax.UIRoot.DestroyFacetCollectIcon(); // Destroy UI icon
+        if (FacetCollects.Count > 0) Dax.UIRoot.ChangeFacetCollectIcon(FacetCollects[0]); // Update UI if we have more available
 
         switch(facetCollect.FacetCollectType)
         {            
@@ -148,7 +148,7 @@ public class Player : BoardObject
         shield.transform.parent = this.transform; // Player is now parent
         shield.gameObject.SetActive(false); // Turn it off
         Shields.Add(shield); // Add it to our list
-        if(Shields.Count == 1) Dax._UIRoot.ChangeShieldIcon(shield); // Update the UI for clicking on it to activate
+        if(Shields.Count == 1) Dax.UIRoot.ChangeShieldIcon(shield); // Update the UI for clicking on it to activate
         return true; // We added the Shield so let the calling code know
     }     
 
@@ -166,8 +166,8 @@ public class Player : BoardObject
         ActiveShield.transform.position = this.transform.position;
         ActiveShield.transform.parent = this.transform;               
         Shields.RemoveAt(0); // Remove shield from list
-        Dax._UIRoot.DestroyShieldIcon(); // Destroy UI icon
-        if (Shields.Count > 0) Dax._UIRoot.ChangeShieldIcon(Shields[0]); // If we have more Shields update the UI
+        Dax.UIRoot.DestroyShieldIcon(); // Destroy UI icon
+        if (Shields.Count > 0) Dax.UIRoot.ChangeShieldIcon(Shields[0]); // If we have more Shields update the UI
     }
 
     /// <summary>

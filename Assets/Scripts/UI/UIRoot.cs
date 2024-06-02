@@ -18,8 +18,8 @@ public class UIRoot : MonoBehaviour
     public TextMeshPro EndGameText;
     public GameObject TryAgainButton;
     public GameObject MainMenuButton;
-    Dax _Dax;
-    MCP _MCP;
+    Dax Dax;
+    MCP MCP;
 
     public void ToggleEndGameItems(string endGameReason, bool isActive)
     {
@@ -35,14 +35,14 @@ public class UIRoot : MonoBehaviour
     public void ChangeShieldIcon(Shield shield )
     {
         DestroyShieldIcon();
-        ShieldIcon = _MCP.CreateShieldIcon(shield.ShieldType);
+        ShieldIcon = MCP.CreateShieldIcon(shield.ShieldType);
         ShieldIcon.transform.parent = this.transform;
     }
 
     public void ChangeFacetCollectIcon(FacetCollect facetCollect)
     {        
         DestroyFacetCollectIcon();
-        FacetCollectIcon = _MCP.CreateFacetCollectIcon(facetCollect.FacetCollectType);
+        FacetCollectIcon = MCP.CreateFacetCollectIcon(facetCollect.FacetCollectType);
         FacetCollectIcon.transform.parent = this.transform;
     }
 
@@ -54,8 +54,8 @@ public class UIRoot : MonoBehaviour
 
     public void Init()
     {
-        _MCP = FindObjectOfType<MCP>();
-        _Dax = FindObjectOfType<Dax>();
+        MCP = FindObjectOfType<MCP>();
+        Dax = FindObjectOfType<Dax>();
         for (int i = 0; i < ColorCounters.Length; i++)
         {
             ColorCounterTexts[i] = ColorCounters[i].GetComponentInChildren<TextMeshPro>();            
@@ -65,7 +65,7 @@ public class UIRoot : MonoBehaviour
         
         for (int i = 0; i < ColorCounters.Length; i++)
         {
-            ColorCounters[i].GetComponent<MeshRenderer>().material = _MCP.GetFacetMaterial((Facet.eFacetColors)i);
+            ColorCounters[i].GetComponent<MeshRenderer>().material = MCP.GetFacetMaterial((Facet.eFacetColors)i);
             ColorCounterTexts[i].SetText(0.ToString());
         }
         PreGameButton.gameObject.SetActive(true);
@@ -76,8 +76,8 @@ public class UIRoot : MonoBehaviour
     }
     void SetTimerText()
     {
-        int minutes = Mathf.FloorToInt(_Dax.LevelTime / 60f);
-        int seconds = Mathf.FloorToInt(_Dax.LevelTime % 60f);
+        int minutes = Mathf.FloorToInt(Dax.LevelTime / 60f);
+        int seconds = Mathf.FloorToInt(Dax.LevelTime % 60f);
         if (minutes != 0) TimerText.SetText(minutes + ":" + seconds);
         else TimerText.SetText(":" + seconds);
     }
@@ -85,7 +85,7 @@ public class UIRoot : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _Dax.LevelTime -= Time.deltaTime;
+        Dax.LevelTime -= Time.deltaTime;
         SetTimerText();
         
         if (Input.GetMouseButtonDown(0))
@@ -94,7 +94,7 @@ public class UIRoot : MonoBehaviour
             Ray ray = UICamera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
-                switch(_Dax.GameState)
+                switch(Dax.GameState)
                 {
                     case Dax.eGameState.RUNNING:
                         if (hit.collider.name.Contains("Shield_HUD"))
@@ -111,20 +111,20 @@ public class UIRoot : MonoBehaviour
                     case Dax.eGameState.PRE_GAME:
                         if (hit.collider.name.Contains("Pre_Game"))
                         {
-                            _Dax.StartGame();
+                            Dax.StartGame();
                         }
                         break;
                     case Dax.eGameState.GAME_OVER:
                         if (hit.collider.name.Contains("Try_Again"))
                         {
                             ToggleEndGameItems("ignore", false);
-                            _Dax.ResetPuzzleFromSave();
+                            Dax.ResetPuzzleFromSave();
                         }
                         else if (hit.collider.name.Contains("Main_Menu"))
                         {
                             ToggleEndGameItems("ignore", false);
-                            _Dax.ResetPuzzleFromSave();
-                            _Dax.GameState = Dax.eGameState.PRE_GAME;
+                            Dax.ResetPuzzleFromSave();
+                            Dax.GameState = Dax.eGameState.PRE_GAME;
                             PreGameButton.SetActive(true);
                         }
                         break;

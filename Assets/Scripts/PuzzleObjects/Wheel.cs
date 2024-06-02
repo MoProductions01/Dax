@@ -46,7 +46,7 @@ public class Wheel : MonoBehaviour
     public void CollectFacet(Facet facet)
     {        
         NumFacetsCollected[(int)facet._Color]++; // update number collected for this color
-        Dax._UIRoot.SetFacetColorText(facet._Color, NumFacetsCollected[(int)facet._Color]); // update UI
+        Dax.UIRoot.SetFacetColorText(facet._Color, NumFacetsCollected[(int)facet._Color]); // update UI
         Dax.AddPoints(5);
         DestroyImmediate(facet.gameObject);
         CheckVictoryConditions(); // Check the victory conditions each time you collect a facet
@@ -61,7 +61,7 @@ public class Wheel : MonoBehaviour
         NumFacetsCollected[(int)colorFacetCarried._Color]++;
         Dax.AddPoints(5);
         Dax.Player.CarriedFacet = null;
-        Dax._UIRoot.SetFacetColorText(colorFacetCarried._Color, NumFacetsCollected[(int)colorFacetCarried._Color]);       
+        Dax.UIRoot.SetFacetColorText(colorFacetCarried._Color, NumFacetsCollected[(int)colorFacetCarried._Color]);       
     }
 
     /// <summary>

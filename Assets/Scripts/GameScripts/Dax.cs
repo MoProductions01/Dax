@@ -46,7 +46,7 @@ public class Dax : MonoBehaviour
     
     [field: SerializeField] public DaxSaveData.PuzzleSaveData PuzzleSaveData {get; set;}   // Save data for the current puzzle  
         
-    public UIRoot _UIRoot;  // Ref to the root UI moui
+    public UIRoot UIRoot;  // Ref to the root UI moui
     [field: SerializeField] public string PuzzleName {get; set;} = "Default Puzzle"; //Name of the puzzle    
 
     /// <summary>
@@ -57,8 +57,8 @@ public class Dax : MonoBehaviour
         GameState = eGameState.PRE_GAME; // Dax.Awake()
         RingMask = LayerMask.GetMask("Main Touch Control");        
         Score = 0;
-        _UIRoot = FindObjectOfType<UIRoot>();
-        _UIRoot.Init();
+        UIRoot = FindObjectOfType<UIRoot>(); // moui
+        UIRoot.Init();
     }      
     
     /// <summary>
@@ -85,7 +85,7 @@ public class Dax : MonoBehaviour
             points *= PointModVal;
         }
         Score += points;
-        _UIRoot.ScoreText.SetText(Score.ToString());
+        UIRoot.ScoreText.SetText(Score.ToString());
     }   
 
     /// <summary>
@@ -200,7 +200,7 @@ public class Dax : MonoBehaviour
     public void EndGame(string reason)
     {
         GameState = eGameState.GAME_OVER;
-        _UIRoot.ToggleEndGameItems(reason, true);
+        UIRoot.ToggleEndGameItems(reason, true);
     }
 
     /// <summary>
@@ -208,7 +208,7 @@ public class Dax : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
-        _UIRoot.PreGameButton.SetActive(false);
+        UIRoot.PreGameButton.SetActive(false);
         GameState = eGameState.RUNNING;
     }
 

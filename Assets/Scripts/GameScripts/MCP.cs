@@ -457,7 +457,7 @@ public class MCP : MonoBehaviour
                 facetCollectIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/Facet_Collect_Wheel_HUD");
                 break;
         }
-        GameObject facetCollectIcon = Instantiate<GameObject>(facetCollectIconPrefab, Dax._UIRoot.transform);
+        GameObject facetCollectIcon = Instantiate<GameObject>(facetCollectIconPrefab, Dax.UIRoot.transform);
         return facetCollectIcon;
     }
 
@@ -478,7 +478,7 @@ public class MCP : MonoBehaviour
                 shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/Single_Kill_Shield_HUD");
                 break;           
         }
-        GameObject shieldIcon = Instantiate<GameObject>(shieldIconPrefab, Dax._UIRoot.transform);
+        GameObject shieldIcon = Instantiate<GameObject>(shieldIconPrefab, Dax.UIRoot.transform);
         return shieldIcon;       
     }    
    
