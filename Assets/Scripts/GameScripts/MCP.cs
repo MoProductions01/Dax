@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
@@ -176,7 +177,7 @@ public class MCP : MonoBehaviour
                
 
         // Wheel is the container class for the gameboard (Rings, etc)
-        Wheel wheel = CreateWheel(mcp/*, mcp._Dax.gameObject, mcp._Dax, 0*/);
+        Wheel wheel = CreateWheel(mcp/*, mcp._Dax.gameObject, mcp._Dax, 0*/); // modelete
         mcp.Dax.Wheel = wheel;
 
         // Set up the camera propertly
@@ -211,7 +212,7 @@ public class MCP : MonoBehaviour
     /// </summary>
     /// <param name="mcp">MCP is the main project overseer class</param>
     /// <returns></returns>
-    public static Wheel CreateWheel(MCP mcp/*, GameObject rootGO, Dax daxRef, int wheelNum*/)
+    public static Wheel CreateWheel(MCP mcp/*, GameObject rootGO, Dax daxRef, int wheelNum*/) // modelete
     {
         // Create the Wheel GameObject/Class and make it a child of Dax
         GameObject go = new GameObject("Wheel");
@@ -440,7 +441,7 @@ public class MCP : MonoBehaviour
         UnityEngine.Object.DestroyImmediate(nodes);
 
         // Make sure all the Rings are on        
-        wheel.TurnOnRings(Dax.MAX_NUM_RINGS);
+        wheel.TurnOnRings(Dax.MAX_NUM_RINGS);        
 
         return wheel;
     }

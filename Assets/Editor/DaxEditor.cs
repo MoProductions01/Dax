@@ -475,6 +475,15 @@ public class DaxEditor : Editor
             HandleActiveGameObject();                                                                                                                                        
         }
 
+        if (GUILayout.Button("Clear ", GUILayout.Width(150f)))
+        {
+            List<ChannelPiece> pieces = Dax.GetComponentsInChildren<ChannelPiece>().ToList();
+            foreach(ChannelPiece cp in pieces)
+            {
+                cp.GetComponent<MeshRenderer>().enabled = false;
+            }
+        }
+
         // Save data                        
         DaxSetupSO.ApplyModifiedProperties();
         DaxSO.ApplyModifiedProperties();            
