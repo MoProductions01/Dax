@@ -8,7 +8,7 @@ using System.Linq;
 /// </summary>
 public class Ring : MonoBehaviour
 {
-    public static float DEFAULT_ROTATE_SPEED = 10f; // Default rotate speed for rings
+    public static float DEFAULT_ROTATE_SPEED = 0f; // Default rotate speed for rings modelete - put back to 10
 
     [field: SerializeField] public Dax Dax {get; set;} // Reference to the root gameplay Dax object
     [field: SerializeField] public float RotateSpeed {get; set;} // How fast the Ring rotating    

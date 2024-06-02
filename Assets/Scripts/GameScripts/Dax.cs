@@ -11,6 +11,7 @@ public class Dax : MonoBehaviour
     public static float MAX_SPIN_SPEED = 20f; // Maximum speed the player can spin a ring
     public static float MAX_SPEED = 1f; // Maximum speed a board object or the player can go
     public static int MAX_NUM_RINGS = 1; // Maximum number of rings the game can have // monotewheel
+    public static float DEFAULT_LEVEL_TIME = 120f;
      
     // The victory conditions (or game type).
     // COLLECTION: Player needs to run over the facets to collect them.  When they have them all you win.
@@ -41,7 +42,7 @@ public class Dax : MonoBehaviour
     private float PointModTimer; // Timer for the current gameplay modifier // moui
     private int PointModVal;     // Value of the current gameplay modifier
             
-    public float LevelTime {get; set;} = 120f;  // Amount of time for the current level
+    public float LevelTime {get; set;} = DEFAULT_LEVEL_TIME;  // Amount of time for the current level
     public int Score {get; set;} = 0;       // Player score // moui
     
     [field: SerializeField] public DaxSaveData.PuzzleSaveData PuzzleSaveData {get; set;}   // Save data for the current puzzle  
@@ -85,7 +86,7 @@ public class Dax : MonoBehaviour
             points *= PointModVal;
         }
         Score += points;
-        UIRoot.ScoreText.SetText(Score.ToString());
+        UIRoot.ScoreText.SetText(Score.ToString()); // moui timer/score
     }   
 
     /// <summary>
@@ -200,7 +201,7 @@ public class Dax : MonoBehaviour
     public void EndGame(string reason)
     {
         GameState = eGameState.GAME_OVER;
-        UIRoot.ToggleEndGameItems(reason, true);
+        UIRoot.ShowEndGame(reason, true);
     }
 
     /// <summary>
@@ -208,7 +209,7 @@ public class Dax : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
-        UIRoot.PreGameButton.SetActive(false);
+        UIRoot.ClickToStartButton.SetActive(false);
         GameState = eGameState.RUNNING;
     }
 
