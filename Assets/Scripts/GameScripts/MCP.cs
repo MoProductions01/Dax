@@ -258,10 +258,10 @@ public class MCP : MonoBehaviour
             // Add the Ring to the wheel
             wheel.Rings.Add(ringGameObject.GetComponent<Ring>());
 
-            // The center ring has no bumpers so if it's any other ring load up and create those
+            // The center ring has no bumpers so if it's any other ring create the BumperGroup container for the Bumpers
             if (ringIndex != 0)
-            {
-                // Bumpers
+            {   
+                // Bumper Group               
                 bumperGroup = new GameObject("Ring_" + ringIndex.ToString("D2") + "_Bumpers");
                 bumperGroup.transform.parent = wheel.gameObject.transform;
                 bumperGroup.AddComponent<BumperGroup>();

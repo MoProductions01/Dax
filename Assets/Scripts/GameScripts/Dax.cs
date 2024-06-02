@@ -10,7 +10,7 @@ public class Dax : MonoBehaviour
 {   
     public static float MAX_SPIN_SPEED = 20f; // Maximum speed the player can spin a ring
     public static float MAX_SPEED = 1f; // Maximum speed a board object or the player can go
-    public static int MAX_NUM_RINGS = 4; // Maximum number of rings the game can have // monotewheel
+    public static int MAX_NUM_RINGS = 1; // Maximum number of rings the game can have // monotewheel
     public static float DEFAULT_LEVEL_TIME = 120f;
      
     // The victory conditions (or game type).
