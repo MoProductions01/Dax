@@ -172,7 +172,8 @@ public class MCP : MonoBehaviour
         
 
         // Dax is the main overall gameplay class.  Pretty much manages everything
-        mcp.Dax = new GameObject("Dax").AddComponent<Dax>();               
+        mcp.Dax = new GameObject("Dax").AddComponent<Dax>();   
+               
 
         // Wheel is the container class for the gameboard (Rings, etc)
         Wheel wheel = CreateWheel(mcp/*, mcp._Dax.gameObject, mcp._Dax, 0*/);
@@ -180,7 +181,8 @@ public class MCP : MonoBehaviour
 
         // Set up the camera propertly
         Camera mainCamera = Camera.main;
-        mainCamera.transform.position = new Vector3(0f, DaxPuzzleSetup.CAMERA_Y_VALUES[Dax.MAX_NUM_RINGS-1], 0f);
+        // modelete - look into the camera/dax offset
+        mainCamera.transform.position = new Vector3(-10f, DaxPuzzleSetup.CAMERA_Y_VALUES[Dax.MAX_NUM_RINGS-1], 0f);        
         mainCamera.transform.eulerAngles = new Vector3(90f, 0f, 0f);        
         mainCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("UI"));
         mainCamera.clearFlags = CameraClearFlags.Depth;
@@ -198,7 +200,10 @@ public class MCP : MonoBehaviour
         mcp.Dax.Player.Dax = mcp.Dax;
         player.SetStartChannel(0);        
         player.InitForChannelNode(null, mcp.Dax);
-        player.ResetPlayer();                        
+        player.ResetPlayer();         
+
+        // modelete - look into the camera/dax offset
+        mcp.Dax.transform.position = new Vector3(-10f, 0f, 0f);                            
     }    
 
     /// <summary>
@@ -447,19 +452,20 @@ public class MCP : MonoBehaviour
     /// </summary>
     /// <param name="type">Whether it's a collect facet powerup for a ring or the whole wheel</param>
     /// <returns></returns>
-    public GameObject CreateFacetCollectIcon( FacetCollect.eFacetCollectTypes type)
-    {        
-        GameObject facetCollectIconPrefab = null;
+    public GameObject CreateFacetCollectButton( FacetCollect.eFacetCollectTypes type)
+    {        // mopowerup
+        Debug.Log("MCP.CreateFacetCollectButton()");
+        GameObject facetCollectButtonPrefab = null;
         switch (type)
         {
             case FacetCollect.eFacetCollectTypes.RING:
-                facetCollectIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/Facet_Collect_Ring_HUD");
+                facetCollectButtonPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/FC_Ring_Activate_Button");
                 break;
             case FacetCollect.eFacetCollectTypes.WHEEL:
-                facetCollectIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/Facet_Collect_Wheel_HUD");
+                facetCollectButtonPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/FC_Wheel_Activate_Button");
                 break;
         }
-        GameObject facetCollectIcon = Instantiate<GameObject>(facetCollectIconPrefab, Dax.UIRoot.transform);
+        GameObject facetCollectIcon = Instantiate<GameObject>(facetCollectButtonPrefab, Dax.UIRoot.transform);
         return facetCollectIcon;
     }
 
@@ -474,10 +480,10 @@ public class MCP : MonoBehaviour
         switch (type)
         {   // 
             case Shield.eShieldTypes.HIT:
-                shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/Hit_Shield_HUD");
+                shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/Shield_Hit_Activate_Button");
                 break;
             case Shield.eShieldTypes.SINGLE_KILL:
-                shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/Single_Kill_Shield_HUD");
+                shieldIconPrefab = Resources.Load<GameObject>("Dax/Prefabs/HUD_Items/Shield_Single_Kill_Activate_Button");
                 break;           
         }
         GameObject shieldIcon = Instantiate<GameObject>(shieldIconPrefab, Dax.UIRoot.transform);

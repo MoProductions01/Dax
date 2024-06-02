@@ -147,6 +147,7 @@ public class BoardObject : MonoBehaviour
                         {   // Player is carrying a facet that's the same color as the bumper so update game state                           
                             FindObjectOfType<Dax>().Wheel.MatchedFacetColor(playerCarriedColorFacet);                            
                             DestroyImmediate(playerCarriedColorFacet.gameObject);
+                            playerCarriedColorFacet = null;
                             if(Dax.Wheel.VictoryCondition == Dax.eVictoryConditions.COLOR_MATCH) Dax.Wheel.CheckVictoryConditions();
                         }
                         break;

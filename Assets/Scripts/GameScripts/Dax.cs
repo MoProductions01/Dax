@@ -250,8 +250,8 @@ public class Dax : MonoBehaviour
 
         mcp.ResetWheel(Wheel); // reset the wheel to starting state                
         Wheel.VictoryCondition = PuzzleSaveData.VictoryCondition;                
-        Wheel.TurnOnRings(PuzzleSaveData.NumRings); // turn on # of rings baesd on save data       
-
+        Wheel.TurnOnRings(PuzzleSaveData.NumRings); // turn on # of rings baesd on save data               
+       
         // first pass through all the rings to create all the board objects
         for(int i=0; i<PuzzleSaveData.RingSaves.Count; i++)
         {            

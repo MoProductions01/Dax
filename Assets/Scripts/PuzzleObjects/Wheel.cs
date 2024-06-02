@@ -32,6 +32,7 @@ public class Wheel : MonoBehaviour
     /// </summary>
     public void ResetFacetsCount()
     {
+        // modelete - I'm not sure if this funciton does anything useful
         List<Facet> facets = GetComponentsInChildren<Facet>().ToList();
         for (int i = 0; i < NumFacetsOnBoard.Count; i++)
         {
@@ -108,6 +109,7 @@ public class Wheel : MonoBehaviour
         }
 
         // set up the camera position based on number of rings    
-        Camera.main.transform.position = new Vector3(0f, DaxPuzzleSetup.CAMERA_Y_VALUES[numRings-1], 0f);
+        // modelete - look into the camera/dax offset
+        Camera.main.transform.position = new Vector3(-10f, DaxPuzzleSetup.CAMERA_Y_VALUES[numRings-1], 0f);
     }   
 }

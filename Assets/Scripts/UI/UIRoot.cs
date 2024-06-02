@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEditor.PackageManager;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class UIRoot : MonoBehaviour
 {
@@ -20,12 +22,92 @@ public class UIRoot : MonoBehaviour
     //public GameObject[] ColorCounters;
     public TMP_Text[] FacetCounterTexts = new TMP_Text[(int)Facet.eFacetColors.ORANGE + 1];
     public GameObject EndGameItems;
+    public UnityEngine.UI.Button FacetCollectActivateButton;
+    UnityEngine.UI.Image FacetCollectIcon;
+    public UnityEngine.UI.Button ShieldActivateButton;
+    UnityEngine.UI.Image ShieldIcon;
+    
    // public GameObject TryAgainButton;
-    public GameObject ShieldIcon = null;
-    public GameObject FacetCollectIcon = null;        
+    //public GameObject ShieldIcon = null;
+    //public GameObject FacetCollectIcon = null;        
 //    public GameObject MainMenuButton;
     Dax Dax;
     MCP MCP;
+    Player Player;
+
+    // mopowerup
+   // public void ChangeFacetCollectIcon(FacetCollect.eFacetCollectTypes facetCollectType)
+   // {         // modelete update - make the points for items const
+        
+   //     FacetCollectIcon.enabled = true;
+              
+
+        /*
+        Debug.Log("UIRoot.ChangeFacetCollectIcon()");
+        DestroyFacetCollectIcon();
+        FacetCollectIcon = MCP.CreateFacetCollectButton(facetCollectType);
+        Debug.Log("name: " + FacetCollectIcon.name);
+        FacetCollectIcon.transform.parent = this.transform;*/
+ //   }
+
+    public void ToggleFacetCollectIcon(bool isActive, FacetCollect.eFacetCollectTypes facetCollectType)
+    {
+        Debug.Log("UIRoot.ToggleFacetCollectIcon(). isActive: " + isActive + ", type: " + facetCollectType.ToString());
+        FacetCollectIcon.enabled = isActive;
+        if(isActive == true)
+        {
+            if(facetCollectType == FacetCollect.eFacetCollectTypes.RING)
+            {
+                FacetCollectIcon.sprite = Resources.Load<Sprite>("Dax/Powerup Icons/Icon Lightning Yellow");
+            }
+            else
+            {
+                FacetCollectIcon.sprite = Resources.Load<Sprite>("Dax/Powerup Icons/Icon Lightning Blue");
+            }  
+        }
+    }
+     
+
+    public void OnClickFacetCollectButton()
+    {
+        Debug.Log("UIRoot.OnClickFacetCollectButton()");
+        Player.ActivateFacetCollect();
+    }
+
+    public void OnClickShieldButton()
+    {
+        Debug.Log("UIRoot.OnClickShieldButton()");
+        Player.ActivateShield();
+
+    }
+
+    /*public void DestroyFacetCollectIcon()
+    {
+        Debug.LogWarning("Implement UIRoot.DestroyFacetCollectIcon()");
+        //Debug.Log("UIRoot.DestroyFacetCollectIcon()");
+       */ //if (FacetCollectIcon != null) DestroyImmediate(FacetCollectIcon);        
+   // }
+  /*  public void DestroyShieldIcon()
+    {
+        Debug.LogWarning("Implement UIRoot.DestroyShieldIcon()");
+        //if (ShieldIcon != null) DestroyImmediate(ShieldIcon);
+    }*/
+    public void ToggleShieldIcon(bool isActive, Shield.eShieldTypes shieldType)
+    {
+        Debug.Log("UIRoot.ToggleShieldIcon(). isActive: " + isActive + ", type: " + shieldType.ToString());
+        ShieldIcon.enabled = isActive;
+        if(isActive == true)
+        {
+            if(shieldType == Shield.eShieldTypes.HIT)
+            {
+                ShieldIcon.sprite = Resources.Load<Sprite>("Dax/Powerup Icons/Icon Shield Wood");
+            }
+            else
+            {
+                ShieldIcon.sprite = Resources.Load<Sprite>("Dax/Powerup Icons/Icon Shield Metal");
+            }  
+        }        
+    }   
 
     public void ShowEndGame(string endGameReason, bool isActive)
     {                
@@ -43,9 +125,12 @@ public class UIRoot : MonoBehaviour
 
     public void OnClickTryAgainButton()
     {
+        Debug.Log("UIRoot.OnClickTryAgainButton()");
         EndGameItems.gameObject.SetActive(false);
         Dax.ResetPuzzleFromSave();
     }
+    
+    
 
     void SetTimerText()
     {
@@ -68,12 +153,17 @@ public class UIRoot : MonoBehaviour
 
         EndGameItems.SetActive(false);
         ClickToStartButton.gameObject.SetActive(true);
+        FacetCollectIcon.enabled = false;
+        ShieldIcon.enabled = false;
     }
 
     public void Init()
     {
         MCP = FindObjectOfType<MCP>();
-        Dax = FindObjectOfType<Dax>(); // moui        
+        Dax = FindObjectOfType<Dax>(); // moui 
+        Player = FindObjectOfType<Player>();    
+        FacetCollectIcon = FacetCollectActivateButton.gameObject.GetComponent<UnityEngine.UI.Image>();
+        ShieldIcon = ShieldActivateButton.gameObject.GetComponent<UnityEngine.UI.Image>();
         ResetForGameStart();                
     }
     public void SetFacetColorText(Facet.eFacetColors color, int value)
@@ -88,26 +178,6 @@ public class UIRoot : MonoBehaviour
         SetTimerText();                
     }
 
-    public void DestroyShieldIcon()
-    {
-        if (ShieldIcon != null) DestroyImmediate(ShieldIcon);
-    }
-    public void ChangeShieldIcon(Shield shield )
-    {
-        DestroyShieldIcon();
-        ShieldIcon = MCP.CreateShieldIcon(shield.ShieldType);
-        ShieldIcon.transform.parent = this.transform;
-    }   
-
-    public void ChangeFacetCollectIcon(FacetCollect facetCollect)
-    {        
-        DestroyFacetCollectIcon(); // modelete update - make the points for items const
-        FacetCollectIcon = MCP.CreateFacetCollectIcon(facetCollect.FacetCollectType);
-        FacetCollectIcon.transform.parent = this.transform;
-    }
-
-    public void DestroyFacetCollectIcon()
-    {
-        if (FacetCollectIcon != null) DestroyImmediate(FacetCollectIcon);        
-    }
+    
+   
 }
