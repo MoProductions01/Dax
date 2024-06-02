@@ -180,9 +180,9 @@ MonoBehaviour:
   <Dax>k__BackingField: {fileID: 0}
   <CurChannel>k__BackingField: {fileID: 0}
   <SpawningNode>k__BackingField: {fileID: 0}
-  PointModType: 0
-  PointModVal: 0
-  PointModTime: 5
+  <PointModType>k__BackingField: 0
+  <PointModVal>k__BackingField: 0
+  <PointModTime>k__BackingField: 5
 --- !u!1 &5829565246846027510
 GameObject:
   m_ObjectHideFlags: 0
@@ -628,7 +628,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationX:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -681,7 +681,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationY:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
