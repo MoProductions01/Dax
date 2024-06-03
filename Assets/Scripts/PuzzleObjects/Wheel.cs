@@ -45,11 +45,12 @@ public class Wheel : MonoBehaviour
     /// </summary>
     /// <param name="facet"></param>
     public void CollectFacet(Facet facet)
-    {        
+    {     
+        FindObjectOfType<VFX>().PlayFacetVFX(facet._Color, facet.transform.position);   // modelete - get a ref to VFX or make it static
         NumFacetsCollected[(int)facet._Color]++; // update number collected for this color
         Dax.UIRoot.SetFacetColorText(facet._Color, NumFacetsCollected[(int)facet._Color]); // update UI
         Dax.AddPoints(5);
-        DestroyImmediate(facet.gameObject);
+        DestroyImmediate(facet.gameObject);        
         CheckVictoryConditions(); // Check the victory conditions each time you collect a facet
     }   
 
@@ -59,10 +60,12 @@ public class Wheel : MonoBehaviour
     /// <param name="colorFacetCarried"></param>
     public void MatchedFacetColor(Facet colorFacetCarried) 
     {        
-        NumFacetsCollected[(int)colorFacetCarried._Color]++;
-        Dax.AddPoints(5);
+        //DestroyImmediate(playerCarriedColorFacet.gameObject); modelete
+        CollectFacet(colorFacetCarried);
+        //NumFacetsCollected[(int)colorFacetCarried._Color]++;
+        //Dax.AddPoints(5);
         Dax.Player.CarriedFacet = null;
-        Dax.UIRoot.SetFacetColorText(colorFacetCarried._Color, NumFacetsCollected[(int)colorFacetCarried._Color]);       
+        //Dax.UIRoot.SetFacetColorText(colorFacetCarried._Color, NumFacetsCollected[(int)colorFacetCarried._Color]);       
     }
 
     /// <summary>

@@ -58,15 +58,16 @@ public class Hazard : BoardObject
 
         if (player.ActiveShield != null)
         {   // Collided with hazard but you have a shield
+            FindObjectOfType<VFX>().PlayShieldImpactCollectVFX(player.ActiveShield.ShieldType, this.transform.position); 
             switch (player.ActiveShield.ShieldType)
             {   
                 case Shield.eShieldTypes.HIT:
-                    // HIT just destroys the shield
+                    // HIT just destroys the shield                                            
                     DestroyShield();
                     player.TempEnemyIgnore = hazard; // Temporarily ignore the hazard you collided with that destroys the shield
                     break;
                 case Shield.eShieldTypes.SINGLE_KILL:
-                    // Kill shield so destroy the shield and the hazard
+                    // Kill shield so destroy the shield and the hazard                    
                     DestroyShield();
                     DestroyHazard(hazard);
                     break;                             
@@ -83,8 +84,18 @@ public class Hazard : BoardObject
             else
             {
                 // Collided with an Enemy or Dynamite so you're toast
-                if(hazard.HazardType == Hazard.eHazardType.ENEMY) FindObjectOfType<Dax>().EndGame("Killed By Enemy");                            
-                else if (hazard.HazardType == Hazard.eHazardType.DYNAMITE) FindObjectOfType<Dax>().EndGame("Killed By Dynamite");                            
+                if(hazard.HazardType == Hazard.eHazardType.ENEMY) 
+                {
+                    FindObjectOfType<VFX>().PlayHazardVFX(Hazard.eHazardType.ENEMY, this.transform.position);                         
+                    FindObjectOfType<Dax>().EndGame("Killed By Enemy");                       
+                    //DestroyHazard(hazard);                    
+                }
+                else if (hazard.HazardType == Hazard.eHazardType.DYNAMITE) 
+                {
+                    FindObjectOfType<VFX>().PlayHazardVFX(Hazard.eHazardType.DYNAMITE, this.transform.position);                      
+                    FindObjectOfType<Dax>().EndGame("Killed By Dynamite");                                                   
+                    DestroyHazard(hazard); 
+                }
             }
             
         }         

@@ -214,7 +214,7 @@ public class DaxEditor : Editor
 
         // A list of all the facets that you need to collect on the board
         EditorGUILayout.Separator();
-        for (int i = 0; i < Dax.Wheel.NumFacetsOnBoard.Count-1; i++)
+        for (int i = 0; i < Dax.Wheel.NumFacetsOnBoard.Count; i++)
         {
             Facet.eFacetColors curColor = (Facet.eFacetColors)i;
             EditorGUILayout.LabelField(curColor.ToString() + " To Collect: " + Dax.Wheel.NumFacetsOnBoard[(int)curColor]);

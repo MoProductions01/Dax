@@ -74,8 +74,10 @@ public class BoardObject : MonoBehaviour
             Vector3 heading = channelNode.transform.position - this.transform.position;
             float dot = Vector3.Dot(heading, this.transform.forward);         
             if(dot > 0f) // Make sure channel node is in front of us.  It should be but better safe than sorry
-            {   // If we're here then we can move to a new channel
-                CurChannel = channelNode.MyChannel;                
+            {   // If we're here then we can move to a new channel                
+                CurChannel = channelNode.MyChannel;               
+               // Debug.Log("new channel CurChannel: " + CurChannel.name + ", channelNodE: " + channelNode.name + ", pos: " + channelNode.transform.position.ToString("F2")); 
+                FindObjectOfType<VFX>().PlayChannelChangeVFX(channelNode.transform.position);
                 this.transform.parent = CurChannel.MyRing.transform;                
                 this.transform.position = channelNode.transform.position;
                 transform.LookAt(channelNode.IsStartNode() ? channelNode.MyChannel.EndNode.transform : channelNode.MyChannel.StartNode.transform);  
@@ -145,8 +147,7 @@ public class BoardObject : MonoBehaviour
                         Facet playerCarriedColorFacet = (Facet)player.CarriedFacet;
                         if (playerCarriedColorFacet._Color == bumper.BumperColor)
                         {   // Player is carrying a facet that's the same color as the bumper so update game state                           
-                            FindObjectOfType<Dax>().Wheel.MatchedFacetColor(playerCarriedColorFacet);                            
-                            DestroyImmediate(playerCarriedColorFacet.gameObject);
+                            FindObjectOfType<Dax>().Wheel.MatchedFacetColor(playerCarriedColorFacet);                                                        
                             playerCarriedColorFacet = null;
                             if(Dax.Wheel.VictoryCondition == Dax.eVictoryConditions.COLOR_MATCH) Dax.Wheel.CheckVictoryConditions();
                         }

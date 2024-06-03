@@ -97,13 +97,26 @@ public class Player : BoardObject
         FacetCollects.Clear();
     }
 
-/// <summary>
+    
+    /// <summary>
     /// Adds a Shield object to our list
     /// </summary>
     /// <param name="shield"></param>
     /// <returns></returns>
     public bool AddShield(Shield shield)
-    {
+    {        
+        Debug.Log("Player.AddShield(): " + shield.ShieldType);
+
+        if (Shields.Count == MAX_FACETCOLLECT_OR_SHIELD) return false; // Can't go over max shields
+
+        Shield.eShieldTypes shieldType = shield.ShieldType;    
+        Shields.Add(shieldType);      
+        FindObjectOfType<VFX>().PlayShieldCollectVFX(shieldType, this.transform.position);      
+        if (Shields.Count == 1) Dax.UIRoot.ToggleShieldIcon(true, shieldType); // Update the UI for clicking on it to activate
+        DestroyImmediate(shield.gameObject);
+        shield.SpawningNode.SpawnedBoardObject = null;               
+        return true; // We added the FacetCollect so let the calling code know
+
         /* if (Shields.Count == MAX_FACETCOLLECT_OR_SHIELD) return false; // Can't go over max shields
 
         Destroy(shield.GetComponent<Collider>()); // Destroy collider but not object so we can add it to our list
@@ -113,19 +126,36 @@ public class Player : BoardObject
         Shields.Add(shield); // Add it to our list
         if(Shields.Count == 1) Dax.UIRoot.ChangeShieldIcon(shield); // Update the UI for clicking on it to activate*/
        // return true; // We added the Shield so let the calling code know
-
-        Debug.Log("Player.AddShield(): " + shield.ShieldType);
-
-        if (Shields.Count == MAX_FACETCOLLECT_OR_SHIELD) return false; // Can't go over max shields
-
-        Shield.eShieldTypes shieldType = shield.ShieldType;                
-        DestroyImmediate(shield.gameObject);
-        shield.SpawningNode.SpawnedBoardObject = null;
-
-        Shields.Add(shieldType);
-        if (Shields.Count == 1) Dax.UIRoot.ToggleShieldIcon(true, shieldType); // Update the UI for clicking on it to activate
-        return true; // We added the FacetCollect so let the calling code know
     }  
+
+    
+
+    /// <summary>
+    /// Adds a FacetCollect object to our list
+    /// </summary>
+    /// <param name="facetCollect">FacetCollect to add</param>
+    /// <returns></returns>    
+    public bool AddFacetCollect(FacetCollect facetCollect)
+    {   // mopowerup 01 (called from FacetCollect.cs)
+        
+
+        /*Destroy(facetCollect.GetComponent<Collider>()); // Destroy the collider but keep the object to add to the list
+        facetCollect.SpawningNode.SpawnedBoardObject = null; // Remove it from the ChannelNode
+        facetCollect.transform.parent = this.transform; // Player is now the parent
+        facetCollect.gameObject.SetActive(false); // Turn it off for now
+        FacetCollects.Add(facetCollect); // Add the FacetCollect to the list*/ // modelete\
+        Debug.Log("Player.AddFacetCollect(): " + facetCollect.FacetCollectType);
+        
+        if (FacetCollects.Count == MAX_FACETCOLLECT_OR_SHIELD) return false; // Maxed out so don't collect or add it
+        
+        FacetCollect.eFacetCollectTypes facetCollectType = facetCollect.FacetCollectType;                        
+        FacetCollects.Add(facetCollectType);
+        FindObjectOfType<VFX>().PlayFacetCollectVFX(facetCollectType, this.transform.position);
+        if (FacetCollects.Count == 1) Dax.UIRoot.ToggleFacetCollectIcon(true, facetCollectType); // Update the UI for clicking on it to activate
+        DestroyImmediate(facetCollect.gameObject);
+        facetCollect.SpawningNode.SpawnedBoardObject = null;
+        return true; // We added the FacetCollect so let the calling code know
+    }
 
     /// <summary>
     /// Activates the oldest Shield on the list
@@ -154,6 +184,8 @@ public class Player : BoardObject
         Dax.UIRoot.ToggleShieldIcon(Shields.Count > 0, 
                     (Shields.Count > 0 ? Shields[0] : shieldToActivateType));
 
+        FindObjectOfType<VFX>().PlayShieldCollectVFX(shieldToActivateType, this.transform.position);
+
         string prefabString = 
             MCP.CreatePrefabString((int)BoardObject.eBoardObjectType.SHIELD, (int)shieldToActivateType);
         Shield shieldPrefab = Resources.Load<Shield>(prefabString);
@@ -178,7 +210,8 @@ public class Player : BoardObject
         FacetCollects.RemoveAt(0); // Remove oldest from list        
         Dax.UIRoot.ToggleFacetCollectIcon(FacetCollects.Count > 0, 
                     (FacetCollects.Count > 0 ? FacetCollects[0] : facetCollectToActivateType));
-               
+        
+        FindObjectOfType<VFX>().PlayFacetCollectVFX(facetCollectToActivateType, this.transform.position);
         if(facetCollectToActivateType == FacetCollect.eFacetCollectTypes.RING)
         {
             // Collect all Facets on this ring
@@ -219,29 +252,7 @@ public class Player : BoardObject
 
    
 
-    /// <summary>
-    /// Adds a FacetCollect object to our list
-    /// </summary>
-    /// <param name="facetCollect">FacetCollect to add</param>
-    /// <returns></returns>    
-    public bool AddFacetCollect(FacetCollect facetCollect)
-    {   // mopowerup 01 (called from FacetCollect.cs)
-        Debug.Log("Player.AddFacetCollect(): " + facetCollect.FacetCollectType);
-        if (FacetCollects.Count == MAX_FACETCOLLECT_OR_SHIELD) return false; // Maxed out so don't collect or add it
-
-        /*Destroy(facetCollect.GetComponent<Collider>()); // Destroy the collider but keep the object to add to the list
-        facetCollect.SpawningNode.SpawnedBoardObject = null; // Remove it from the ChannelNode
-        facetCollect.transform.parent = this.transform; // Player is now the parent
-        facetCollect.gameObject.SetActive(false); // Turn it off for now
-        FacetCollects.Add(facetCollect); // Add the FacetCollect to the list*/ // modelete
-        FacetCollect.eFacetCollectTypes facetCollectType = facetCollect.FacetCollectType;                
-        DestroyImmediate(facetCollect.gameObject);
-        facetCollect.SpawningNode.SpawnedBoardObject = null;
-
-        FacetCollects.Add(facetCollectType);
-        if (FacetCollects.Count == 1) Dax.UIRoot.ToggleFacetCollectIcon(true, facetCollectType); // Update the UI for clicking on it to activate
-        return true; // We added the FacetCollect so let the calling code know
-    }
+    
 
     
 
@@ -251,6 +262,7 @@ public class Player : BoardObject
     /// <param name="effectTime">Time the Glue hazard lasts</param>
     public void GlueHit(float effectTime)
     {
+        FindObjectOfType<VFX>().PlayHazardVFX(Hazard.eHazardType.GLUE, this.transform.position);   // modelete - get a ref to VFX or make it static
         EffectType = Hazard.eHazardType.GLUE; 
         GlueStickTime = effectTime;
         SpeedSave = Speed;
@@ -285,6 +297,7 @@ public class Player : BoardObject
             {   // Glue time is over so turn off the Glue and get moving
                 EffectType = Hazard.eHazardType.ENEMY;
                 Speed = SpeedSave;
+                FindObjectOfType<VFX>().ShutOffGlueVFX();
             }
         }
     }   

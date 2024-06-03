@@ -149,6 +149,8 @@ public class MCP : MonoBehaviour
         if (dax != null) UnityEngine.Object.DestroyImmediate(dax.gameObject);
         UIRoot uiRoot = GameObject.FindObjectOfType<UIRoot>();
         if (uiRoot != null) UnityEngine.Object.DestroyImmediate(uiRoot.gameObject);
+        VFX vfx = GameObject.FindObjectOfType<VFX>();
+        if (vfx != null) UnityEngine.Object.DestroyImmediate(vfx.gameObject);
     }
 
     /// <summary>
@@ -193,8 +195,12 @@ public class MCP : MonoBehaviour
         UIRoot uiRootPrefab = Resources.Load<UIRoot>("Dax/Prefabs/UI/UI Root");
         mcp.UIRoot = UnityEngine.Object.Instantiate<UIRoot>(uiRootPrefab);
 
+        // VFX
+        VFX vfxPrefab = Resources.Load<VFX>("Dax/Prefabs/Misc/VFX"); // moui new asset
+        Instantiate<VFX>(vfxPrefab);
+
         // Create the Player and set it up
-        Player playerPrefab = Resources.Load<Player>("Dax/Prefabs/Player_Diode");
+        Player playerPrefab = Resources.Load<Player>("Dax/Prefabs/Misc/Player_Diode");
         Player player = UnityEngine.Object.Instantiate<Player>(playerPrefab, mcp.Dax.transform);        
         player.name = "Player Diode";        
         mcp.Dax.Player = player;

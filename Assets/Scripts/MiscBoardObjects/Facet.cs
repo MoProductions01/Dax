@@ -9,7 +9,7 @@ public class Facet : BoardObject
 {
     // Which color facet we are
     public enum eFacetColors { RED, GREEN, BLUE, YELLOW, PURPLE, ORANGE };
-    [field: SerializeField] public eFacetColors _Color {get; set;}
+    [field: SerializeField] public eFacetColors _Color {get; set;} // modelete - get rid of _
 
     /// <summary>
     /// Overridden function for initting the Facet object
