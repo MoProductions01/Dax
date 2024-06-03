@@ -36,7 +36,8 @@ public class SpeedMod : BoardObject
     /// <param name="facet">Facet object</param>
     public override void HandleCollisionWithPlayer(Player player, BoardObject boardObject)
     {
-        SpeedMod speedMod = (SpeedMod)boardObject;           
+        SpeedMod speedMod = (SpeedMod)boardObject;
+        FindObjectOfType<VFX>().PlaySpeedModVFX(speedMod.SpeedModType, this.transform.position);
         switch(speedMod.SpeedModType)
         {
             case SpeedMod.eSpeedModType.PLAYER_SPEED:

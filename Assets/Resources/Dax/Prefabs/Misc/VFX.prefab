@@ -71,7 +71,15 @@ MonoBehaviour:
   ShieldImpactVFXPrefabs:
   - {fileID: 5880797563127281583, guid: 265d3a5ba69981a4698ceabcedf368b0, type: 3}
   - {fileID: 6579561155568907013, guid: d9a6b62b67fc0ff4fb24f51151287ed9, type: 3}
-  SI_Y: 0.2
+  PointModVFXPrefabs:
+  - {fileID: 8533296111543935201, guid: 40074ee0d535dc44b87dad4d9c8bb5da, type: 3}
+  - {fileID: 8533296111543935201, guid: e51b13faed2e79445998e76de6ad078d, type: 3}
+  PM_Y: 0.2
+  SpeedModVFXPrefabs:
+  - {fileID: 481947888716730270, guid: de2b4eb7d88a7e14e8f8b85e2999154b, type: 3}
+  - {fileID: 481947888716730270, guid: 0d6c73da89e9c4241a2b0922098c9753, type: 3}
+  - {fileID: 481947888716730270, guid: b4f04d135faa2bc42b6a131603b9e813, type: 3}
+  SM_Y: 0.2
   dbgIndex: 0
 --- !u!1 &6767360780188942953
 GameObject:

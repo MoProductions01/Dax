@@ -35,10 +35,11 @@ public class PointMod : BoardObject
     public override void HandleCollisionWithPlayer(Player player, BoardObject boardObject)
     {
         PointMod pointMod = (PointMod)boardObject;
+        FindObjectOfType<VFX>().PlayPointModVFX(pointMod.PointModType, this.transform.position); 
         switch(pointMod.PointModType)
         {
             case PointMod.ePointModType.EXTRA_POINTS:
-                // Give player specified points
+                // Give player specified points                
                 Dax.AddPoints(pointMod.PointModVal);
                 break;
             case PointMod.ePointModType.POINTS_MULTIPLIER:

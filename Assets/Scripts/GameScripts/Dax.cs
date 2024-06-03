@@ -38,9 +38,9 @@ public class Dax : MonoBehaviour
     private float RingRot = 0f;      // Rotation of the ring
     private float PointerPrevAngle; // Angle between the center point and the mouse pointer
     
-    private bool PointModActive; // Whether or not a gameplay modifier is active
-    private float PointModTimer; // Timer for the current gameplay modifier // moui
-    private int PointModVal;     // Value of the current gameplay modifier
+    public bool PointModActive; // Whether or not a gameplay modifier is active
+    public float PointModTimer; // Timer for the current gameplay modifier // moui
+    public int PointModVal;     // Value of the current gameplay modifier
             
     public float LevelTime {get; set;} = DEFAULT_LEVEL_TIME;  // Amount of time for the current level
     public int Score {get; set;} = 0;       // Player score // moui
@@ -69,6 +69,7 @@ public class Dax : MonoBehaviour
     /// <param name="val">Mod val (point multiplier, etc) for the current mod0</param>
     public void BeginPointMod(float time, int val)
     {
+        UIRoot.PointMultTimeText.transform.parent.gameObject.SetActive(true);
         PointModActive = true;
         PointModTimer = time;
         PointModVal = val;
@@ -100,9 +101,11 @@ public class Dax : MonoBehaviour
         if(PointModActive == true)
         {
             PointModTimer -= Time.deltaTime;
+            UIRoot.SetPointModTime(PointModTimer);
             if(PointModTimer <= 0)
             {
                 PointModActive = false;
+                UIRoot.PointMultTimeText.transform.parent.gameObject.SetActive(false); // moui
             }
         }
 

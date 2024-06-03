@@ -76,18 +76,45 @@ public class VFX : MonoBehaviour
        // GameObject instance = Instantiate<GameObject>(ShieldImpactVFXPrefabs[dbgIndex], this.transform);    
         //instance.transform.position = worldPos + new Vector3(0f, SI_Y, 0f);
         //Debug.Log("PlayShieldImpactCollectVFX(): " + ShieldImpactVFXPrefabs[dbgIndex].name + ", at: " + instance.transform.position.ToString("F2"));
+    }       
+
+    [Header("-------------------Point Mods-------------------")]
+    public List<GameObject> PointModVFXPrefabs = new List<GameObject>();
+    public float PM_Y;
+    public void PlayPointModVFX(PointMod.ePointModType type, Vector3 worldPos)
+    {                 
+        //GameObject instance = Instantiate<GameObject>(PointModVFXPrefabs[dbgIndex], this.transform);    
+        //instance.transform.position = worldPos + new Vector3(0f, PM_Y, 0f);
+        //Debug.Log("PlayPointModVFX(): " + PointModVFXPrefabs[dbgIndex].name + ", at: " + instance.transform.position.ToString("F2"));
+
+        GameObject instance = Instantiate<GameObject>(PointModVFXPrefabs[(int)type], this.transform);    
+        instance.transform.position = worldPos + new Vector3(0f, PM_Y, 0f);
+        Debug.Log("PlayPointModVFX(): " + PointModVFXPrefabs[(int)type].name + ", at: " + instance.transform.position.ToString("F2"));
     }
 
-   /* [Header("-------------------Debug-------------------")]
+    [Header("-------------------Speed Mods-------------------")]
+    public List<GameObject> SpeedModVFXPrefabs = new List<GameObject>();
+    public float SM_Y;
+    public void PlaySpeedModVFX(SpeedMod.eSpeedModType type, Vector3 worldPos)
+    {                 
+        //GameObject instance = Instantiate<GameObject>(SpeedModVFXPrefabs[dbgIndex], this.transform);    
+        //instance.transform.position = worldPos + new Vector3(0f, SM_Y, 0f);
+        //Debug.Log("PlaySpeedModVFX(): " + SpeedModVFXPrefabs[dbgIndex].name + ", at: " + instance.transform.position.ToString("F2"));
+        GameObject instance = Instantiate<GameObject>(SpeedModVFXPrefabs[(int)type], this.transform);    
+        instance.transform.position = worldPos + new Vector3(0f, SM_Y, 0f);
+        Debug.Log("PlaySpeedModVFX(): " + SpeedModVFXPrefabs[(int)type].name + ", at: " + instance.transform.position.ToString("F2"));
+    }
+
+    [Header("-------------------Debug-------------------")]
     public int dbgIndex = 0;
     void OnGUI()
     {
         if(GUI.Button(new Rect(0, 0, 200, 100), "play: " + dbgIndex))
         {
-            PlayShieldImpactCollectVFX(Shield.eShieldTypes.HIT, FindObjectOfType<Player>().transform.position);
-            dbgIndex = (dbgIndex + 1) % ShieldImpactVFXPrefabs.Count;
+            PlaySpeedModVFX(SpeedMod.eSpeedModType.ENEMY_SPEED, FindObjectOfType<Player>().transform.position);
+            dbgIndex = (dbgIndex + 1) % SpeedModVFXPrefabs.Count;
         }
-    }*/
+    }
 
     public void ShutOffGlueVFX()
     {

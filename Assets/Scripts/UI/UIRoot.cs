@@ -19,6 +19,7 @@ public class UIRoot : MonoBehaviour
    // public TextMeshPro ScoreText;
     public TMP_Text ScoreText;
     public TMP_Text TimerText;    
+    public TMP_Text PointMultTimeText;    
     //public GameObject[] ColorCounters;
     public TMP_Text[] FacetCounterTexts = new TMP_Text[(int)Facet.eFacetColors.ORANGE + 1];
     public GameObject EndGameItems;
@@ -128,9 +129,7 @@ public class UIRoot : MonoBehaviour
         Debug.Log("UIRoot.OnClickTryAgainButton()");
         EndGameItems.gameObject.SetActive(false);
         Dax.ResetPuzzleFromSave();
-    }
-    
-    
+    }       
 
     void SetTimerText()
     {
@@ -138,6 +137,14 @@ public class UIRoot : MonoBehaviour
         int seconds = Mathf.FloorToInt(Dax.LevelTime % 60f);
         if (minutes != 0) TimerText.SetText(minutes + ":" + seconds);
         else TimerText.SetText(":" + seconds);
+    }
+
+    public void SetPointModTime(float pointModTimer)
+    {
+        int minutes = Mathf.FloorToInt(pointModTimer / 60f); // moui timer/score
+        float seconds = pointModTimer % 60f;
+        if (minutes != 0) PointMultTimeText.SetText(minutes + ":" + Mathf.FloorToInt(seconds));
+        else PointMultTimeText.SetText(":" + seconds.ToString("F2"));
     }
     
     public void ResetForGameStart()
@@ -151,11 +158,15 @@ public class UIRoot : MonoBehaviour
             FacetCounterTexts[i].SetText(0.ToString()); // tie this into resetting the facet counters
         }
 
+        PointMultTimeText.transform.parent.gameObject.SetActive(false);
+
         EndGameItems.SetActive(false);
         ClickToStartButton.gameObject.SetActive(true);
         FacetCollectIcon.enabled = false;
         ShieldIcon.enabled = false;
     }
+
+    
 
     public void Init()
     {
@@ -163,7 +174,7 @@ public class UIRoot : MonoBehaviour
         Dax = FindObjectOfType<Dax>(); // moui 
         Player = FindObjectOfType<Player>();    
         FacetCollectIcon = FacetCollectActivateButton.gameObject.GetComponent<UnityEngine.UI.Image>();
-        ShieldIcon = ShieldActivateButton.gameObject.GetComponent<UnityEngine.UI.Image>();
+        ShieldIcon = ShieldActivateButton.gameObject.GetComponent<UnityEngine.UI.Image>();        
         ResetForGameStart();                
     }
     public void SetFacetColorText(Facet.eFacetColors color, int value)
