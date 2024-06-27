@@ -34,7 +34,8 @@ public class Facet : BoardObject
         if(Dax.Wheel.VictoryCondition == Dax.eVictoryConditions.COLLECTION)
         {   // COLLECTION victory condition so collect the facet
             facet.SpawningNode.SpawnedBoardObject = null;                     
-            this.Dax.Wheel.CollectFacet(facet);                                                                                
+            this.Dax.Wheel.CollectFacet(facet);  
+            SoundPlayerStatic.PlaySoundFX("Pick Up Object");               
         }
         else
         {   // COLOR_MATCH condition so start carrying the facet if you 
