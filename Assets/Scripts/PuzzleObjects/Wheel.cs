@@ -20,8 +20,8 @@ public class Wheel : MonoBehaviour
     [field: SerializeField] public Dax Dax {get; set;} // Referernce to the root game object
     
     // For a while we had multiple wheels each with their own victory conditions.  Now
-    // we're just using one wheel but too much code was written to move things around
-    // so I'm keeping it for now since it ain't broke
+    // we're just using one wheel but so much code was written I'm keeping it here for
+    // now until I get a chance to update
     [field: SerializeField] public Dax.eVictoryConditions VictoryCondition {get; set;} = Dax.eVictoryConditions.COLLECTION;        
     [field: SerializeField] public List<int> NumFacetsOnBoard {get; set;} = new List<int>();
     [field: SerializeField] public List<int> NumFacetsCollected {get; set;} = new List<int>();

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,7 +12,7 @@ public class Dax : MonoBehaviour
     public static float MAX_SPIN_SPEED = 20f; // Maximum speed the player can spin a ring
     public static float MAX_SPEED = 1f; // Maximum speed a board object or the player can go
     public static int MAX_NUM_RINGS = 1; // Maximum number of rings the game can have // monotewheel
-    public static float DEFAULT_LEVEL_TIME = 120f;
+    public static float DEFAULT_LEVEL_TIME = 120;
      
     // The victory conditions (or game type).
     // COLLECTION: Player needs to run over the facets to collect them.  When they have them all you win.
@@ -45,6 +46,7 @@ public class Dax : MonoBehaviour
     public float LevelTime {get; set;} = DEFAULT_LEVEL_TIME;  // Amount of time for the current level
     public int Score {get; set;} = 0;       // Player score // moui
     
+    public TimeSpan ts;
     [field: SerializeField] public DaxSaveData.PuzzleSaveData PuzzleSaveData {get; set;}   // Save data for the current puzzle  
         
     public UIRoot UIRoot;  // Ref to the root UI moui
@@ -97,11 +99,19 @@ public class Dax : MonoBehaviour
     {
         if (GameState != eGameState.RUNNING) return; // Bail if the game isn't in it's running state     
         
+        // Handle the timer
+        LevelTime -= Time.deltaTime;        
+        UIRoot.SetTimerText(LevelTime);
+        if(LevelTime <= 0f)
+        {
+            EndGame("Time Ran Out");
+            UIRoot.SetTimerText("0:00"); // specal case to display 0:00 on the UI            
+        }        
         // Count down the point mod timer if it's on
         if(PointModActive == true)
         {
             PointModTimer -= Time.deltaTime;
-            UIRoot.SetPointModTime(PointModTimer);
+            UIRoot.SetPointModTimerText(PointModTimer);
             if(PointModTimer <= 0)
             {
                 PointModActive = false;
@@ -212,6 +222,7 @@ public class Dax : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
+//        Debug.Log("Start Game");
         UIRoot.ClickToStartButton.SetActive(false);
         GameState = eGameState.RUNNING;
     }
@@ -315,8 +326,7 @@ public class Dax : MonoBehaviour
         }
          
         Player.ResetPlayer(PuzzleSaveData.PlayerSave); //reset player                   
-        Wheel.ResetFacetsCount();    // Init all of the facets on the current wheel                
-        GameState = eGameState.RUNNING; // start the game running
+        Wheel.ResetFacetsCount();    // Init all of the facets on the current wheel                        
 
         return true;
     }      

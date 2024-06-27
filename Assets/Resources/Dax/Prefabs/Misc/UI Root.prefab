@@ -822,21 +822,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b7bbe1e3fde1f24880fd0b8d7aae290, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UICamera: {fileID: 1421739233538408490}
-  ClickToStartButton: {fileID: 7006298689808842989}
-  ScoreText: {fileID: 3722962288572141128}
-  TimerText: {fileID: 68289140251899298}
-  PointMultTimeText: {fileID: 5602712131794703816}
-  FacetCounterTexts:
+  <ClickToStartButton>k__BackingField: {fileID: 7006298689808842989}
+  <FacetCollectActivateButton>k__BackingField: {fileID: 3303317834496644699}
+  <ShieldActivateButton>k__BackingField: {fileID: 2618535246723909567}
+  <ScoreText>k__BackingField: {fileID: 3722962288572141128}
+  <TimerText>k__BackingField: {fileID: 68289140251899298}
+  <PointMultTimeText>k__BackingField: {fileID: 5602712131794703816}
+  <FacetCounterTexts>k__BackingField:
   - {fileID: 7661830175729028405}
   - {fileID: 8269026570532705939}
   - {fileID: 1793371403509324787}
   - {fileID: 6713457937290474421}
   - {fileID: 5505886864889778949}
   - {fileID: 8924045464608267118}
-  EndGameItems: {fileID: 1454020366587264972}
-  FacetCollectActivateButton: {fileID: 3303317834496644699}
-  ShieldActivateButton: {fileID: 2618535246723909567}
+  <EndGameItems>k__BackingField: {fileID: 1454020366587264972}
 --- !u!1 &2657988497438005243
 GameObject:
   m_ObjectHideFlags: 0

@@ -161,7 +161,7 @@ public class VFX : MonoBehaviour
     /// <returns></returns>
     public GameObject PlayVFX(string name, Vector3 pos)
     {        
-        Debug.Log("PlayVFX(): " + name);
+//        Debug.Log("PlayVFX(): " + name);
         GameObject prefab = Resources.Load<GameObject>(name);
         GameObject instance = GameObject.Instantiate<GameObject>(prefab, this.transform);
         instance.transform.position = pos;
