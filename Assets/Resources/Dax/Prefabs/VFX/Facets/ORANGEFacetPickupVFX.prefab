@@ -4688,7 +4688,7 @@ GameObject:
   - component: {fileID: 4955258683721167103}
   - component: {fileID: 2104650088403106994}
   m_Layer: 0
-  m_Name: CFXR Firework 3 (Yellow)
+  m_Name: ORANGEFacetPickupVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4864,8 +4864,8 @@ ParticleSystem:
     startColor:
       serializedVersion: 2
       minMaxState: 2
-      minColor: {r: 0.59607846, g: 0.59607846, b: 0, a: 0.54901963}
-      maxColor: {r: 1, g: 1, b: 0, a: 1}
+      minColor: {r: 0.7372549, g: 0.4862745, b: 0.023529412, a: 0.54901963}
+      maxColor: {r: 1, g: 0.64705884, b: 0, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -9578,7 +9578,7 @@ Light:
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
-  m_Color: {r: 1, g: 1, b: 0, a: 1}
+  m_Color: {r: 1, g: 0.64705884, b: 0, a: 1}
   m_Intensity: 0
   m_Range: 32
   m_SpotAngle: 30

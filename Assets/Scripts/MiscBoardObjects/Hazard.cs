@@ -58,7 +58,8 @@ public class Hazard : BoardObject
 
         if (player.ActiveShield != null)
         {   // Collided with hazard but you have a shield
-            FindObjectOfType<VFX>().PlayShieldImpactCollectVFX(player.ActiveShield.ShieldType, this.transform.position); 
+           // FindObjectOfType<VFX>().PlayShieldImpactCollectVFX(player.ActiveShield.ShieldType, this.transform.position);  modelete
+           VFXPlayer.PlayShieldImpactVFX(player.ActiveShield.ShieldType, this.transform.position);
             switch (player.ActiveShield.ShieldType)
             {   
                 case Shield.eShieldTypes.HIT:
@@ -83,16 +84,17 @@ public class Hazard : BoardObject
             }
             else
             {
+                VFXPlayer.PlayHazardVFX(hazard.HazardType, this.transform.position);
                 // Collided with an Enemy or Dynamite so you're toast
                 if(hazard.HazardType == Hazard.eHazardType.ENEMY) 
                 {
-                    FindObjectOfType<VFX>().PlayHazardVFX(Hazard.eHazardType.ENEMY, this.transform.position);                         
+                    //FindObjectOfType<VFX>().PlayHazardVFX(Hazard.eHazardType.ENEMY, this.transform.position);                         
                     FindObjectOfType<Dax>().EndGame("Killed By Enemy");                       
                     //DestroyHazard(hazard);                    
                 }
                 else if (hazard.HazardType == Hazard.eHazardType.DYNAMITE) 
                 {
-                    FindObjectOfType<VFX>().PlayHazardVFX(Hazard.eHazardType.DYNAMITE, this.transform.position);                      
+                    //FindObjectOfType<VFX>().PlayHazardVFX(Hazard.eHazardType.DYNAMITE, this.transform.position);                      modelete
                     FindObjectOfType<Dax>().EndGame("Killed By Dynamite");                                                   
                     DestroyHazard(hazard); 
                 }

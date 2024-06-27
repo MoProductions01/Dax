@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 4075584798738414928}
   - component: {fileID: 3997335515395740909}
   m_Layer: 0
-  m_Name: CFXR Hit Sparks HDR (Channel Change)
+  m_Name: ChannelChangeVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

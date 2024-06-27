@@ -77,7 +77,8 @@ public class BoardObject : MonoBehaviour
             {   // If we're here then we can move to a new channel                
                 CurChannel = channelNode.MyChannel;               
                // Debug.Log("new channel CurChannel: " + CurChannel.name + ", channelNodE: " + channelNode.name + ", pos: " + channelNode.transform.position.ToString("F2")); 
-                FindObjectOfType<VFX>().PlayChannelChangeVFX(channelNode.transform.position);
+              //  FindObjectOfType<VFX>().PlayChannelChangeVFX(channelNode.transform.position);
+                VFXPlayer.PlayChannelChangeVFX(channelNode.transform.position);
                 this.transform.parent = CurChannel.MyRing.transform;                
                 this.transform.position = channelNode.transform.position;
                 transform.LookAt(channelNode.IsStartNode() ? channelNode.MyChannel.EndNode.transform : channelNode.MyChannel.StartNode.transform);  

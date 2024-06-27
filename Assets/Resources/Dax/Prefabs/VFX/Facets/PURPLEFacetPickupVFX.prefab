@@ -4688,7 +4688,7 @@ GameObject:
   - component: {fileID: 4955258683721167103}
   - component: {fileID: 2104650088403106994}
   m_Layer: 0
-  m_Name: CFXR Firework 3 (Red)
+  m_Name: PURPLEFacetPickupVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4864,8 +4864,8 @@ ParticleSystem:
     startColor:
       serializedVersion: 2
       minMaxState: 2
-      minColor: {r: 0.7607844, g: 0, b: 0, a: 0.54901963}
-      maxColor: {r: 0.96470594, g: 0, b: 0, a: 1}
+      minColor: {r: 0.69803923, g: 0, b: 0.69803923, a: 0.54901963}
+      maxColor: {r: 1, g: 0, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -9578,7 +9578,7 @@ Light:
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 0, b: 1, a: 1}
   m_Intensity: 0
   m_Range: 32
   m_SpotAngle: 30

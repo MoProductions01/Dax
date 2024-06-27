@@ -1,126 +1,175 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
-public class VFX : MonoBehaviour
-{   // monote - make a generic vfx player like the MCP create board object stuff
-    // monote - make ALL vfx play at the player position
-    [Header("-------------------Channel Change-------------------")]
-    public GameObject ChannelChangeVFXPrefab;       
-    public float CC_Y;
-    public void PlayChannelChangeVFX(Vector3 worldPos)
-    {
-        return;
-        GameObject instance = Instantiate<GameObject>(ChannelChangeVFXPrefab, this.transform);     
-        instance.transform.position = worldPos + new Vector3(0f, CC_Y, 0f);
-    }
-        
-    [Header("-------------------Facet-------------------")]        
-    public List<GameObject> FacetVFXPrefabs = new List<GameObject>();
-    public float F_Y;
-    public void PlayFacetVFX(Facet.eFacetColors color, Vector3 worldPos)
-    {
-       // Debug.Log("PlayFacetVFX(): " + FacetVFXPrefabs[(int)color].name);
-        GameObject instance = Instantiate<GameObject>(FacetVFXPrefabs[(int)color], this.transform);     
-        instance.transform.position = worldPos + new Vector3(0f, F_Y, 0f);
-    }
+/// <summary>
+/// Static visual effects class that can be called from anywhere and then calls a
+/// MonoBehavior to get access to necessary functions that aren't in a static class.
+/// Some of the calls are redundant but there's a few exceptions and I wanted to leave it
+/// open for future modification
+/// I used a static class because the VFX are stateless and there's only one instance of everything
+/// </summary>
+static class VFXPlayer
+{
+    private static VFX vfx; // Reference to the MonoBehavior instance
 
-    [Header("-------------------Hazard-------------------")]
-    public List<GameObject> HazardVFXPrefabs = new List<GameObject>();
-    public GameObject ActiveGlueVFX;    
-    public void PlayHazardVFX( Hazard.eHazardType type, Vector3 worldPos)
+    /// <summary>
+    /// Sets up the VFX class reference
+    /// </summary>
+    /// <param name="vfxInstance"></param>
+    public static void Init(VFX vfxInstance)
     {
-        List<float> yOffsets = new List<float> {.5f, .5f, 0f};
-        GameObject instance = Instantiate<GameObject>(HazardVFXPrefabs[(int)type], this.transform);     
-        instance.transform.position = worldPos + new Vector3(0f, yOffsets[(int)type], 0f);                           
-        Debug.Log("Play Hazard VFX: " + instance.name + ", at: " + instance.transform.position.ToString("F2"));
-        if(type == Hazard.eHazardType.GLUE)
-        {
-            ActiveGlueVFX = instance;
-        }
-        
-        
+        vfx = vfxInstance;
     }
     
-    [Header("-------------------Facet Collect-------------------")]
-    public List<GameObject> FacetCollectVFXPrefabs = new List<GameObject>();
-    public float FC_Y;
-    public void PlayFacetCollectVFX(FacetCollect.eFacetCollectTypes type, Vector3 worldPos)
-    {        
-        Debug.Log("PlayFacetCollectVFX(): " + FacetCollectVFXPrefabs[(int)type].name);
-        GameObject instance = Instantiate<GameObject>(FacetCollectVFXPrefabs[(int)type], this.transform);     
-        instance.transform.position = worldPos + new Vector3(0f, FC_Y, 0f);
-    }
+    /// <summary>
+    /// Plays a VFX for collecting a facet
+    /// </summary>
+    /// <param name="color">Color of facet</param>
+    /// <param name="worldPos">Spawn point</param>
+    public static void PlayFacetVFX(Facet.eFacetColors color, Vector3 worldPos)
+    {     
+        string prefabName = "Dax/Prefabs/VFX/Facets/" + color.ToString() + "FacetPickupVFX";        
+        worldPos += new Vector3(0f, .1f, 0f);     
+        vfx.PlayVFX(prefabName, worldPos);
+    }    
 
-    [Header("-------------------Shields-------------------")]
-    public List<GameObject> ShieldVFXPrefabs = new List<GameObject>();
-    public float S_Y;
-    public void PlayShieldCollectVFX(Shield.eShieldTypes type, Vector3 worldPos)
-    {        
-        Debug.Log("PlayShieldCollectVFX(): " + ShieldVFXPrefabs[(int)type].name);
-        GameObject instance = Instantiate<GameObject>(ShieldVFXPrefabs[(int)type], this.transform);     
-        //Debug.Log("PlayShieldCollectVFX(): " + ShieldVFXPrefabs[dbgIndex].name);
-        //GameObject instance = Instantiate<GameObject>(ShieldVFXPrefabs[dbgIndex], this.transform);    
-        instance.transform.position = worldPos + new Vector3(0f, S_Y, 0f);
-    }
-
-    [Header("-------------------Shield Impacts-------------------")]
-    public List<GameObject> ShieldImpactVFXPrefabs = new List<GameObject>();
-    //public float SI_Y;
-    public void PlayShieldImpactCollectVFX(Shield.eShieldTypes type, Vector3 worldPos)
-    { 
-        List<float> yOffsets = new List<float> {.2f, .1f};               
-        GameObject instance = Instantiate<GameObject>(ShieldImpactVFXPrefabs[(int)type], this.transform);   
-        instance.transform.position = worldPos + new Vector3(0f, yOffsets[(int)type], 0f);          
-        Debug.Log("PlayShieldImpactCollectVFX(): " + ShieldImpactVFXPrefabs[(int)type].name + ", at: " + instance.transform.position.ToString("F2"));
-       // GameObject instance = Instantiate<GameObject>(ShieldImpactVFXPrefabs[dbgIndex], this.transform);    
-        //instance.transform.position = worldPos + new Vector3(0f, SI_Y, 0f);
-        //Debug.Log("PlayShieldImpactCollectVFX(): " + ShieldImpactVFXPrefabs[dbgIndex].name + ", at: " + instance.transform.position.ToString("F2"));
-    }       
-
-    [Header("-------------------Point Mods-------------------")]
-    public List<GameObject> PointModVFXPrefabs = new List<GameObject>();
-    public float PM_Y;
-    public void PlayPointModVFX(PointMod.ePointModType type, Vector3 worldPos)
-    {                 
-        //GameObject instance = Instantiate<GameObject>(PointModVFXPrefabs[dbgIndex], this.transform);    
-        //instance.transform.position = worldPos + new Vector3(0f, PM_Y, 0f);
-        //Debug.Log("PlayPointModVFX(): " + PointModVFXPrefabs[dbgIndex].name + ", at: " + instance.transform.position.ToString("F2"));
-
-        GameObject instance = Instantiate<GameObject>(PointModVFXPrefabs[(int)type], this.transform);    
-        instance.transform.position = worldPos + new Vector3(0f, PM_Y, 0f);
-        Debug.Log("PlayPointModVFX(): " + PointModVFXPrefabs[(int)type].name + ", at: " + instance.transform.position.ToString("F2"));
-    }
-
-    [Header("-------------------Speed Mods-------------------")]
-    public List<GameObject> SpeedModVFXPrefabs = new List<GameObject>();
-    public float SM_Y;
-    public void PlaySpeedModVFX(SpeedMod.eSpeedModType type, Vector3 worldPos)
-    {                 
-        //GameObject instance = Instantiate<GameObject>(SpeedModVFXPrefabs[dbgIndex], this.transform);    
-        //instance.transform.position = worldPos + new Vector3(0f, SM_Y, 0f);
-        //Debug.Log("PlaySpeedModVFX(): " + SpeedModVFXPrefabs[dbgIndex].name + ", at: " + instance.transform.position.ToString("F2"));
-        GameObject instance = Instantiate<GameObject>(SpeedModVFXPrefabs[(int)type], this.transform);    
-        instance.transform.position = worldPos + new Vector3(0f, SM_Y, 0f);
-        Debug.Log("PlaySpeedModVFX(): " + SpeedModVFXPrefabs[(int)type].name + ", at: " + instance.transform.position.ToString("F2"));
-    }
-
-    [Header("-------------------Debug-------------------")]
-    public int dbgIndex = 0;
-    void OnGUI()
+    /// <summary>
+    /// Plays a VFX for collecting a facet
+    /// </summary>
+    /// <param name="type">type of Hazard</param>
+    /// <param name="worldPos">Spawn point</param>
+    public static void PlayHazardVFX(Hazard.eHazardType type, Vector3 worldPos)
     {
-        if(GUI.Button(new Rect(0, 0, 200, 100), "play: " + dbgIndex))
+        List<float> yOffsets = new List<float> {.5f, .5f, 0f};
+        string prefabName = "Dax/Prefabs/VFX/Hazards/" + type.ToString() + "EnemyVFX";        
+        worldPos += new Vector3(0f, yOffsets[(int)type], 0f);          
+        GameObject instance = vfx.PlayVFX(prefabName, worldPos); 
+        
+        // Keep a reference to the Glue instance we created so that the code 
+        // can get rid of it when the Glue timer is out
+        if(type == Hazard.eHazardType.GLUE)
         {
-            PlaySpeedModVFX(SpeedMod.eSpeedModType.ENEMY_SPEED, FindObjectOfType<Player>().transform.position);
-            dbgIndex = (dbgIndex + 1) % SpeedModVFXPrefabs.Count;
+            vfx.ActiveGlueVFX = instance;
         }
     }
 
+    /// <summary>
+    /// Play FacetCollect VFX
+    /// </summary>
+    /// <param name="type">Type of FacetCollect</param>
+    /// <param name="worldPos">Spawn point</param>
+    public static void PlayFacetCollectVFX(FacetCollect.eFacetCollectTypes type, Vector3 worldPos)
+    {
+        string prefabName = "Dax/Prefabs/VFX/Pickups/Facet Collects/" + type.ToString() + "FacetCollectVFX";
+        worldPos += new Vector3(0f, .2f, 0f);
+        vfx.PlayVFX(prefabName, worldPos);        
+    }
+
+    /// <summary>
+    /// Play VFX for picking up and activating a shield
+    /// </summary>
+    /// <param name="type">Type of shield</param>
+    /// <param name="worldPos">Spawn point</param>
+    public static void PlayShieldCollectActivateVFX(Shield.eShieldTypes type, Vector3 worldPos)
+    {
+        string prefabName = "Dax/Prefabs/VFX/Pickups/Shields/PickupOrActivate/" + type.ToString() + "ShieldCollectActivateVFX";
+        worldPos += new Vector3(0f, .2f, 0f);
+        vfx.PlayVFX(prefabName, worldPos);        
+    }
+
+    /// <summary>
+    /// Play VFX for when a shield impacts with an object
+    /// </summary>
+    /// <param name="type">Type of shield</param>
+    /// <param name="worldPos">Spawn point</param>
+    public static void PlayShieldImpactVFX(Shield.eShieldTypes type, Vector3 worldPos)
+    {
+        List<float> yOffsets = new List<float> {.2f, .1f};      
+        string prefabName = "Dax/Prefabs/VFX/Pickups/Shields/Impact/" + type.ToString() + "ShieldImpactVFX";
+        worldPos += new Vector3(0f, yOffsets[(int)type], 0f);   
+        vfx.PlayVFX(prefabName, worldPos);
+    }
+
+    /// <summary>
+    /// Play PointMod VFX
+    /// </summary>
+    /// <param name="type">Type of PointMod</param>
+    /// <param name="worldPos">SpawnPoint</param>
+    public static void PlayPointModVFX(PointMod.ePointModType type, Vector3 worldPos)
+    {
+        string prefabName = "Dax/Prefabs/VFX/Pickups/Point Mods/" + type.ToString() + "PointModVFX";
+        worldPos += new Vector3(0f, .2f, 0f);
+        vfx.PlayVFX(prefabName, worldPos);     
+    }
+
+    /// <summary>
+    /// Play a SpeedMod VFX
+    /// </summary>
+    /// <param name="type">Type of SpeedMod</param>
+    /// <param name="worldPos">Spawn Point</param>
+    public static void PlaySpeedModVFX(SpeedMod.eSpeedModType type, Vector3 worldPos)
+    {
+        string prefabName = "Dax/Prefabs/VFX/Pickups/Speed Mods/" + type.ToString() + "SpeedModVFX";
+        worldPos += new Vector3(0f, .2f, 0f);
+        vfx.PlayVFX(prefabName, worldPos);     
+    }
+
+    /// <summary>
+    /// Play ChannelChange VFX
+    /// </summary>
+    /// <param name="worldPos">Spawn point</param>
+    public static void PlayChannelChangeVFX(Vector3 worldPos)
+    {
+        string prefabName = "Dax/Prefabs/VFX/Misc/ChannelChangeVFX";
+        worldPos += new Vector3(0f, .1f, 0f);
+        vfx.PlayVFX(prefabName, worldPos);     
+    }
+}
+
+/// <summary>
+/// This is the class that's called from VFXPlayer to play a VFX.
+/// I can't do everything I need to do in a static class (like Resources.Load)
+/// so I use this to handle the actually playing.
+/// </summary>
+public class VFX : MonoBehaviour
+{   
+    public GameObject ActiveGlueVFX {get; set;}  // Ref to the GlueVFX that we get rid of once the timer is gone
+
+    private void Awake() 
+    {
+        VFXPlayer.Init(this);
+    }
+
+    /// <summary>
+    /// The function that actually handles the resource loading and playing of a VFX
+    /// Can't put stuff like Resources.Load in a static class so this is used for evertying
+    /// once the static class sets it up
+    /// </summary>
+    /// <param name="name">Name of the prefab</param>
+    /// <param name="pos">Spawn point</param>
+    /// <returns></returns>
+    public GameObject PlayVFX(string name, Vector3 pos)
+    {        
+        Debug.Log("PlayVFX(): " + name);
+        GameObject prefab = Resources.Load<GameObject>(name);
+        GameObject instance = GameObject.Instantiate<GameObject>(prefab, this.transform);
+        instance.transform.position = pos;
+        return instance;
+    }                                            
+
+    /// <summary>
+    /// If we have a Glue Hazard on screen this will get called
+    /// from another spat to get rid of it once the timer is done
+    /// </summary>
     public void ShutOffGlueVFX()
     {
         if(ActiveGlueVFX == null) {Debug.LogWarning("Why do we not have an active glue vfx?"); return; }
         
         DestroyImmediate(ActiveGlueVFX);
         ActiveGlueVFX = null;
-    } 
+    }        
 }
+
+    

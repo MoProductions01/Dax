@@ -46,7 +46,8 @@ public class Wheel : MonoBehaviour
     /// <param name="facet"></param>
     public void CollectFacet(Facet facet)
     {     
-        FindObjectOfType<VFX>().PlayFacetVFX(facet._Color, facet.transform.position);   // modelete - get a ref to VFX or make it static
+        //FindObjectOfType<VFX>().PlayFacetVFX(facet._Color, facet.transform.position);   // modelete - get a ref to VFX or make it static
+        VFXPlayer.PlayFacetVFX(facet._Color, facet.transform.position);
         NumFacetsCollected[(int)facet._Color]++; // update number collected for this color
         Dax.UIRoot.SetFacetColorText(facet._Color, NumFacetsCollected[(int)facet._Color]); // update UI
         Dax.AddPoints(5);
