@@ -16,7 +16,7 @@ using UnityEngine.TextCore.Text;
 public class MCP : MonoBehaviour
 {
     [field: SerializeField] public Dax Dax {get; set;}    
-    public UIRoot UIRoot; // moui
+    //public UIRoot UIRoot; // moui
 
     /// <summary>
     /// List of the root strings for board object prefabs.  Combined with the
@@ -191,13 +191,19 @@ public class MCP : MonoBehaviour
         mainCamera.clearFlags = CameraClearFlags.Depth;
         mainCamera.depth = 1;
 
-        // UI container
-        UIRoot uiRootPrefab = Resources.Load<UIRoot>("Dax/Prefabs/UI/UI Root");
-        mcp.UIRoot = UnityEngine.Object.Instantiate<UIRoot>(uiRootPrefab);
+        // UI
+        UIRoot uiRootPrefab = Resources.Load<UIRoot>("Dax/Prefabs/Misc/UI Root");
+        Instantiate<UIRoot>(uiRootPrefab);
+        //mcp.UIRoot = Instantiate<UIRoot>(uiRootPrefab); // moui
 
         // VFX
         VFX vfxPrefab = Resources.Load<VFX>("Dax/Prefabs/Misc/VFX"); // moui new asset
         Instantiate<VFX>(vfxPrefab);
+
+        // Sound
+        SoundPlayer soundPlayerPrefab = Resources.Load<SoundPlayer>("Dax/Prefabs/Misc/SoundPlayer");
+        Instantiate<SoundPlayer>(soundPlayerPrefab);
+
 
         // Create the Player and set it up
         Player playerPrefab = Resources.Load<Player>("Dax/Prefabs/Misc/Player_Diode");
