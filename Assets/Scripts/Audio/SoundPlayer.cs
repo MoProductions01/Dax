@@ -3,15 +3,54 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+/// <summary>
+/// Static sound effects class that can be called from anywhere and then calls a
+/// MonoBehavior to get access to necessary functions that you can't access in a static class.
+/// I used a static class because the sound is stateless and there's only one instance of everything
+/// </summary>
+static class SoundFXPlayer
+{        
+    static SoundPlayer soundPlayer; // reference to the MonoBehavior component
+
+    /// <summary>
+    /// Init just sets up the reference to the SoundPlayer
+    /// </summary>
+    /// <param name="sp">SoundPlayer reference</param>
+    public static void Init(SoundPlayer sp)
+    {
+        soundPlayer = sp;
+    }
+
+    /// <summary>
+    /// Call used all around the code
+    /// </summary>
+    /// <param name="name">Name of Sound Effect to play</param>
+    public static void PlaySoundFX(string name)
+    {
+        soundPlayer.PlaySoundOneOff(name);
+    }
+}
+
+/// <summary>
+/// This is the class that's called from SoundFXPlayer to play a sound.
+/// I can't do everything I need to do in a static class (like Resources.Load)
+/// so I use this to handle the actually playing.
+/// </summary>
 public class SoundPlayer : MonoBehaviour
 {
-    [field: SerializeField] public AudioSource BackgroundMusicSource {get; set;}
+    // AudioSource for the SoundFX that's attached to it's GameObject    
     [field: SerializeField] public AudioSource SoundFXSource {get; set;}
         
     private void Awake() 
     {
+        // The Init sets up the reference for the 
         SoundFXPlayer.Init(this);
     }
+
+    /// <summary>
+    /// Handles the actual loading and playing of the sound effect
+    /// </summary>
+    /// <param name="soundFXName">Name of the effect to load up and play</param>
     public void PlaySoundOneOff(string soundFXName)
     {
         AudioClip clip = Resources.Load<AudioClip>("Dax/SoundFX/" + soundFXName);
@@ -19,17 +58,17 @@ public class SoundPlayer : MonoBehaviour
     }   
 }
 
- // Using a static class because sound is stateless
-static class SoundFXPlayer
-{        
-    static SoundPlayer soundPlayer;
+/*
+Game start
+Victory
+Defeat
+Pick up object
+Enemy Defeat
+Color Match
+Incorrect Color Match
+Change Channels
 
-    public static void Init(SoundPlayer sp)
-    {
-        soundPlayer = sp;
-    }
-    public static void PlaySoundFX(string name)
-    {
-        soundPlayer.PlaySoundOneOff(name);
-    }
-}
+Activate Shield
+Activate Facet Collect
+
+*/

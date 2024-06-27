@@ -5,12 +5,12 @@ using UnityEngine.Rendering;
 
 /// <summary>
 /// Static visual effects class that can be called from anywhere and then calls a
-/// MonoBehavior to get access to necessary functions that aren't in a static class.
+/// MonoBehavior to get access to necessary functions that you can't access in a static class.
+/// I used a static class because the VFX are stateless and there's only one instance of everything
 /// Some of the calls are redundant but there's a few exceptions and I wanted to leave it
 /// open for future modification
-/// I used a static class because the VFX are stateless and there's only one instance of everything
 /// </summary>
-static class VFXPlayer
+public static class VFXPlayer
 {
     private static VFX vfx; // Reference to the MonoBehavior instance
 
