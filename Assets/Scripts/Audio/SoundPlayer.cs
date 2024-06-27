@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SoundPlayer : MonoBehaviour
@@ -9,21 +10,26 @@ public class SoundPlayer : MonoBehaviour
         
     private void Awake() 
     {
-        SoundPlayerStatic.sp = this;
+        SoundFXPlayer.Init(this);
     }
     public void PlaySoundOneOff(string soundFXName)
     {
         AudioClip clip = Resources.Load<AudioClip>("Dax/SoundFX/" + soundFXName);
-        SoundFXSource.PlayOneShot(clip);
+        SoundFXSource.PlayOneShot(clip);        
     }   
 }
 
- public static class SoundPlayerStatic
+ // Using a static class because sound is stateless
+static class SoundFXPlayer
 {        
-    public static SoundPlayer sp;
+    static SoundPlayer soundPlayer;
 
+    public static void Init(SoundPlayer sp)
+    {
+        soundPlayer = sp;
+    }
     public static void PlaySoundFX(string name)
     {
-        sp.PlaySoundOneOff(name);
+        soundPlayer.PlaySoundOneOff(name);
     }
 }

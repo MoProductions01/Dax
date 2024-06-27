@@ -151,6 +151,8 @@ public class MCP : MonoBehaviour
         if (uiRoot != null) UnityEngine.Object.DestroyImmediate(uiRoot.gameObject);
         VFX vfx = GameObject.FindObjectOfType<VFX>();
         if (vfx != null) UnityEngine.Object.DestroyImmediate(vfx.gameObject);
+        SoundPlayer soundPlayer = GameObject.FindObjectOfType<SoundPlayer>();
+        if (soundPlayer != null) UnityEngine.Object.DestroyImmediate(soundPlayer.gameObject);
     }
 
     /// <summary>
