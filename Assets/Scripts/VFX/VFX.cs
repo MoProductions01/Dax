@@ -56,6 +56,15 @@ static class VFXPlayer
     }
 
     /// <summary>
+    /// If we have a Glue Hazard on screen this will get called
+    /// from another spat to get rid of it once the timer is done
+    /// </summary>
+    public static void ShutOffGlueVFX()
+    {
+        vfx.ShutOffGlueVFX();
+    }
+
+    /// <summary>
     /// Play FacetCollect VFX
     /// </summary>
     /// <param name="type">Type of FacetCollect</param>
@@ -160,8 +169,7 @@ public class VFX : MonoBehaviour
     }                                            
 
     /// <summary>
-    /// If we have a Glue Hazard on screen this will get called
-    /// from another spat to get rid of it once the timer is done
+    /// Destroys the ActiveGlueVFX object
     /// </summary>
     public void ShutOffGlueVFX()
     {

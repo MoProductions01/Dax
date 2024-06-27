@@ -135,20 +135,22 @@ public class BoardObject : MonoBehaviour
             Bumper bumper = bumperColliders[0].GetComponent<Bumper>();
             if (this.BoardObjectType == eBoardObjectType.PLAYER)
             {   // Only Players have to check for things like matching facet colors.  Enemies just bounce regardless
-                Player player = FindObjectOfType<Player>();
+                //Player player = FindObjectOfType<Player>();
                 switch (bumper.BumperType)
                 {
                     case Bumper.eBumperType.DEATH:
                         // Collided with a Death bumper so game over
-                        FindObjectOfType<Dax>().EndGame("Death Bumper!");
+                        //FindObjectOfType<Dax>().EndGame("Death Bumper!");
+                        Dax.EndGame("Death Bumper!");
                         break;
                     case Bumper.eBumperType.COLOR_MATCH:
                         // Color match collider so check it against any facets the player is carrying
-                        if (player.CarriedFacet == null) break; // No facet being carried so bail
-                        Facet playerCarriedColorFacet = (Facet)player.CarriedFacet;
+                        if (Dax.Player.CarriedFacet == null) break; // No facet being carried so bail
+                        Facet playerCarriedColorFacet = (Facet)Dax.Player.CarriedFacet;
                         if (playerCarriedColorFacet._Color == bumper.BumperColor)
                         {   // Player is carrying a facet that's the same color as the bumper so update game state                           
-                            FindObjectOfType<Dax>().Wheel.MatchedFacetColor(playerCarriedColorFacet);                                                        
+                            //FindObjectOfType<Dax>().Wheel.MatchedFacetColor(playerCarriedColorFacet);                                                        
+                            Dax.Wheel.MatchedFacetColor(playerCarriedColorFacet);   
                             playerCarriedColorFacet = null;
                             if(Dax.Wheel.VictoryCondition == Dax.eVictoryConditions.COLOR_MATCH) Dax.Wheel.CheckVictoryConditions();
                         }

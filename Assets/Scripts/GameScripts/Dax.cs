@@ -243,7 +243,7 @@ public class Dax : MonoBehaviour
             PuzzleSaveData = saveData;
         }
 
-        MCP mcp = FindObjectOfType<MCP>();       
+        MCP mcp = FindObjectOfType<MCP>(); // I know FindObjectOfType is bad but this code only happens when reloading a puzzle  
         
         this.PuzzleName = PuzzleSaveData.PuzzleName; // update puzzle's name
         // Reset ring and touch data        

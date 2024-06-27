@@ -302,7 +302,8 @@ public class Player : BoardObject
             {   // Glue time is over so turn off the Glue and get moving
                 EffectType = Hazard.eHazardType.ENEMY;
                 Speed = SpeedSave;
-                FindObjectOfType<VFX>().ShutOffGlueVFX();
+                //FindObjectOfType<VFX>().ShutOffGlueVFX();
+                VFXPlayer.ShutOffGlueVFX();
             }
         }
     }   

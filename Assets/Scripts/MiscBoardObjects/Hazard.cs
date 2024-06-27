@@ -89,13 +89,15 @@ public class Hazard : BoardObject
                 if(hazard.HazardType == Hazard.eHazardType.ENEMY) 
                 {
                     //FindObjectOfType<VFX>().PlayHazardVFX(Hazard.eHazardType.ENEMY, this.transform.position);                         
-                    FindObjectOfType<Dax>().EndGame("Killed By Enemy");                       
+                    //FindObjectOfType<Dax>().EndGame("Killed By Enemy");    
+                    Dax.EndGame("Killed By Enemy");                   
                     //DestroyHazard(hazard);                    
                 }
                 else if (hazard.HazardType == Hazard.eHazardType.DYNAMITE) 
                 {
                     //FindObjectOfType<VFX>().PlayHazardVFX(Hazard.eHazardType.DYNAMITE, this.transform.position);                      modelete
-                    FindObjectOfType<Dax>().EndGame("Killed By Dynamite");                                                   
+                    //FindObjectOfType<Dax>().EndGame("Killed By Dynamite");                                                   
+                    Dax.EndGame("Killed By Dynamite");
                     DestroyHazard(hazard); 
                 }
             }
