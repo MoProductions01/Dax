@@ -88,7 +88,5 @@ Victory voice
 Victory sound
 Defeat voice
 Defeat sound
-
-
 click try again button
 */

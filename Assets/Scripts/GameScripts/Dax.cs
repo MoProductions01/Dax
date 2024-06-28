@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -172,13 +172,14 @@ public class Dax : MonoBehaviour
         if (GameState != eGameState.RUNNING) return;  
                 
         // Update the player 
-        Player.BoardObjectFixedUpdate(Time.deltaTime);
+        Player.BoardObjectFixedUpdate(Time.deltaTime); // mo01
         
-        // Hazards (such as enemies) are the only non player board objects that move
+        // Enemies are the only other object on the board besides the Player that moves
         List<Hazard> hazards = transform.GetComponentsInChildren<Hazard>().ToList(); 
         hazards.RemoveAll(x => x.HazardType != Hazard.eHazardType.ENEMY); // Only enemies move
         foreach(Hazard hazard in hazards) 
         {
+//            Debug.Log("Check enemy Fixedupdate");
             hazard.BoardObjectFixedUpdate(Time.deltaTime);
         }
         
@@ -218,12 +219,12 @@ public class Dax : MonoBehaviour
         if(isVictory == true)
         {
             SoundFXPlayer.PlaySoundFX("VictoryVoice", 1f);
-            SoundFXPlayer.PlaySoundFX("VictorySound", .8f);
+            SoundFXPlayer.PlaySoundFX("VictorySound", .7f);
         }
         else
         {
             SoundFXPlayer.PlaySoundFX("DefeatVoice", 1f);
-            SoundFXPlayer.PlaySoundFX("DefeatSound", .8f);
+            SoundFXPlayer.PlaySoundFX("DefeatSound", .7f);
         }
     }
 

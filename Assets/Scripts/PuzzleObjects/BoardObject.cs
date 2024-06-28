@@ -82,7 +82,7 @@ public class BoardObject : MonoBehaviour
                 this.transform.parent = CurChannel.MyRing.transform;                
                 this.transform.position = channelNode.transform.position;
                 transform.LookAt(channelNode.IsStartNode() ? channelNode.MyChannel.EndNode.transform : channelNode.MyChannel.StartNode.transform);  
-                Debug.Log("Channel Change");
+                //Debug.Log("Channel Change");
                 SoundFXPlayer.PlaySoundFX("ChannelChange", .8f);
                 //transform.LookAt(channelNode.MyChannel.StartNode ? channelNode.MyChannel.EndNode.transform : channelNode.MyChannel.StartNode.transform);       // modelete node   
             } 
@@ -116,7 +116,7 @@ public class BoardObject : MonoBehaviour
             if(dot > 0f)
             {   // If the colliders is in front of us then bounce back in the other direction                      
                 transform.forward = -transform.forward;      
-                Debug.Log("Generic Bounce");   
+                //Debug.Log("Generic Bounce");   
                 SoundFXPlayer.PlaySoundFX("GenericWallBounce", .8f);
             } 
             else
@@ -163,7 +163,7 @@ public class BoardObject : MonoBehaviour
             }
             // Every object bounces back to the other direction
             transform.forward = -transform.forward;             
-            Debug.Log("Bumper bounce");
+            //Debug.Log("Bumper bounce");
             SoundFXPlayer.PlaySoundFX("BumperBounce", .8f);
         }
     }         
@@ -172,15 +172,23 @@ public class BoardObject : MonoBehaviour
     /// Function for the Player checking against other board objects on the game
     /// </summary>
     /// <param name="boardObjectColliders">Colliders the player is overlapping with</param>
-    private void CheckBoardObjectsForPlayer(List<Collider> boardObjectColliders)
+    private void CheckBoardObjectsForPlayer(List<Collider> boardObjectColliders, Player player)
     {        
-        Player player = FindObjectOfType<Player>();
-        boardObjectColliders.RemoveAll(x => x.GetComponentInParent<BoardObject>() == null); // Remove anything that's not a board boject             
+        string s = "";
+       // Player player = FindObjectOfType<Player>(); // mofix
+        boardObjectColliders.RemoveAll(x => x.GetComponentInParent<BoardObject>() == null); // Remove anything that's not a board object             
+        s += "after no bo: " + boardObjectColliders.Count;
         boardObjectColliders.Remove(this.gameObject.GetComponent<Collider>()); // Remove player's collider
+        s += ", after player collider: " + boardObjectColliders.Count;
         
         if (player.ActiveShield != null) boardObjectColliders.Remove(player.ActiveShield.GetComponent<Collider>()); // Remove shield collider if necessary
-        if (boardObjectColliders.Count == 0) return; // bail if no collisions
-
+        s += ", after shield: " + boardObjectColliders.Count;
+        if (boardObjectColliders.Count == 0) 
+        {
+            //Debug.Log( s + ": No Collisions");
+            return; // bail if no collisions
+        }
+//        Debug.Log(s + ": num collisions: " + boardObjectColliders.Count);
         for(int i=0; i<boardObjectColliders.Count; i++)
         {
             // Call each BoardObject's HandleCollisionWithPlayer() function
@@ -191,7 +199,7 @@ public class BoardObject : MonoBehaviour
                     boardObject.GetComponentInParent<Facet>().HandleCollisionWithPlayer(player, boardObject);                                                                                     
                     break;  
                 case eBoardObjectType.HAZARD:
-                    boardObject.GetComponentInParent<Hazard>().HandleCollisionWithPlayer(player, boardObject);                         
+                    boardObject.GetComponentInParent<Hazard>().HandleCollisionWithPlayer(player, boardObject);   // mo03                     
                 break;
                 case eBoardObjectType.SHIELD:    
                     boardObject.GetComponentInParent<Shield>().HandleCollisionWithPlayer(player, boardObject);                                                                                            
@@ -218,8 +226,9 @@ public class BoardObject : MonoBehaviour
     {        
         if(CurChannel == null) {Debug.LogError("Why do we have no Channel assigned? " + this.name); return; }
 
-        if (Speed != 0f) // This check might be unnecessary but better save than sorry
-        {                       
+        if (Speed != 0f || this.BoardObjectType == eBoardObjectType.PLAYER) // This check might be unnecessary but better save than sorry
+        {         
+            Debug.Log(this.name + " speed is above 0");              
             // move along the forward vector
             transform.Translate(Vector3.forward * deltaTime * Speed);            
             // now check colliders
@@ -232,7 +241,7 @@ public class BoardObject : MonoBehaviour
                 if(this.BoardObjectType == eBoardObjectType.PLAYER) 
                 {
                     // Player gets a special case
-                    CheckBoardObjectsForPlayer(overlapColliders.ToList());
+                    CheckBoardObjectsForPlayer(overlapColliders.ToList(), (Player)this); //  mo02
                 }                
             }                                                                                    
         }                       

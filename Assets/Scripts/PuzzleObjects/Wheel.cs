@@ -81,7 +81,7 @@ public class Wheel : MonoBehaviour
          
         // If any of the number of facets to collect for each color isn't what
         // it's supposed to be it's not a victory yet
-        for(int i = 0; i < NumFacetsCollected.Count-1; i++)
+        for(int i = 0; i < NumFacetsCollected.Count; i++)
         {                   
             if (NumFacetsCollected[i] != NumFacetsOnBoard[i])
             {

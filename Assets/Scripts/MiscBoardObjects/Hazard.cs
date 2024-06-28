@@ -38,8 +38,9 @@ public class Hazard : BoardObject
     /// <param name="player">Player object</param>
     /// <param name="facet">Facet object</param>
     public override void HandleCollisionWithPlayer(Player player, BoardObject boardObject)
-    {
+    {        
         Hazard hazard = (Hazard)boardObject; // Get a ref to the hazard
+//        Debug.Log("Hazard.HandleCollision() type: " + hazard.HazardType);
         // Check if we're temporarily ignoring this due to a shield collision
         if (hazard == player.TempEnemyIgnore) return; 
         // A couple of local functions to handle destroying shields or hazards                   
