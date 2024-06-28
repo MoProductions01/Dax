@@ -513,12 +513,12 @@ public class MCP : MonoBehaviour
     {
         switch (color)
         {
-            case Facet.eFacetColors.RED: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Red"));
-            case Facet.eFacetColors.GREEN: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Green"));
-            case Facet.eFacetColors.BLUE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Blue"));
-            case Facet.eFacetColors.YELLOW: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Yellow"));
-            case Facet.eFacetColors.PURPLE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Purple"));            
-            case Facet.eFacetColors.ORANGE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/_Orange"));           
+            case Facet.eFacetColors.RED: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/Red"));
+            case Facet.eFacetColors.GREEN: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/Green"));
+            case Facet.eFacetColors.BLUE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/Blue"));
+            case Facet.eFacetColors.YELLOW: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/Yellow"));
+            case Facet.eFacetColors.PURPLE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/Purple"));            
+            case Facet.eFacetColors.ORANGE: return Instantiate<Material>(Resources.Load<Material>("Dax/Color_Materials/Orange"));           
             default: Debug.LogError("GetFacetMaterial(): Invalid Bumper color: " + color); return null;
         }
     }

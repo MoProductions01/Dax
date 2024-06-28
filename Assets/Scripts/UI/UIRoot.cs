@@ -25,6 +25,7 @@ public class UIRoot : MonoBehaviour
     UnityEngine.UI.Image ShieldIcon {get; set;}
 
     [field: SerializeField] public GameObject EndGameItems {get; set;} // Container for all of the end game UI items
+    [field: SerializeField] private TMP_Text EndGameReason {get; set;} // Text for telling you why game ended
        
     // References to the most important objects in the game to tie into the UI
     Dax Dax {get; set;}
@@ -69,8 +70,10 @@ public class UIRoot : MonoBehaviour
         PointMultTimeText.transform.parent.gameObject.SetActive(false); // Shut off point mod timer
         EndGameItems.SetActive(false); // Shut off the end game container
         // Shut off the action buttons
-        FacetCollectIcon.enabled = false; 
-        ShieldIcon.enabled = false;
+        FacetCollectActivateButton.gameObject.SetActive(false);
+        //FacetCollectIcon.enabled = false; 
+       // ShieldIcon.enabled = false;
+       ShieldActivateButton.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -98,7 +101,8 @@ public class UIRoot : MonoBehaviour
     /// <param name="facetCollectType">Type of facet collect icon we're showing</param>
     public void ToggleFacetCollectIcon(bool isActive, FacetCollect.eFacetCollectTypes facetCollectType)
     {
-        FacetCollectIcon.enabled = isActive; // Enable or disable the icon itself
+        //FacetCollectIcon.enabled = isActive; // Enable or disable the icon itself
+        FacetCollectActivateButton.gameObject.SetActive(isActive);
         if(isActive == true)
         {   // If isActive is true, then load up and set the sprite
             if(facetCollectType == FacetCollect.eFacetCollectTypes.RING)
@@ -119,7 +123,8 @@ public class UIRoot : MonoBehaviour
     /// <param name="shieldType">Type of facet collect icon we're showing</param>
     public void ToggleShieldIcon(bool isActive, Shield.eShieldTypes shieldType)
     {
-        ShieldIcon.enabled = isActive; // Enable or disable the icon itself
+        //ShieldIcon.enabled = isActive; // Enable or disable the icon itself
+        ShieldActivateButton.gameObject.SetActive(isActive);
         if(isActive == true)
         {   // If isActive is true, then load up and set the sprite
             if(shieldType == Shield.eShieldTypes.HIT)
@@ -159,7 +164,8 @@ public class UIRoot : MonoBehaviour
     public void ShowEndGame(string endGameReason, bool isActive)
     {                
         EndGameItems.gameObject.SetActive(isActive);
-        EndGameItems.GetComponentInChildren<TMP_Text>().SetText("Game Over: " + endGameReason);      
+       // EndGameItems.GetComponentInChildren<TMP_Text>().SetText("Game Over: " + endGameReason);      
+       EndGameReason.text = "Game Over: " + endGameReason;
     }
 
     /// <summary>
