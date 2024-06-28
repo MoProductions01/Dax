@@ -50,7 +50,7 @@ public class BoardObject : MonoBehaviour
     /// </summary>
     /// <param name="player">Player object</param>
     /// <param name="boardObject">Object collided with</param>
-    public virtual void HandleCollisionWithPlayer(Player player, BoardObject boardObject) {}   
+    public virtual void HandleCollisionWithPlayer(Player player, BoardObject boardObject) {}       
          
     /// <summary>
     /// Checks for the transition from one channel to another for any moving game objects
@@ -82,6 +82,8 @@ public class BoardObject : MonoBehaviour
                 this.transform.parent = CurChannel.MyRing.transform;                
                 this.transform.position = channelNode.transform.position;
                 transform.LookAt(channelNode.IsStartNode() ? channelNode.MyChannel.EndNode.transform : channelNode.MyChannel.StartNode.transform);  
+                Debug.Log("Channel Change");
+                SoundFXPlayer.PlaySoundFX("ChannelChange", .8f);
                 //transform.LookAt(channelNode.MyChannel.StartNode ? channelNode.MyChannel.EndNode.transform : channelNode.MyChannel.StartNode.transform);       // modelete node   
             } 
             else
@@ -113,7 +115,9 @@ public class BoardObject : MonoBehaviour
             float dot = Vector3.Dot(heading, this.transform.forward);         
             if(dot > 0f)
             {   // If the colliders is in front of us then bounce back in the other direction                      
-                transform.forward = -transform.forward;         
+                transform.forward = -transform.forward;      
+                Debug.Log("Generic Bounce");   
+                SoundFXPlayer.PlaySoundFX("GenericWallBounce", .8f);
             } 
             else
             {
@@ -141,7 +145,7 @@ public class BoardObject : MonoBehaviour
                     case Bumper.eBumperType.DEATH:
                         // Collided with a Death bumper so game over
                         //FindObjectOfType<Dax>().EndGame("Death Bumper!");
-                        Dax.EndGame("Death Bumper!");
+                        Dax.EndGame("Death Bumper!", false);
                         break;
                     case Bumper.eBumperType.COLOR_MATCH:
                         // Color match collider so check it against any facets the player is carrying
@@ -159,6 +163,8 @@ public class BoardObject : MonoBehaviour
             }
             // Every object bounces back to the other direction
             transform.forward = -transform.forward;             
+            Debug.Log("Bumper bounce");
+            SoundFXPlayer.PlaySoundFX("BumperBounce", .8f);
         }
     }         
     

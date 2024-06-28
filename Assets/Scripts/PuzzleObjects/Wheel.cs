@@ -43,11 +43,12 @@ public class Wheel : MonoBehaviour
     /// <summary>
     /// Handles the Player collecting a facet from the board
     /// </summary>
-    /// <param name="facet"></param>
+    /// <param name="facet">Facet collected</param>
     public void CollectFacet(Facet facet)
     {     
         //FindObjectOfType<VFX>().PlayFacetVFX(facet._Color, facet.transform.position);   // modelete - get a ref to VFX or make it static
         VFXPlayer.PlayFacetVFX(facet._Color, facet.transform.position);
+        SoundFXPlayer.PlaySoundFX("FacetPickup", .8f);
         NumFacetsCollected[(int)facet._Color]++; // update number collected for this color
         Dax.UIRoot.SetFacetColorText(facet._Color, NumFacetsCollected[(int)facet._Color]); // update UI
         Dax.AddPoints(5);
@@ -92,7 +93,7 @@ public class Wheel : MonoBehaviour
         // Let the game know if you won
         if(gameWon == true)
         {
-            Dax.EndGame("You won!!!");                
+            Dax.EndGame("You won!!!", true);                
         }       
         
         return gameWon;               

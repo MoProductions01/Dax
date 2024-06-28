@@ -112,7 +112,9 @@ public class Player : BoardObject
         Shield.eShieldTypes shieldType = shield.ShieldType;    
         Shields.Add(shieldType);      
         //FindObjectOfType<VFX>().PlayShieldCollectVFX(shieldType, this.transform.position);      
-        VFXPlayer.PlayShieldCollectActivateVFX(shieldType, this.transform.position);   
+        VFXPlayer.PlayShieldCollectActivateVFX(shieldType, this.transform.position); 
+        SoundFXPlayer.PlaySoundFX( (shieldType == Shield.eShieldTypes.HIT ? 
+            "ShieldPickupHit" : "ShieldPickupSingleKill"), .8f);
         if (Shields.Count == 1) Dax.UIRoot.ToggleShieldIcon(true, shieldType); // Update the UI for clicking on it to activate
         DestroyImmediate(shield.gameObject);
         shield.SpawningNode.SpawnedBoardObject = null;               
@@ -152,10 +154,13 @@ public class Player : BoardObject
         FacetCollect.eFacetCollectTypes facetCollectType = facetCollect.FacetCollectType;                        
         FacetCollects.Add(facetCollectType);
         //FindObjectOfType<VFX>().PlayFacetCollectVFX(facetCollectType, this.transform.position); modelete
-        VFXPlayer.PlayFacetCollectVFX(facetCollectType, this.transform.position);    
+        VFXPlayer.PlayFacetCollectVFX(facetCollectType, this.transform.position);
+        SoundFXPlayer.PlaySoundFX( (facetCollectType == FacetCollect.eFacetCollectTypes.RING ? 
+            "FacetCollectPickupRing" : "FacetCollectPickupWheel"), .8f);
+        
         if (FacetCollects.Count == 1) Dax.UIRoot.ToggleFacetCollectIcon(true, facetCollectType); // Update the UI for clicking on it to activate
-        DestroyImmediate(facetCollect.gameObject);
         facetCollect.SpawningNode.SpawnedBoardObject = null;
+        DestroyImmediate(facetCollect.gameObject);        
         return true; // We added the FacetCollect so let the calling code know
     }
 
@@ -188,6 +193,8 @@ public class Player : BoardObject
 
        // FindObjectOfType<VFX>().PlayShieldCollectVFX(shieldToActivateType, this.transform.position);
        VFXPlayer.PlayShieldCollectActivateVFX(shieldToActivateType, this.transform.position);
+       SoundFXPlayer.PlaySoundFX( (shieldToActivateType == Shield.eShieldTypes.HIT ? 
+            "ShieldActivateHit" : "ShieldActivateSingleKill"), .8f);
 
         string prefabString = 
             MCP.CreatePrefabString((int)BoardObject.eBoardObjectType.SHIELD, (int)shieldToActivateType);
@@ -216,6 +223,8 @@ public class Player : BoardObject
         
         //FindObjectOfType<VFX>().PlayFacetCollectVFX(facetCollectToActivateType, this.transform.position);
         VFXPlayer.PlayFacetCollectVFX(facetCollectToActivateType, this.transform.position);
+        SoundFXPlayer.PlaySoundFX( (facetCollectToActivateType == FacetCollect.eFacetCollectTypes.RING ? 
+            "FacetCollectActivateRing" : "FacetCollectActivateWheel"), .8f);
         if(facetCollectToActivateType == FacetCollect.eFacetCollectTypes.RING)
         {
             // Collect all Facets on this ring

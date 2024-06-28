@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7869687370789488563}
   - component: {fileID: 8943853214940838377}
   m_Layer: 0
-  m_Name: Player_Diode
+  m_Name: PlayerDiode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

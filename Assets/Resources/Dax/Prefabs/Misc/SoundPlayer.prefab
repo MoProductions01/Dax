@@ -302,5 +302,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 673a132383adf484aa383fabb9841580, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BackgroundMusicSource>k__BackingField: {fileID: 3827399440208096842}
   <SoundFXSource>k__BackingField: {fileID: 7454183236108726148}

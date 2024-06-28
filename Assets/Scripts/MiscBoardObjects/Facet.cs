@@ -44,6 +44,7 @@ public class Facet : BoardObject
                 facet.transform.position = player.transform.position + (player.transform.up * .1f);    
                 facet.transform.parent = player.transform;                
                 player.CarriedFacet = facet;                
+                SoundFXPlayer.PlaySoundFX("FacetPickupColorMatch", .8f);
             }                                            
         }
     }

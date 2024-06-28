@@ -194,7 +194,7 @@ public class MCP : MonoBehaviour
         mainCamera.depth = 1;
 
         // UI
-        UIRoot uiRootPrefab = Resources.Load<UIRoot>("Dax/Prefabs/Misc/UI Root");
+        UIRoot uiRootPrefab = Resources.Load<UIRoot>("Dax/Prefabs/Misc/UIRoot");
         Instantiate<UIRoot>(uiRootPrefab);
         //mcp.UIRoot = Instantiate<UIRoot>(uiRootPrefab); // moui
 
@@ -206,9 +206,8 @@ public class MCP : MonoBehaviour
         SoundPlayer soundPlayerPrefab = Resources.Load<SoundPlayer>("Dax/Prefabs/Misc/SoundPlayer");
         Instantiate<SoundPlayer>(soundPlayerPrefab);
 
-
         // Create the Player and set it up
-        Player playerPrefab = Resources.Load<Player>("Dax/Prefabs/Misc/Player_Diode");
+        Player playerPrefab = Resources.Load<Player>("Dax/Prefabs/Misc/PlayerDiode");
         Player player = UnityEngine.Object.Instantiate<Player>(playerPrefab, mcp.Dax.transform);        
         player.name = "Player Diode";        
         mcp.Dax.Player = player;

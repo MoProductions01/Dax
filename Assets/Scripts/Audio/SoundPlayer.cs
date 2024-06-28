@@ -25,9 +25,9 @@ static class SoundFXPlayer
     /// Call used all around the code
     /// </summary>
     /// <param name="name">Name of Sound Effect to play</param>
-    public static void PlaySoundFX(string name)
+    public static void PlaySoundFX(string name, float vol)
     {
-        soundPlayer.PlaySoundOneOff(name);
+        soundPlayer.PlaySoundOneOff(name, vol);
     }
 }
 
@@ -51,24 +51,44 @@ public class SoundPlayer : MonoBehaviour
     /// Handles the actual loading and playing of the sound effect
     /// </summary>
     /// <param name="soundFXName">Name of the effect to load up and play</param>
-    public void PlaySoundOneOff(string soundFXName)
+    public void PlaySoundOneOff(string soundFXName, float vol)
     {
-        AudioClip clip = Resources.Load<AudioClip>("Dax/SoundFX/" + soundFXName);
-        SoundFXSource.PlayOneShot(clip);        
-    }   
+        AudioClip clip = Resources.Load<AudioClip>("Dax/SoundFX/" + soundFXName);        
+        SoundFXSource.PlayOneShot(clip, vol);        
+    }       
 }
 
 /*
-Game start
-Victory
-Defeat
-Pick up object
-Enemy Defeat
-Color Match
-Incorrect Color Match
-Change Channels
+BG Music
+Click to start
+Generic Bounce
+Bumper Bounce
+Channel Change
+Collect Facet
+EnemyDeath
+Dynamite
+Glue
+Pickup Facet Color Match
+Pickup Ring FC
+Pickup Wheel FC
+Pickup Shield Single Kill
+Pickup Shield Hit
+PIckup Speed Mod Player
+Pickup Speed Mod Wheel
+Pickup Speed Mod Enemy
+Pickup PointMod 1
+Pickup PointMod 2
+Shield Collision Hit
+Shield Collision Single Kill
+Activate Facet Collect Ring
+Activate Facet Collect Wheel
+Activate Shield Hit
+Activate Hield Single Kill
+Victory voice
+Victory sound
+Defeat voice
+Defeat sound
 
-Activate Shield
-Activate Facet Collect
 
+click try again button
 */

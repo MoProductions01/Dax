@@ -44,7 +44,8 @@ public class SpeedMod : BoardObject
         {
             case SpeedMod.eSpeedModType.PLAYER_SPEED:
                 // Update the player speed                
-                player.Speed += speedMod.SpeedModVal;                
+                player.Speed += speedMod.SpeedModVal;         
+                SoundFXPlayer.PlaySoundFX("SpeedModPickupPlayer", .8f);       
                 break;        
             case SpeedMod.eSpeedModType.ENEMY_SPEED:
                 // Get a list of all the ENEMIES on the board        
@@ -55,14 +56,16 @@ public class SpeedMod : BoardObject
                 {
                     e.Speed += speedMod.SpeedModVal; 
                 }
+                SoundFXPlayer.PlaySoundFX("SpeedModPickupEnemy", .8f);
                 break;
             case SpeedMod.eSpeedModType.RING_SPEED:
                 // Update the current Ring's speed                    
                 player.CurChannel.MyRing.RotateSpeed += speedMod.SpeedModVal;
+                SoundFXPlayer.PlaySoundFX("SpeedModPickupRing", .8f);
                 break;                 
-        }        
+        }                
         // Destroy SpeedMod and give points
         DestroyImmediate(speedMod.gameObject);
         Dax.AddPoints(5);
-    }
+    }    
 }

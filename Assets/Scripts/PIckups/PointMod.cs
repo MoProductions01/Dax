@@ -42,10 +42,12 @@ public class PointMod : BoardObject
             case PointMod.ePointModType.EXTRA_POINTS:
                 // Give player specified points                
                 Dax.AddPoints(pointMod.PointModVal);
+                SoundFXPlayer.PlaySoundFX("PointModPickupExtraPoints", .8f);
                 break;
             case PointMod.ePointModType.POINTS_MULTIPLIER:
                 // Start a point multiplier for the specified time
                 Dax.BeginPointMod(pointMod.PointModTime, pointMod.PointModVal);
+                SoundFXPlayer.PlaySoundFX("PointModPickupPointMult", .8f);
                 break;
         }                    
         // Destroy game object right away

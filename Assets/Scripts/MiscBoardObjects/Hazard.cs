@@ -66,11 +66,13 @@ public class Hazard : BoardObject
                     // HIT just destroys the shield                                            
                     DestroyShield();
                     player.TempEnemyIgnore = hazard; // Temporarily ignore the hazard you collided with that destroys the shield
+                    SoundFXPlayer.PlaySoundFX("ShieldCollideHit", .8f);
                     break;
                 case Shield.eShieldTypes.SINGLE_KILL:
                     // Kill shield so destroy the shield and the hazard                    
                     DestroyShield();
                     DestroyHazard(hazard);
+                    SoundFXPlayer.PlaySoundFX("ShieldCollideSingleKill", .8f);
                     break;                             
             }
         }
@@ -78,7 +80,8 @@ public class Hazard : BoardObject
         {   // No shield
             if(hazard.HazardType == eHazardType.GLUE)
             {
-                // Collided with GLUE so tell player to stay put for the EffectTime
+                // Collided with GLUE so player gets stuck for the time specified on the object
+                SoundFXPlayer.PlaySoundFX("Glue", .4f);
                 player.GlueHit(hazard.EffectTime);
                 DestroyHazard(hazard);
             }
@@ -90,14 +93,16 @@ public class Hazard : BoardObject
                 {
                     //FindObjectOfType<VFX>().PlayHazardVFX(Hazard.eHazardType.ENEMY, this.transform.position);                         
                     //FindObjectOfType<Dax>().EndGame("Killed By Enemy");    
-                    Dax.EndGame("Killed By Enemy");                   
+                    SoundFXPlayer.PlaySoundFX("EnemyDeath", .8f);                
+                    Dax.EndGame("Killed By Enemy", false);                       
                     //DestroyHazard(hazard);                    
                 }
                 else if (hazard.HazardType == Hazard.eHazardType.DYNAMITE) 
                 {
                     //FindObjectOfType<VFX>().PlayHazardVFX(Hazard.eHazardType.DYNAMITE, this.transform.position);                      modelete
-                    //FindObjectOfType<Dax>().EndGame("Killed By Dynamite");                                                   
-                    Dax.EndGame("Killed By Dynamite");
+                    //FindObjectOfType<Dax>().EndGame("Killed By Dynamite");                                                                       
+                    SoundFXPlayer.PlaySoundFX("Dynamite", .8f);
+                    Dax.EndGame("Killed By Dynamite", false);                    
                     DestroyHazard(hazard); 
                 }
             }

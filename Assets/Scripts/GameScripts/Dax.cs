@@ -12,7 +12,7 @@ public class Dax : MonoBehaviour
     public static float MAX_SPIN_SPEED = 20f; // Maximum speed the player can spin a ring
     public static float MAX_SPEED = 1f; // Maximum speed a board object or the player can go
     public static int MAX_NUM_RINGS = 1; // Maximum number of rings the game can have // monotewheel
-    public static float DEFAULT_LEVEL_TIME = 120; // Default time for the level
+    public static float DEFAULT_LEVEL_TIME = 120f; // Default time for the level
      
     // The victory conditions (or game type).
     // COLLECTION: Player needs to run over the facets to collect them.  When they have them all you win.
@@ -104,7 +104,7 @@ public class Dax : MonoBehaviour
         UIRoot.SetTimerText(LevelTime);
         if(LevelTime <= 0f)
         {
-            EndGame("Time Ran Out");
+            EndGame("Time Ran Out", false);
             UIRoot.SetTimerText("0:00"); // specal case to display 0:00 on the UI            
         }        
         // Count down the point mod timer if it's on
@@ -211,10 +211,20 @@ public class Dax : MonoBehaviour
     /// Handles the end of the game
     /// </summary>
     /// <param name="reason">Reason for game ending (died, out of time, ect)</param>
-    public void EndGame(string reason)
+    public void EndGame(string reason, bool isVictory)
     {
         GameState = eGameState.GAME_OVER;
         UIRoot.ShowEndGame(reason, true);
+        if(isVictory == true)
+        {
+            SoundFXPlayer.PlaySoundFX("VictoryVoice", 1f);
+            SoundFXPlayer.PlaySoundFX("VictorySound", .8f);
+        }
+        else
+        {
+            SoundFXPlayer.PlaySoundFX("DefeatVoice", 1f);
+            SoundFXPlayer.PlaySoundFX("DefeatSound", .8f);
+        }
     }
 
     /// <summary>
