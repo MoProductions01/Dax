@@ -10,7 +10,7 @@ public class Hazard : BoardObject
 {
     // Some statics for the time the hazard can be active
     public static float DEFAULT_EFFECT_TIME = 2f; 
-    public static float MAX_EFFECT_TIME = 10f;
+    public static float MAX_EFFECT_TIME = 8f;
     public static float MIN_EFFECT_TIME = .1f;
     public float EffectTime = DEFAULT_EFFECT_TIME;           
 
