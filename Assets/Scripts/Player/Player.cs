@@ -315,27 +315,18 @@ public class Player : BoardObject
                 VFXPlayer.ShutOffGlueVFX();
             }
         }
-    }   
-
-    ///
-    private void Awake() 
-    {
-        MCP = FindObjectOfType<MCP>();    
-    }
+    }       
         
-    DaxPuzzleSetup DS = null;
+    //************************************** Editor Code ***********************************************************//    
     private void OnDrawGizmos()
     {        
-        if (DS == null) DS = FindObjectOfType<DaxPuzzleSetup>();        
-        if (DS != null && DS.ShowGizmos == true)            
-        {           
-            if (CurChannel != null)
-            {
-                Gizmos.color = Color.yellow / 1.5f;
-                Gizmos.DrawWireSphere(CurChannel.StartNode.transform.position, .08f);
-                Gizmos.DrawWireSphere(CurChannel.MidNode.transform.position, .08f);
-                Gizmos.DrawWireSphere(CurChannel.EndNode.transform.position, .08f);
-            }       
-        }        
+        if(CurChannel == null) return;
+        DaxPuzzleSetup DS = FindObjectOfType<DaxPuzzleSetup>(); // FindObjectOfType is fine for editor stuff
+        if (DS == null || DS.ShowGizmos == false) return;    
+        
+        Gizmos.color = Color.yellow / 1.5f;
+        Gizmos.DrawWireSphere(CurChannel.StartNode.transform.position, .08f);
+        Gizmos.DrawWireSphere(CurChannel.MidNode.transform.position, .08f);
+        Gizmos.DrawWireSphere(CurChannel.EndNode.transform.position, .08f);        
     }
 }

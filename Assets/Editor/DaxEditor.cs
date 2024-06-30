@@ -21,7 +21,7 @@ public class DaxEditor : Editor
 
     MCP MCP;   // The Master Control Program object from the main game
     Dax Dax;   // The Dax object from the main game
-    DaxPuzzleSetup _DaxPuzzleSetup; // The MonoBehavior that this editor script extends
+    DaxPuzzleSetup DaxPuzzleSetup; // The MonoBehavior that this editor script extends
     SerializedObject DaxSetupSO;    // The SerializedObject for the DaxPuzzleSetup object    
     SerializedObject DaxSO; // The SerializedObject for the _Dax object
    
@@ -41,13 +41,17 @@ public class DaxEditor : Editor
     
         // Gather the main GameObjects and SerializedObjects used for everything
         MCP = GameObject.FindObjectOfType<MCP>();
-        _DaxPuzzleSetup = (DaxPuzzleSetup)target;        
-        DaxSetupSO = new SerializedObject(_DaxPuzzleSetup);
+        DaxPuzzleSetup = (DaxPuzzleSetup)target;        
+        DaxSetupSO = new SerializedObject(DaxPuzzleSetup);
         DaxSetupSO.Update();
         Dax = MCP.Dax.GetComponent<Dax>();
         DaxSO = new SerializedObject(Dax);
         DaxSO.Update();        
-
+                
+        EditorGUILayout.Separator();     
+        DaxPuzzleSetup.ShowGizmos = EditorGUILayout.Toggle("Show Gizmos", DaxPuzzleSetup.ShowGizmos);
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        
         // This is for the overall puzzle data, not individual objects on the puzzle
         HandlePuzzleInfo();
            
@@ -63,8 +67,8 @@ public class DaxEditor : Editor
         // Save data                        
         DaxSetupSO.ApplyModifiedProperties();
         DaxSO.ApplyModifiedProperties();            
-        Undo.RecordObject(_DaxPuzzleSetup, "OnInspectorGUI");
-        EditorUtility.SetDirty(_DaxPuzzleSetup);
+        Undo.RecordObject(DaxPuzzleSetup, "OnInspectorGUI");
+        EditorUtility.SetDirty(DaxPuzzleSetup);
     }   
     
     /* These are helper functions to take care of the multiple serialized property updates */
@@ -246,7 +250,7 @@ public class DaxEditor : Editor
     }
 
     /// <summary>
-    /// User has selected a Ring from the tool so handle that
+    /// User has selected a Ring so handle that
     /// </summary>
     void HandleRingSelected()
     {
