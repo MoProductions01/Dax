@@ -56,7 +56,7 @@ public class BoardObject : MonoBehaviour
     /// Checks for the transition from one channel to another for any moving game objects
     /// </summary>
     /// <param name="overlapColliders">List of colliders we're currently overlapping</param>
-    private void CheckForNewChannel(List<Collider> overlapColliders)
+    private bool CheckForNewChannel(List<Collider> overlapColliders)
     {        
         List<Collider> channelNodeColliders = overlapColliders.ToList(); // Make a new list of the colliders we're overlapping
         channelNodeColliders.RemoveAll(c => c.GetComponent<ChannelNode>() == null); // Remove anything that's not a ChannelNode
@@ -84,6 +84,7 @@ public class BoardObject : MonoBehaviour
                 transform.LookAt(channelNode.IsStartNode() ? channelNode.MyChannel.EndNode.transform : channelNode.MyChannel.StartNode.transform);  
                 //Debug.Log("Channel Change");
                 SoundFXPlayer.PlaySoundFX("ChannelChange", .8f);
+                return true;
                 //transform.LookAt(channelNode.MyChannel.StartNode ? channelNode.MyChannel.EndNode.transform : channelNode.MyChannel.StartNode.transform);       // modelete node   
             } 
             else
@@ -91,6 +92,7 @@ public class BoardObject : MonoBehaviour
                 Debug.LogError("Why do we have a Channel Node that's behind us?");
             }             
         }      
+        return false;
     }
 
     /// <summary>
@@ -235,9 +237,14 @@ public class BoardObject : MonoBehaviour
             List<Collider> overlapColliders = Physics.OverlapSphere(transform.position, GetComponent<SphereCollider>().radius).ToList();
             if(overlapColliders.Count > 0)
             {                
-                CheckForNewChannel(overlapColliders.ToList()); // Check if we want to jump to another channel         
-                CheckBumpers(overlapColliders.ToList());       // Check if we collided with a bumper
-                CheckGenericBounce(overlapColliders.ToList()); // Check bouncing off non BoardObjects
+                // Check if we want to jump to another channel                   
+                if( CheckForNewChannel(overlapColliders.ToList()) == false)                
+                {   // Changing channels moves the game object which can cause issues if you check for
+                    // generic collisions on the same frame so only check for them if you did not change channels
+                    // (there's no issue with bumpers)
+                    CheckGenericBounce(overlapColliders.ToList()); // Check bouncing off non BoardObjects
+                }
+                CheckBumpers(overlapColliders.ToList());       // Check if we collided with a bumper                
                 if(this.BoardObjectType == eBoardObjectType.PLAYER) 
                 {
                     // Player gets a special case
