@@ -28,19 +28,20 @@ public class UIRoot : MonoBehaviour
     [field: SerializeField] private TMP_Text EndGameReason {get; set;} // Text for telling you why game ended
        
     // References to the most important objects in the game to tie into the UI
-    Dax Dax {get; set;}
-    MCP MCP {get; set;}
-    Player Player {get; set;}
+    [field: SerializeField] public MCP MCP {get; set;}
+    [field: SerializeField] public Dax Dax {get; set;}        
+    [field: SerializeField] public Player Player {get; set;}
+
+    private void Awake() 
+    {
+        Init(); // Set the UI to it's default setup
+    }
 
     /// <summary>
     /// Init the UI
     /// </summary>
     public void Init()
-    {
-        // First get references to the GameObjects we need
-        MCP = FindObjectOfType<MCP>();
-        Dax = FindObjectOfType<Dax>(); 
-        Player = FindObjectOfType<Player>();    
+    {        
         FacetCollectIcon = FacetCollectActivateButton.gameObject.GetComponent<UnityEngine.UI.Image>();
         ShieldIcon = ShieldActivateButton.gameObject.GetComponent<UnityEngine.UI.Image>();        
         

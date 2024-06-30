@@ -60,8 +60,8 @@ public class Dax : MonoBehaviour
         GameState = eGameState.PRE_GAME; // Dax.Awake()
         RingMask = LayerMask.GetMask("Main Touch Control");        
         Score = 0;
-        UIRoot = FindObjectOfType<UIRoot>(); // moui
-        UIRoot.Init();
+      //  UIRoot = FindObjectOfType<UIRoot>(); // modelete
+         //UIRoot.Init();
     }      
     
     /// <summary>

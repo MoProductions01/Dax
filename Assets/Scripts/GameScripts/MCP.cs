@@ -177,8 +177,7 @@ public class MCP : MonoBehaviour
         
 
         // Dax is the main overall gameplay class.  Pretty much manages everything
-        mcp.Dax = new GameObject("Dax").AddComponent<Dax>();   
-               
+        mcp.Dax = new GameObject("Dax").AddComponent<Dax>();                  
 
         // Wheel is the container class for the gameboard (Rings, etc)
         Wheel wheel = CreateWheel(mcp/*, mcp._Dax.gameObject, mcp._Dax, 0*/); // modelete
@@ -191,12 +190,7 @@ public class MCP : MonoBehaviour
         mainCamera.transform.eulerAngles = new Vector3(90f, 0f, 0f);        
         mainCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("UI"));
         mainCamera.clearFlags = CameraClearFlags.Depth;
-        mainCamera.depth = 1;
-
-        // UI
-        UIRoot uiRootPrefab = Resources.Load<UIRoot>("Dax/Prefabs/Misc/UIRoot");
-        Instantiate<UIRoot>(uiRootPrefab);
-        //mcp.UIRoot = Instantiate<UIRoot>(uiRootPrefab); // moui
+        mainCamera.depth = 1;        
 
         // VFX
         VFX vfxPrefab = Resources.Load<VFX>("Dax/Prefabs/Misc/VFX"); // moui new asset
@@ -206,6 +200,13 @@ public class MCP : MonoBehaviour
         SoundPlayer soundPlayerPrefab = Resources.Load<SoundPlayer>("Dax/Prefabs/Misc/SoundPlayer");
         Instantiate<SoundPlayer>(soundPlayerPrefab);
 
+        // UI
+        UIRoot uiRootPrefab = Resources.Load<UIRoot>("Dax/Prefabs/Misc/UIRoot");
+        UIRoot uiRoot = Instantiate<UIRoot>(uiRootPrefab);
+        mcp.Dax.UIRoot = uiRoot;
+        uiRoot.MCP = mcp;
+        uiRoot.Dax = mcp.Dax;
+
         // Create the Player and set it up
         Player playerPrefab = Resources.Load<Player>("Dax/Prefabs/Misc/PlayerDiode");
         Player player = UnityEngine.Object.Instantiate<Player>(playerPrefab, mcp.Dax.transform);        
@@ -213,10 +214,10 @@ public class MCP : MonoBehaviour
         player.MCP = mcp;
         mcp.Dax.Player = player;
         mcp.Dax.Player.Dax = mcp.Dax;
-
+        uiRoot.Player = player;
         player.SetStartChannel(0);        
         player.InitForChannelNode(null, mcp.Dax);
-        player.ResetPlayer();         
+        player.ResetPlayer();                                
 
         // modelete - look into the camera/dax offset
         mcp.Dax.transform.position = new Vector3(-10f, 0f, 0f);                            
