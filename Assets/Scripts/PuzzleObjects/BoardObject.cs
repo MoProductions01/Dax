@@ -228,7 +228,7 @@ public class BoardObject : MonoBehaviour
 
         if (Speed != 0f || this.BoardObjectType == eBoardObjectType.PLAYER) // This check might be unnecessary but better save than sorry
         {         
-            Debug.Log(this.name + " speed is above 0");              
+//            Debug.Log(this.name + " speed is above 0");              
             // move along the forward vector
             transform.Translate(Vector3.forward * deltaTime * Speed);            
             // now check colliders

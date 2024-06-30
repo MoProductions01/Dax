@@ -24,12 +24,49 @@ public class DaxEditor : Editor
     DaxPuzzleSetup _DaxPuzzleSetup; // The MonoBehavior that this editor script extends
     SerializedObject DaxSetupSO;    // The SerializedObject for the DaxPuzzleSetup object    
     SerializedObject DaxSO; // The SerializedObject for the _Dax object
-
-    int SelectedRing = 0; // Index of our currently selected ring          
+   
     int NumRingsUserWants = Dax.MAX_NUM_RINGS; // How many rings the user wants to change to
     bool RingsNumChangePopupActive = false; // For confirmation if the user does in fact want to reduce the number of rings since that also destroys objects
     bool RingsResetPopupActive = false; // For confirmation if the user wants to reset the Ring since it clears all BoardObjects and resets ChannelPieces
 
+    
+    /// <summary>
+    /// This is the callback from the engine that is the core of interacting
+    /// with the in-engine tool Inspector window
+    /// </summary>
+    public override void OnInspectorGUI()
+    {
+        if(Application.isPlaying) return;        
+        //HandleSceneView(); // make sure the Radient Debug object is not visible NOTE: only needed if we're using the RadientDebug stuff         
+    
+        // Gather the main GameObjects and SerializedObjects used for everything
+        MCP = GameObject.FindObjectOfType<MCP>();
+        _DaxPuzzleSetup = (DaxPuzzleSetup)target;        
+        DaxSetupSO = new SerializedObject(_DaxPuzzleSetup);
+        DaxSetupSO.Update();
+        Dax = MCP.Dax.GetComponent<Dax>();
+        DaxSO = new SerializedObject(Dax);
+        DaxSO.Update();        
+
+        // This is for the overall puzzle data, not individual objects on the puzzle
+        HandlePuzzleInfo();
+           
+        // Check to see if the engine is telling us we have a GameObject selected
+        SelectedGameObject = Selection.activeGameObject;                        
+
+        if (SelectedGameObject != null)
+        {
+            // The engine is telling us we have a GameObject selected so handle that.
+            HandleActiveGameObject();                                                                                                                                        
+        }        
+
+        // Save data                        
+        DaxSetupSO.ApplyModifiedProperties();
+        DaxSO.ApplyModifiedProperties();            
+        Undo.RecordObject(_DaxPuzzleSetup, "OnInspectorGUI");
+        EditorUtility.SetDirty(_DaxPuzzleSetup);
+    }   
+    
     /* These are helper functions to take care of the multiple serialized property updates */
     void UpdateStringProperty(SerializedObject so, string propName, string stringValue)
     {
@@ -99,7 +136,7 @@ public class DaxEditor : Editor
     }
 
     /// <summary>
-    /// This is to make sure the RadientDebug object is always hidden.  It's a bit hacky but it's the only thing that works
+    /// This is to make sure the RadientDebug object is always hidden.
     /// </summary>
     /*void HandleSceneView()
     {        
@@ -128,8 +165,7 @@ public class DaxEditor : Editor
                 RingsNumChangePopupActive = false;         
                 // ResetRing destroys all the board objects and restores any removed ChannelPieces      
                 for (int i = Dax.Wheel.NumActiveRings; i > NumRingsUserWants; i--) MCP.ResetRing(Dax.Wheel.Rings[i]);                      
-                Selection.activeGameObject = null;
-                SelectedRing = 0;
+                Selection.activeGameObject = null;                
                 Dax.Wheel.TurnOnRings(NumRingsUserWants); // This will turn on the correct # of puzzle rings
             }
             else RingsNumChangePopupActive = false; // User chose no so just shut off the popup            
@@ -149,33 +185,7 @@ public class DaxEditor : Editor
                     NumRingsUserWants = newNumRings;
                 }
             }
-        }
-
-        // Ring selection is handled via the tool Inspector window since there's so many other colliders on the board
-        EditorGUILayout.Separator();
-        if (Selection.activeGameObject == null || (Selection.activeGameObject != null && Selection.activeGameObject.GetComponent<Ring>() == null))
-        {   // We have something other than a ring selected now so make sure that there's no ring selected
-            SelectedRing = 0;            
-        }
-        // You always have at least one Ring other than the Center ring so
-        // set up the enum list based on the # of rings after that
-        List<string> ringNames = new List<string> { "None", "Center", "Ring 01" };
-        for (int i = 2; i <= Dax.Wheel.NumActiveRings; i++) ringNames.Add("Ring " + i.ToString("D2"));        
-        string[] ringNamesArray = ringNames.ToArray();
-        // Set up the enum pulldown
-        int newRing = EditorGUILayout.Popup("Select Ring", SelectedRing, ringNamesArray);
-        if (newRing != SelectedRing)
-        {
-            if (newRing == 0)
-            {   // If you selected "None" on the enum list then you will have no active selected object
-                Selection.activeGameObject = null;
-            }
-            else
-            {   // You've chosen a ring so make that the activeGameObject
-                Selection.activeGameObject = Dax.Wheel.Rings[newRing - 1].gameObject;
-            }
-            SelectedRing = newRing;
-        }
+        }       
     }
 
     /// <summary>
@@ -232,7 +242,7 @@ public class DaxEditor : Editor
             // level if you win or die and want to restart.     
             Dax.Wheel.ResetFacetsCount();
             Dax.CreateSaveData(Dax);            
-        }        
+        }               
     }
 
     /// <summary>
@@ -416,6 +426,12 @@ public class DaxEditor : Editor
     {
         // Handle the selected game object depending on what it is
 
+        if(SelectedGameObject.tag.Equals("Wedge"))
+        {   // clicking on a wedge well make the active object it's parent Ring
+            Ring ring = SelectedGameObject.GetComponentInParent<Ring>();     
+            Selection.activeGameObject = ring.gameObject;           
+            SelectedGameObject = Selection.activeGameObject;               
+        }
         if (SelectedGameObject.GetComponent<Ring>() != null)
         {
             HandleRingSelected();            
@@ -441,46 +457,10 @@ public class DaxEditor : Editor
             // This is a special case for when the user clicks on a spawned BoardObject. 
             // See function's comments for full explanation.
             HandleSpawnedBoardObjectSelected();
-        }  
+        }          
     }
 
-    /// <summary>
-    /// This is the callback from the engine that is the core of interacting
-    /// with the in-engine tool Inspector window
-    /// </summary>
-    public override void OnInspectorGUI()
-    {
-        if(Application.isPlaying) return;        
-        //HandleSceneView(); // make sure the Radient Debug object is not visible NOTE: only needed if we're using the RadientDebug stuff         
     
-        // Gather the main GameObjects and SerializedObjects used for everything
-        MCP = GameObject.FindObjectOfType<MCP>();
-        _DaxPuzzleSetup = (DaxPuzzleSetup)target;        
-        DaxSetupSO = new SerializedObject(_DaxPuzzleSetup);
-        DaxSetupSO.Update();
-        Dax = MCP.Dax.GetComponent<Dax>();
-        DaxSO = new SerializedObject(Dax);
-        DaxSO.Update();        
-
-        // This is for the overall puzzle data, not individual objects on the puzzle
-        HandlePuzzleInfo();
-           
-        // Check to see if the engine is telling us we have a GameObject selected
-        SelectedGameObject = Selection.activeGameObject;              
-        //if (LastSelectedGameObject != SelectedGameObject) LastSelectedGameObject = SelectedGameObject;        
-
-        if (SelectedGameObject != null)
-        {
-            // The engine is telling us we have a GameObject selected so handle that.
-            HandleActiveGameObject();                                                                                                                                        
-        }        
-
-        // Save data                        
-        DaxSetupSO.ApplyModifiedProperties();
-        DaxSO.ApplyModifiedProperties();            
-        Undo.RecordObject(_DaxPuzzleSetup, "OnInspectorGUI");
-        EditorUtility.SetDirty(_DaxPuzzleSetup);
-    }   
     
     /// <summary>
     /// Handles when the user has an empty middle node selected and is

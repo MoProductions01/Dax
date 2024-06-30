@@ -404,6 +404,7 @@ public class MCP : MonoBehaviour
                 wedge.transform.parent = ringGameObject.transform;
                 wedge.name = ringString + "_Wedge_" + channelString;
                 wedge.gameObject.layer = LayerMask.NameToLayer("Player Generic Collider");
+                wedge.gameObject.tag = "Wedge";                
                 wedge.AddComponent<MeshCollider>();
                 wedge.GetComponent<MeshCollider>().convex = true;
             }
