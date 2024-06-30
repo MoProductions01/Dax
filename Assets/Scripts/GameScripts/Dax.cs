@@ -9,10 +9,10 @@ using UnityEngine;
 /// </summary>
 public class Dax : MonoBehaviour
 {   
-    public static float MAX_SPIN_SPEED = 20f; // Maximum speed the player can spin a ring
-    public static float MAX_SPEED = 1f; // Maximum speed a board object or the player can go
-    public static int MAX_NUM_RINGS = 1; // Maximum number of rings the game can have // monotewheel
-    public static float DEFAULT_LEVEL_TIME = 120f; // Default time for the level
+    public const float MAX_SPIN_SPEED = 20f; // Maximum speed the player can spin a ring
+    public const float MAX_SPEED = 1f; // Maximum speed a board object or the player can go
+    public const int MAX_NUM_RINGS = 1; // Maximum number of rings the game can have // monotewheel
+    public const float DEFAULT_LEVEL_TIME = 120f; // Default time for the level
      
     // The victory conditions (or game type).
     // COLLECTION: Player needs to run over the facets to collect them.  When they have them all you win.

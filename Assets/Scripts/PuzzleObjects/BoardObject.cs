@@ -8,10 +8,13 @@ using System.Linq;
 /// </summary>
 public class BoardObject : MonoBehaviour
 {    
+    public const float MAX_SPEED = 3f;
+    private const string V = "Shield";
+
     // Strings used in the DaxEditor to show in the Inspector window
-    public static List<string> BOARD_OBJECT_EDITOR_NAMES = 
-                                new List<string> {"Player", "Facet", "Hazard", "Facet Collect", 
-                                                    "Shield", "Speed Mod", "Point Mod"};  
+    public static readonly List<string> BOARD_OBJECT_EDITOR_NAMES = 
+                                new List<string> {"Player", "Facet", "Hazard", "Facet Collect",
+                                                    V, "Speed Mod", "Point Mod"};  
 
     // All the types of BoardObjects that we can have
     public enum eBoardObjectType { PLAYER, FACET, HAZARD, FACET_COLLECT, SHIELD, SPEED_MOD, POINT_MOD }; 
@@ -20,7 +23,7 @@ public class BoardObject : MonoBehaviour
     // Movement info.  
     public enum eStartDir {OUTWARD, INWARD}; 
     [field: SerializeField] public eStartDir StartDir = eStartDir.OUTWARD;
-    [field: SerializeField] public float Speed {get; set;} = 0f;        
+    [field: SerializeField] public float Speed {get; set;} = 0f;            
 
     [field: SerializeField] public Dax Dax {get; set;}   // Root Dax game object ref               
     [field: SerializeField] public Channel CurChannel {get; set;}   // Current channel that the board object is in               
@@ -65,11 +68,8 @@ public class BoardObject : MonoBehaviour
         channelNodeColliders.RemoveAll(c => Vector3.Dot( (c.transform.position - this.transform.position), this.transform.forward) <= 0); // Remove anything behind us                     
         if(channelNodeColliders.Count > 0)
         {
-            if(channelNodeColliders.Count > 1) 
-            {
-                Debug.LogError("Why do we have more than 1 Channel Node Colliders?: " + channelNodeColliders.Count);                    
-            }
-
+            // if you're moving fast enough you can collide with two nodes at once, so just deal with the closest one
+            channelNodeColliders = channelNodeColliders.OrderBy(o => Vector3.Distance(o.transform.position, this.transform.position)).ToList();  
             ChannelNode channelNode = channelNodeColliders[0].GetComponent<ChannelNode>();
             Vector3 heading = channelNode.transform.position - this.transform.position;
             float dot = Vector3.Dot(heading, this.transform.forward);         
@@ -175,22 +175,17 @@ public class BoardObject : MonoBehaviour
     /// </summary>
     /// <param name="boardObjectColliders">Colliders the player is overlapping with</param>
     private void CheckBoardObjectsForPlayer(List<Collider> boardObjectColliders, Player player)
-    {        
-        string s = "";
+    {                
        // Player player = FindObjectOfType<Player>(); // mofix
-        boardObjectColliders.RemoveAll(x => x.GetComponentInParent<BoardObject>() == null); // Remove anything that's not a board object             
-        s += "after no bo: " + boardObjectColliders.Count;
-        boardObjectColliders.Remove(this.gameObject.GetComponent<Collider>()); // Remove player's collider
-        s += ", after player collider: " + boardObjectColliders.Count;
+        boardObjectColliders.RemoveAll(x => x.GetComponentInParent<BoardObject>() == null); // Remove anything that's not a board object                     
+        boardObjectColliders.Remove(this.gameObject.GetComponent<Collider>()); // Remove player's collider        
         
         if (player.ActiveShield != null) boardObjectColliders.Remove(player.ActiveShield.GetComponent<Collider>()); // Remove shield collider if necessary
-        s += ", after shield: " + boardObjectColliders.Count;
+        
         if (boardObjectColliders.Count == 0) 
-        {
-            //Debug.Log( s + ": No Collisions");
+        {        
             return; // bail if no collisions
         }
-//        Debug.Log(s + ": num collisions: " + boardObjectColliders.Count);
         for(int i=0; i<boardObjectColliders.Count; i++)
         {
             // Call each BoardObject's HandleCollisionWithPlayer() function

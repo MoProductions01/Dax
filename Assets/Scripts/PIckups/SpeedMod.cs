@@ -8,7 +8,7 @@ using System.Linq;
 public class SpeedMod : BoardObject
 {
     // The value that the SpeedMod has
-    public static float DEFAULT_MOD_VAL = 2f;            
+    public const float DEFAULT_MOD_VAL = 2f;            
     public float SpeedModVal = DEFAULT_MOD_VAL;
     
     // SpeedMod types
@@ -35,15 +35,14 @@ public class SpeedMod : BoardObject
     /// <param name="player">Player object</param>
     /// <param name="facet">Facet object</param>
     public override void HandleCollisionWithPlayer(Player player, BoardObject boardObject)
-    {
-        SpeedMod speedMod = (SpeedMod)boardObject;
-        //FindObjectOfType<VFX>().PlaySpeedModVFX(speedMod.SpeedModType, this.transform.position); modelete
-        VFXPlayer.PlaySpeedModVFX(speedMod.SpeedModType, this.transform.position);
-
+    {        
+        SpeedMod speedMod = (SpeedMod)boardObject;       
+        
         switch(speedMod.SpeedModType)
         {
             case SpeedMod.eSpeedModType.PLAYER_SPEED:
-                // Update the player speed                
+                // Update the player speed               
+                if(player.Speed + speedMod.SpeedModVal > MAX_SPEED) return; // can't go TOO fast  
                 player.Speed += speedMod.SpeedModVal;         
                 SoundFXPlayer.PlaySoundFX("SpeedModPickupPlayer", .8f);       
                 break;        
@@ -52,10 +51,14 @@ public class SpeedMod : BoardObject
                 List<Hazard> enemies = Dax.Wheel.GetComponentsInChildren<Hazard>().ToList();
                 enemies.RemoveAll(c => c.HazardType != Hazard.eHazardType.ENEMY); // Remove anything that's not an ENEMY since they're the only Hazards that move                
                 // Update each enemy's speed
+                bool oneEnemyModified = false;
                 foreach (Hazard e in enemies) 
                 {
+                    if(e.Speed + speedMod.SpeedModVal > MAX_SPEED) continue; // can't go TOO fast
                     e.Speed += speedMod.SpeedModVal; 
+                    oneEnemyModified = true;
                 }
+                if(oneEnemyModified == false) return; // bail if no enemies were modified
                 SoundFXPlayer.PlaySoundFX("SpeedModPickupEnemy", .8f);
                 break;
             case SpeedMod.eSpeedModType.RING_SPEED:
@@ -63,7 +66,8 @@ public class SpeedMod : BoardObject
                 player.CurChannel.MyRing.RotateSpeed += speedMod.SpeedModVal;
                 SoundFXPlayer.PlaySoundFX("SpeedModPickupRing", .8f);
                 break;                 
-        }                
+        }     
+        VFXPlayer.PlaySpeedModVFX(speedMod.SpeedModType, this.transform.position);           
         // Destroy SpeedMod and give points
         DestroyImmediate(speedMod.gameObject);
         Dax.AddPoints(5);

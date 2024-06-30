@@ -57,36 +57,3 @@ public class SoundPlayer : MonoBehaviour
         SoundFXSource.PlayOneShot(clip, vol);        
     }       
 }
-
-/*
-BG Music
-Click to start
-Generic Bounce
-Bumper Bounce
-Channel Change
-Collect Facet
-EnemyDeath
-Dynamite
-Glue
-Pickup Facet Color Match
-Pickup Ring FC
-Pickup Wheel FC
-Pickup Shield Single Kill
-Pickup Shield Hit
-PIckup Speed Mod Player
-Pickup Speed Mod Wheel
-Pickup Speed Mod Enemy
-Pickup PointMod 1
-Pickup PointMod 2
-Shield Collision Hit
-Shield Collision Single Kill
-Activate Facet Collect Ring
-Activate Facet Collect Wheel
-Activate Shield Hit
-Activate Hield Single Kill
-Victory voice
-Victory sound
-Defeat voice
-Defeat sound
-click try again button
-*/

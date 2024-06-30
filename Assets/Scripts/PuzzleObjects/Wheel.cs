@@ -10,8 +10,8 @@ using UnityEngine;
 public class Wheel : MonoBehaviour
 {
     // The center ring has a differennt number of channels than the rest
-    public static int NUM_OUTER_RING_CHANNELS = 48;
-    public static int NUM_CENTER_RING_CHANNELS = 12;
+    public const int NUM_OUTER_RING_CHANNELS = 48;
+    public const int NUM_CENTER_RING_CHANNELS = 12;
         
     // Ring data
     [field: SerializeField] public List<Ring> Rings {get; set;} = new List<Ring>();

@@ -10,7 +10,7 @@ using VisCircle;
 /// </summary>
 public class Player : BoardObject
 {    
-    public static int MAX_FACETCOLLECT_OR_SHIELD = 12; // Can only have 12 FacetCollect or Shields and once
+    public const int MAX_FACETCOLLECT_OR_SHIELD = 12; // Can only have 12 FacetCollect or Shields and once
 
     // None of the data for the Player is saved so there's no need for [field: SerializeField]
     public Shield ActiveShield {get; set;} // The shield that's currently active (if any)

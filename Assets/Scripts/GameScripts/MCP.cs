@@ -22,13 +22,13 @@ public class MCP : MonoBehaviour
     /// List of the root strings for board object prefabs.  Combined with the
     /// info for the board object will get you the correct string to load
     /// </summary>
-    public static List<string> PREFAB_ROOT_STRINGS = new List<string> {"Dax/Prefabs/", "Dax/Prefabs/Pickups/",
+    public static readonly List<string> PREFAB_ROOT_STRINGS = new List<string> {"Dax/Prefabs/", "Dax/Prefabs/Pickups/",
     "Dax/Prefabs/Hazards/", "Dax/Prefabs/Pickups/Facet_Collects/", "Dax/Prefabs/Pickups/Shields/", 
     "Dax/Prefabs/Pickups/Speed_Mods/", "Dax/Prefabs/Pickups/Point_Mods/"};
 
     // Strings for the specific board objects to load.  Combined with the root to get the correct string 
     // for the board object to load
-    public static List<List<string>> PREFAB_BOARDOBJECT_STRINGS = new List<List<string>> 
+    public static readonly List<List<string>> PREFAB_BOARDOBJECT_STRINGS = new List<List<string>> 
     {
         new List<string> { "Player_Diode" }, // Player
         new List<string> { "Facet" },   // Facet
