@@ -11,7 +11,7 @@ public class Dax : MonoBehaviour
 {   
     public const float MAX_SPIN_SPEED = 20f; // Maximum speed the player can spin a ring
     public const float MAX_SPEED = 1f; // Maximum speed a board object or the player can go
-    public const int MAX_NUM_RINGS = 1; // Maximum number of rings the game can have // monotewheel
+    public const int MAX_NUM_RINGS = 3; // Maximum number of rings the game can have // monotewheel
     public const float DEFAULT_LEVEL_TIME = 120f; // Default time for the level
      
     // The victory conditions (or game type).
@@ -265,7 +265,7 @@ public class Dax : MonoBehaviour
             PuzzleSaveData = saveData;
         }
 
-        MCP mcp = FindObjectOfType<MCP>(); // I know FindObjectOfType is bad but this code only happens when reloading a puzzle  
+        MCP mcp = FindFirstObjectByType<MCP>(); // I know FindObjectOfType is bad but this code only happens when reloading a puzzle  
         
         this.PuzzleName = PuzzleSaveData.PuzzleName; // update puzzle's name
         // Reset ring and touch data        

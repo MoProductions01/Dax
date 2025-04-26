@@ -141,17 +141,17 @@ public class MCP : MonoBehaviour
     /// </summary>
     static void TrashCurrentPuzzle()
     {
-        MCP mcp = GameObject.FindObjectOfType<MCP>();
+        MCP mcp = GameObject.FindFirstObjectByType<MCP>();
         if(mcp != null) UnityEngine.Object.DestroyImmediate(mcp.gameObject);        
-        DaxPuzzleSetup daxSetup = GameObject.FindObjectOfType<DaxPuzzleSetup>();
+        DaxPuzzleSetup daxSetup = GameObject.FindFirstObjectByType<DaxPuzzleSetup>();
         if (daxSetup != null) UnityEngine.Object.DestroyImmediate(daxSetup.gameObject);
-        Dax dax = GameObject.FindObjectOfType<Dax>();
+        Dax dax = GameObject.FindFirstObjectByType<Dax>();
         if (dax != null) UnityEngine.Object.DestroyImmediate(dax.gameObject);
-        UIRoot uiRoot = GameObject.FindObjectOfType<UIRoot>();
+        UIRoot uiRoot = GameObject.FindFirstObjectByType<UIRoot>();
         if (uiRoot != null) UnityEngine.Object.DestroyImmediate(uiRoot.gameObject);
-        VFX vfx = GameObject.FindObjectOfType<VFX>();
+        VFX vfx = GameObject.FindFirstObjectByType<VFX>();
         if (vfx != null) UnityEngine.Object.DestroyImmediate(vfx.gameObject);
-        SoundPlayer soundPlayer = GameObject.FindObjectOfType<SoundPlayer>();
+        SoundPlayer soundPlayer = GameObject.FindFirstObjectByType<SoundPlayer>();
         if (soundPlayer != null) UnityEngine.Object.DestroyImmediate(soundPlayer.gameObject);
     }
 

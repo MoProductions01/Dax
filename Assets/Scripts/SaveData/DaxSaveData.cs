@@ -202,7 +202,7 @@ public class DaxSaveData
             }
 
             // Player
-            Player player = GameObject.FindObjectOfType<Player>();
+            Player player = GameObject.FindFirstObjectByType<Player>();
             PlayerSave = new BoardObjectSave(player);
         }
     }    

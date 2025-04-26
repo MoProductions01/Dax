@@ -321,7 +321,7 @@ public class Player : BoardObject
     private void OnDrawGizmos()
     {        
         if(CurChannel == null) return;
-        DaxPuzzleSetup DS = FindObjectOfType<DaxPuzzleSetup>(); // FindObjectOfType is fine for editor stuff
+        DaxPuzzleSetup DS = FindFirstObjectByType<DaxPuzzleSetup>(); // FindObjectOfType is fine for editor stuff
         if (DS == null || DS.ShowGizmos == false) return;    
         
         Gizmos.color = Color.yellow / 1.5f;

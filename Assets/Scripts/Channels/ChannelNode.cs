@@ -72,7 +72,7 @@ public class ChannelNode : MonoBehaviour
     //************************************** Editor Code ***********************************************************//        
     private void OnDrawGizmos()
     {
-        DaxPuzzleSetup DS = FindObjectOfType<DaxPuzzleSetup>(); // FindObjectOfType is fine for editor stuff
+        DaxPuzzleSetup DS = FindFirstObjectByType<DaxPuzzleSetup>(); // FindObjectOfType is fine for editor stuff
         if (DS == null || DS.ShowGizmos == false) return;    
 
         Gizmos.color = new Color(.1f, .1f, .1f, .1f);
