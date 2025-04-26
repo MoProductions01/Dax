@@ -4,7 +4,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
-
+using Unity.EditorCoroutines.Editor;
 
 /// <summary>
 /// This is the class for handling all of the in-engine puzzle design and layout functionality.
@@ -251,7 +251,20 @@ public class DaxEditor : Editor
             Dax.CreateSaveData(Dax);            
         }               
     }
-
+    IEnumerator<EditorWaitForSeconds> DelayExecution(Ring selRing)
+    {
+        Debug.Log("starting one frame");
+        //yield return new EditorWaitForSeconds(3);  // Wait for 3 seconds
+        yield return null;
+        Debug.Log("ending one");
+        bool ringResetResponse = EditorUtility.DisplayDialog("Are you sure you want to reset this Ring?", 
+                                                                "This will remove all BoardObjects and reset Channel Pieces", "Yes", "No");
+        if(ringResetResponse == true)
+        {   // User chose to reset, so reset the Ring
+            MCP.ResetRing(selRing);
+        }
+        RingsResetPopupActive = false;
+    }
     /// <summary>
     /// User has selected a Ring so handle that
     /// </summary>
@@ -262,13 +275,9 @@ public class DaxEditor : Editor
         // Check if the reset ring popup is active
         if(RingsResetPopupActive)
         {
-            bool ringResetResponse = EditorUtility.DisplayDialog("Are you sure you want to reset this Ring?", 
-                                                                "This will remove all BoardObjects and reset Channel Pieces", "Yes", "No");
-            if(ringResetResponse == true)
-            {   // User chose to reset, so reset the Ring
-                MCP.ResetRing(selRing);
-            }
             RingsResetPopupActive = false;
+            EditorCoroutineUtility.StartCoroutine(DelayExecution(selRing), this);
+            
         }
         else
         {
@@ -394,7 +403,7 @@ public class DaxEditor : Editor
             // If it's not a middle node make sure it's a start node
             // on the center ring because those are the ones used to
             // select the Player's starting channel
-            Player player = FindObjectOfType<Player>();
+            Player player = FindFirstObjectByType<Player>();
             // Check if the selected node is already the start node
             if(SelectedChannelNode != player.GetStartChannelNode())
             {
