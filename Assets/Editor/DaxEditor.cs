@@ -35,18 +35,20 @@ public class DaxEditor : Editor
     /// with the in-engine tool Inspector window
     /// </summary>
     public override void OnInspectorGUI()
-    {
+    {        
         if(Application.isPlaying) return;        
         //HandleSceneView(); // make sure the Radient Debug object is not visible NOTE: only needed if we're using the RadientDebug stuff         
     
         // Gather the main GameObjects and SerializedObjects used for everything
-        MCP = GameObject.FindObjectOfType<MCP>();
+        MCP = GameObject.FindFirstObjectByType<MCP>();
         DaxPuzzleSetup = (DaxPuzzleSetup)target;        
         DaxSetupSO = new SerializedObject(DaxPuzzleSetup);
         DaxSetupSO.Update();
         Dax = MCP.Dax.GetComponent<Dax>();
         DaxSO = new SerializedObject(Dax);
-        DaxSO.Update();        
+        DaxSO.Update();       
+
+//        Debug.Log("Level Time: " + Dax.LevelTime); 
                 
         EditorGUILayout.Separator();     
         DaxPuzzleSetup.ShowGizmos = EditorGUILayout.Toggle("Show Gizmos", DaxPuzzleSetup.ShowGizmos);
@@ -192,6 +194,7 @@ public class DaxEditor : Editor
         }       
     }
 
+    
     /// <summary>
     /// The overall puzzle info is always in the inspector.  Individual
     /// puzzle elements change depending on what's selected.
@@ -214,7 +217,7 @@ public class DaxEditor : Editor
         if(newLevelTime != Dax.LevelTime)
         {
             Dax.LevelTime = newLevelTime;
-            UpdateFloatProperty(DaxSO, "LevelTime", Dax.LevelTime);           
+            UpdateFloatProperty(DaxSO, "LevelTime", Dax.LevelTime);              
         }
 
         // Victory Condition

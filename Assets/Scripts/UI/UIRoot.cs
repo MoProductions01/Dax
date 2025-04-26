@@ -54,8 +54,7 @@ public class UIRoot : MonoBehaviour
     /// </summary>
     public void ResetForGameStart()
     {   
-        // Reset Timer             
-        Dax.LevelTime = Dax.DEFAULT_LEVEL_TIME;                
+        // Reset Timer                            
         SetTimerText(Dax.LevelTime);
 
         // Reset Score

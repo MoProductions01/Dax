@@ -11,7 +11,7 @@ public class Dax : MonoBehaviour
 {   
     public const float MAX_SPIN_SPEED = 20f; // Maximum speed the player can spin a ring
     public const float MAX_SPEED = 1f; // Maximum speed a board object or the player can go
-    public const int MAX_NUM_RINGS = 3; // Maximum number of rings the game can have // monotewheel
+    public const int MAX_NUM_RINGS = 4; // Maximum number of rings the game can have // monotewheel
     public const float DEFAULT_LEVEL_TIME = 120f; // Default time for the level
      
     // The victory conditions (or game type).
@@ -42,8 +42,8 @@ public class Dax : MonoBehaviour
     public bool PointModActive; // Whether or not a gameplay modifier is active
     public float PointModTimer; // Timer for the current gameplay modifier // moui
     public int PointModVal;     // Value of the current gameplay modifier
-            
-    public float LevelTime {get; set;} = DEFAULT_LEVEL_TIME;  // Amount of time for the current level
+
+    public float LevelTime/* {get; set;}*/ = DEFAULT_LEVEL_TIME;  // Amount of time for the current level
     public int Score {get; set;} = 0;       // Player score // moui
     
     public TimeSpan ts;
@@ -233,7 +233,6 @@ public class Dax : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
-//        Debug.Log("Start Game");
         UIRoot.ClickToStartButton.SetActive(false);
         GameState = eGameState.RUNNING;
     }
@@ -268,6 +267,7 @@ public class Dax : MonoBehaviour
         MCP mcp = FindFirstObjectByType<MCP>(); // I know FindObjectOfType is bad but this code only happens when reloading a puzzle  
         
         this.PuzzleName = PuzzleSaveData.PuzzleName; // update puzzle's name
+        this.LevelTime = PuzzleSaveData.LevelTime;
         // Reset ring and touch data        
         CurTouchedRing = null;
         RingRot = 0f;

@@ -61,6 +61,7 @@ public class MCP : MonoBehaviour
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file;
         string fileName = Application.dataPath + "/Resources/Puzzles/" + Dax.PuzzleName + ".Dax";
+        Debug.Log("FileName: " + fileName);
         if (File.Exists(fileName))
         {
             bool saveResponse = EditorUtility.DisplayDialog("Warning", 

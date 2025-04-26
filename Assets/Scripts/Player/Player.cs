@@ -105,7 +105,7 @@ public class Player : BoardObject
     /// <returns></returns>
     public bool AddShield(Shield shield)
     {        
-        Debug.Log("Player.AddShield(): " + shield.ShieldType);
+       // Debug.Log("Player.AddShield(): " + shield.ShieldType);
 
         if (Shields.Count == MAX_FACETCOLLECT_OR_SHIELD) return false; // Can't go over max shields
 
@@ -181,12 +181,12 @@ public class Player : BoardObject
         Dax.UIRoot.DestroyShieldIcon(); // Destroy UI icon
         if (Shields.Count > 0) Dax.UIRoot.ChangeShieldIcon(Shields[0]); // If we have more Shields update the UI*/
 
-        Debug.Log("Player.ActivateShield()");
+//        Debug.Log("Player.ActivateShield()");
 
         if (Shields.Count == 0 || ActiveShield != null) return;
 
         Shield.eShieldTypes shieldToActivateType = Shields[0]; // Grab oldest FacetCollect type
-        Debug.Log("Activate Shield type: " + shieldToActivateType.ToString());
+//        Debug.Log("Activate Shield type: " + shieldToActivateType.ToString());
         Shields.RemoveAt(0); // Remove oldest from list        
         Dax.UIRoot.ToggleShieldIcon(Shields.Count > 0, 
                     (Shields.Count > 0 ? Shields[0] : shieldToActivateType));

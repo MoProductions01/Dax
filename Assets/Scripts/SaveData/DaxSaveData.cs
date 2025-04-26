@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEditor.ShaderGraph.Internal;
 
 /// <summary>
 /// This class holds all of the classes for the game's various save data
@@ -146,6 +147,7 @@ public class DaxSaveData
     {       
         // puzzle data
         public string PuzzleName;
+        public float LevelTime;
         public Dax.eVictoryConditions VictoryCondition;
         
         public List<int> NumFacetsOnBoardSave = new List<int>();
@@ -164,6 +166,7 @@ public class DaxSaveData
             int numRingsPlusCenter = NumRings + 1;
 
             PuzzleName = dax.PuzzleName;
+            LevelTime = dax.LevelTime;
             VictoryCondition = wheel.VictoryCondition;
             for(int i=0; i<wheel.NumFacetsOnBoard.Count; i++)
             {
